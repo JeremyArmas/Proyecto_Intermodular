@@ -11,10 +11,10 @@ class Usuario extends Model
     use HasFactory;
 
     protected $table = "usuarios";
-    protected $fillable = ['nombre', 'email', 'contraseña', 'es_admin'];
+    protected $fillable = ['name', 'email', 'password', 'es_admin'];
 
     protected $hidden = [
-        'contraseña',
+        'password',
         'remember_token',
     ];
 

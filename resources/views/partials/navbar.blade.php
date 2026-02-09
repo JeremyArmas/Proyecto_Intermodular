@@ -94,7 +94,7 @@
             </ul>
           </div>
 
-          <a class="btn jg-btn jg-btn-outline" href="{{ url('/login') }}">Iniciar sesión</a>
+          <a class="btn jg-btn jg-btn-outline" data-bs-toggle="modal" data-bs-target="#loginModal" href="{{ url('/login') }}">Iniciar sesión</a>
           <a class="btn jg-btn jg-btn-primary" href="{{ url('/register') }}">Crear cuenta</a>
         </div>
       </div>
