@@ -17,8 +17,8 @@
             <span>Bienvenido a Jediga</span>
           </div>
 
-          <h1 class="fw-bold display-6 mb-2">
-            Juegos, comunidad y presencia profesional — con un toque cercano.
+          <h1 class="jg-hero-title display-6 mb-2">
+            Juegos, comunidad y presencia profesional — con un toque cercano
           </h1>
 
           <p class="jg-muted mb-4" style="max-width: 58ch;">
@@ -34,7 +34,6 @@
           </div>
 
           <div class="mt-4 small jg-muted">
-            Consejo: usa un clip corto (10–15s) y sin texto en el vídeo para que no “pelee” con el contenido.
           </div>
         </div>
       </div>

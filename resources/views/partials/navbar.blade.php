@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top jg-nav">
-    <div class="container py-2">
+    <div class="container py-1">
       <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url('/') }}">
-        <span class="jg-brand">JG</span>
+        <img src="{{ asset('images/logo_jediga_provisional.png') }}" alt="Logo">
         <div class="lh-sm">
-          <div class="fw-bold">Jediga</div>
+          <div class="logoNombre">Jediga</div>
           <div class="small jg-muted">Videojuegos • Canarias</div>
         </div>
       </a>
@@ -94,7 +94,7 @@
             </ul>
           </div>
 
-          <a class="btn jg-btn jg-btn-outline" data-bs-toggle="modal" data-bs-target="#loginModal" href="{{ url('/login') }}">Iniciar sesión</a>
+          <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="{{ url('/login') }}">Iniciar sesión</a>
           <a class="btn jg-btn jg-btn-primary" href="{{ url('/register') }}">Crear cuenta</a>
         </div>
       </div>

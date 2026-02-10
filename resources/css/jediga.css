@@ -2,8 +2,8 @@
 /* Base */
 --jg-bg:#131224;          /* dark violeta suave (no negro puro) */
 --jg-bg2:#0b0b14;
---jg-text:#f4f5ff;
---jg-muted:#c8c9ea;
+--jg-text:#ffffff;
+--jg-muted:#ffffff;
 
 /* Marca */
 --jg-purple:#7c3aed;
@@ -25,6 +25,17 @@
 --jg-shadow: 0 20px 70px rgba(0,0,0,.40);
 }
 
+/* Hover/focus */
+.jg-nav .navbar-nav .nav-link:hover,
+.jg-nav .navbar-nav .nav-link:focus{
+  color: var(--jg-nav-link-hover) !important;
+}
+
+/* Activo (página actual) + cuando el dropdown está abierto */
+.jg-nav .navbar-nav .nav-link.active,
+.jg-nav .navbar-nav .show > .nav-link{
+  color: var(--jg-nav-link-active) !important;
+}
 
 body{
   color: var(--jg-text);
@@ -67,6 +78,13 @@ body::after{
   border-bottom: 1px solid var(--jg-border);
 }
 
+.jg-nav .navbar-brand img{
+  height: 56px;
+  width: auto;       
+  display: block;  
+  object-fit: contain;
+}
+
 .jg-brand{
   width: 42px; height: 42px;
   border-radius: 14px;
@@ -77,7 +95,10 @@ body::after{
   letter-spacing:.5px;
 }
 
-.jg-muted{ color: var(--jg-muted); }
+.jg-muted{ 
+  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--jg-muted); 
+}
 
 .jg-panel{
   border-radius: calc(var(--jg-radius) + 6px);
@@ -110,13 +131,18 @@ body::after{
   border-radius: 14px;
   font-weight: 800;
 }
+
 .jg-btn-primary{
   background: var(--jg-purple);
   border-color: rgba(255,255,255,.12);
-  color:#ffffff;
+  color:#fff;
   box-shadow: 0 18px 44px rgba(124,58,237,.16);
 }
-.jg-btn-primary:hover{ background:#9660f4; color:#fff; }
+
+.jg-btn-primary:hover{ 
+  background:#9660f4;
+  color:#fff; 
+}
 
 .jg-btn-sun{
   background: var(--jg-sun);
@@ -125,7 +151,10 @@ body::after{
   box-shadow: 0 18px 44px rgba(246,196,83,.14);
 }
 
-.jg-btn-sun:hover{ background: var(--jg-sun2); color:#0b0b12; }
+.jg-btn-sun:hover{ 
+  background: var(--jg-sun2); 
+  color:#0b0b12;
+}
 
 .jg-btn-outline{
   border: 2px solid rgba(255,255,255,.18);
@@ -148,9 +177,15 @@ body::after{
   padding: 110px 0 26px;
 }
 
+.jg-hero-title{
+    font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: .15em;
+  }
+
 .jg-section-title{
+  font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-weight: 900;
-  letter-spacing: .2px;
+  letter-spacing: .10em;
   margin: 0;
   position: relative;
   display: inline-block;
@@ -518,6 +553,7 @@ footer{
   filter: brightness(1.04);
 }
 
+
 /* Overlay fullscreen */
 .loader-wrap{
   position: fixed;
@@ -562,9 +598,9 @@ footer{
 }
 
 .load-load-text{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size: clamp(36px, 6vw, 90px);
-  letter-spacing: 0.35em; /* A L E R I C separado */
+  font-family: "Tiny5", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: clamp(55px, 6vw, 90px);
+  letter-spacing: .25em;
   color: #fff;
 }
 
@@ -577,7 +613,6 @@ footer{
   animation-delay: calc(var(--i) * 90ms);
 }
 
-/* si quieres el efecto de “gris->blanco” tipo Aleric */
 .load-load-text span{
   color: var(--jg-sun);
 }
@@ -585,6 +620,8 @@ footer{
 .load-load-text span.strong{
   color: #d69a22;
 }
+
+
 
 @keyframes letterIn{
   to{
@@ -602,4 +639,14 @@ footer{
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+p {
+  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.logoNombre{
+  font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: .0.6em;
+  font-size: 25px;
 }
