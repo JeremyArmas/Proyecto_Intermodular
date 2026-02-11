@@ -1,43 +1,52 @@
+/* =========================================================
+   JEDIGA — CSS (ordenado)
+   ========================================================= 
+*/
+
+
+/* =========================================================
+   1) VARIABLES
+   ========================================================= */
 :root{
-/* Base */
---jg-bg:#131224;          /* dark violeta suave (no negro puro) */
---jg-bg2:#0b0b14;
---jg-text:#ffffff;
---jg-muted:#ffffff;
+  /* Base */
+  --jg-bg:#131224;       
+  --jg-bg2:#0b0b14;
+  --jg-text:#ffffff;
+  --jg-muted:#ffffff;
 
-/* Marca */
---jg-purple:#7c3aed;
---jg-purple2:#a855f7;
+  /* Marca */
+  --jg-purple:#7c3aed;
+  --jg-purple2:#a855f7;
 
-/* “Sol” (3er color) */
---jg-sun:#d69a22;         /* ámbar suave */
---jg-sun2:#fbd257;
+  /* “Sol” (3er color) */
+  --jg-sun:#d69a22;        
+  --jg-sun2:#fbd257;
 
-/* Auxiliar */
---jg-mint:#34d399;        /* para “Gratis” */
+  /* Auxiliar */
+  --jg-mint:#34d399;       
 
---jg-border:rgba(255,255,255,.14);
---jg-card:rgba(255,255,255,.06);
---jg-card2:rgba(255,255,255,.09);
---jg-radius:18px;
+  --jg-border:rgba(255,255,255,.14);
+  --jg-card:rgba(255,255,255,.06);
+  --jg-card2:rgba(255,255,255,.09);
+  --jg-radius:18px;
 
-/* OJO: rgb no acepta alpha así -> usa rgba */
---jg-shadow: 0 20px 70px rgba(0,0,0,.40);
+  /* OJO: rgb no acepta alpha así -> usa rgba */
+  --jg-shadow: 0 20px 70px rgba(0,0,0,.40);
+
+  /* Tipografías (solo se añaden variables; no cambian valores ya usados) */
+  --jg-font-title: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --jg-font-body:  "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --jg-font-loader:"Tiny5", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* Hover/focus */
-.jg-nav .navbar-nav .nav-link:hover,
-.jg-nav .navbar-nav .nav-link:focus{
-  color: var(--jg-nav-link-hover) !important;
-}
 
-/* Activo (página actual) + cuando el dropdown está abierto */
-.jg-nav .navbar-nav .nav-link.active,
-.jg-nav .navbar-nav .show > .nav-link{
-  color: var(--jg-nav-link-active) !important;
-}
+/* =========================================================
+   2) BASE / TIPOGRAFÍA GLOBAL
+   ========================================================= */
 
+/* Base general: resto del sitio */
 body{
+  font-family: var(--jg-font-body);
   color: var(--jg-text);
   background:
     radial-gradient(900px 550px at 12% 6%, rgba(168,85,247,.26), transparent 60%),
@@ -47,7 +56,27 @@ body{
   overflow-x:hidden;
 }
 
-/* “Alma” sin discoteca: aurora cálida + grano suave */
+/* Títulos (Jersey 10) */
+h1,h2,h3,h4,h5,h6{
+  font-family: var(--jg-font-title);
+}
+
+/* Muted (mantiene tus valores actuales, solo ordenado) */
+.jg-muted{
+  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--jg-muted);
+}
+
+/* Párrafos (ya lo tenías; queda igual) */
+p{
+  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+
+/* =========================================================
+   3) FONDO / CAPAS
+   ========================================================= */
+
 body::before{
   content:"";
   position: fixed;
@@ -72,6 +101,10 @@ body::after{
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
 
+
+/* =========================================================
+   4) NAVBAR (HEADER)
+   ========================================================= */
 .jg-nav{
   backdrop-filter: blur(14px);
   background: rgba(14,14,26,.62) !important;
@@ -80,26 +113,50 @@ body::after{
 
 .jg-nav .navbar-brand img{
   height: 56px;
-  width: auto;       
-  display: block;  
+  width: auto;
+  display: block;
   object-fit: contain;
 }
 
+/* Enlaces del navbar */
+.jg-nav .navbar-nav .nav-link{
+  font-family: var(--jg-font-title);
+}
+
+/* Hover/focus */
+.jg-nav .navbar-nav .nav-link:hover,
+.jg-nav .navbar-nav .nav-link:focus{
+  color: var(--jg-nav-link-hover) !important;
+}
+
+/* Activo (página actual) + cuando el dropdown está abierto */
+.jg-nav .navbar-nav .nav-link.active,
+.jg-nav .navbar-nav .show > .nav-link{
+  color: var(--jg-nav-link-active) !important;
+}
+
+/* Logo/Marca “JG” */
 .jg-brand{
-  width: 42px; height: 42px;
+  width: 42px; 
+  height: 42px;
   border-radius: 14px;
   display:grid; place-items:center;
   font-weight: 900;
-  background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(246,196,83,.55));
   box-shadow: 0 16px 44px rgba(124,58,237,.18);
   letter-spacing:.5px;
 }
 
-.jg-muted{ 
-  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: var(--jg-muted); 
+/* Nombre del logo del navbar */
+.logoNombre{
+  font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: .0.6em;
+  font-size: 25px;
 }
 
+
+/* =========================================================
+   5) COMPONENTES UI (PANEL / PILL)
+   ========================================================= */
 .jg-panel{
   border-radius: calc(var(--jg-radius) + 6px);
   border: 1px solid var(--jg-border);
@@ -121,15 +178,22 @@ body::after{
   align-items:center;
   color: var(--jg-muted);
 }
+
 .jg-dot{
   width:10px;height:10px;border-radius:999px;
   background: var(--jg-sun);
   box-shadow: 0 0 0 6px rgba(246,196,83,.14), 0 0 18px rgba(246,196,83,.35);
 }
 
+
+/* =========================================================
+   6) BOTONES
+   ========================================================= */
 .jg-btn{
+  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: .0.9em;
+  font-size: 17px;
   border-radius: 14px;
-  font-weight: 800;
 }
 
 .jg-btn-primary{
@@ -139,9 +203,9 @@ body::after{
   box-shadow: 0 18px 44px rgba(124,58,237,.16);
 }
 
-.jg-btn-primary:hover{ 
+.jg-btn-primary:hover{
   background:#9660f4;
-  color:#fff; 
+  color:#fff;
 }
 
 .jg-btn-sun{
@@ -151,8 +215,8 @@ body::after{
   box-shadow: 0 18px 44px rgba(246,196,83,.14);
 }
 
-.jg-btn-sun:hover{ 
-  background: var(--jg-sun2); 
+.jg-btn-sun:hover{
+  background: var(--jg-sun2);
   color:#0b0b12;
 }
 
@@ -169,22 +233,27 @@ body::after{
   color: var(--jg-text);
 }
 
-.jg-section{
-  padding: 40px 0;
-}
+
+/* =========================================================
+   7) SECCIONES / HERO / TÍTULOS
+   ========================================================= */
 
 .jg-hero{
   padding: 110px 0 26px;
 }
 
 .jg-hero-title{
-    font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    letter-spacing: .15em;
-  }
+  font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: .15em;
+}
+
+.jg-section{
+  padding: 40px 0;
+}
 
 .jg-section-title{
   font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 900;
+  font-weight: 750;
   letter-spacing: .10em;
   margin: 0;
   position: relative;
@@ -206,6 +275,10 @@ body::after{
   opacity:.85;
 }
 
+
+/* =========================================================
+   8) CARDS / COVERS
+   ========================================================= */
 .jg-card{
   border: 1px solid var(--jg-border);
   background: linear-gradient(180deg, var(--jg-card2), var(--jg-card));
@@ -239,6 +312,10 @@ body::after{
   pointer-events:none;
 }
 
+
+/* =========================================================
+   9) BADGES
+   ========================================================= */
 .badge-soft{
   background: rgba(124,58,237,.14);
   border: 1px solid rgba(124,58,237,.28);
@@ -260,7 +337,10 @@ body::after{
   font-weight: 800;
 }
 
-/* Mega dropdown estilo EA (limpio) */
+
+/* =========================================================
+   10) MEGA DROPDOWN (JUEGOS)
+   ========================================================= */
 .dropdown-menu.megamenu{
   width: min(780px, 92vw);
   border-radius: 18px;
@@ -298,7 +378,10 @@ body::after{
   color: var(--jg-text);
 }
 
-/* Footer */
+
+/* =========================================================
+   11) FOOTER / LINKS / FORMS / SOCIAL
+   ========================================================= */
 footer{
   margin-top: 46px;
   border-top: 1px solid var(--jg-border);
@@ -312,8 +395,14 @@ footer{
   margin-bottom: 10px;
 }
 
-.jg-link-muted{ color: rgba(255,255,255,.75); text-decoration:none; }
-.jg-link-muted:hover{ color: var(--jg-text); }
+.jg-link-muted{
+  color: rgba(255,255,255,.75);
+  text-decoration:none;
+}
+
+.jg-link-muted:hover{
+  color: var(--jg-text);
+}
 
 .form-select, .form-control{
   background: rgba(255,255,255,.05);
@@ -345,7 +434,10 @@ footer{
   color: var(--jg-text);
 }
 
-    /* HERO VIDEO RECTANGLE */
+
+/* =========================================================
+   12) HERO VIDEO
+   ========================================================= */
 .hero-video{
   position: relative;
   border-radius: calc(var(--jg-radius) + 10px);
@@ -410,7 +502,10 @@ footer{
   .hero-video video{ display:none; }
 }
 
-/* ===== Fondo con textura premium (sutil pero se nota) ===== */
+
+/* =========================================================
+   13) FONDO “TEXTURA PREMIUM” (CAPA .jg-site-bg)
+   ========================================================= */
 .jg-site-bg{
   position: fixed;
   inset: 0;
@@ -445,116 +540,10 @@ footer{
   mix-blend-mode: overlay;
 }
 
-/* Backdrop más guapo */
-.modal-backdrop.show{
-  opacity: .70;
-}
 
-/* Tamaño extra (además de modal-xl) */
-.login-modal .modal-dialog{
-  max-width: 1100px;
-}
-@media (max-width: 1200px){
-  .login-modal .modal-dialog{ max-width: 980px; }
-}
-@media (max-width: 768px){
-  .login-modal .modal-dialog{ max-width: 94vw; }
-}
-
-/* Caja glass + borde suave */
-.login-modal .modal-content{
-  border-radius: 22px;
-  background: rgba(14, 12, 24, .78);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 30px 120px rgba(0,0,0,.65);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-/* Panel izquierdo */
-.login-modal__left{
-  position: relative;
-  color: #fff;
-  background:
-    radial-gradient(1200px 700px at 10% 20%, rgba(124,58,237,.70), transparent 55%),
-    radial-gradient(900px 600px at 90% 80%, rgba(251,191,36,.22), transparent 60%),
-    linear-gradient(135deg, rgba(18,16,30,.95), rgba(10,8,20,.95));
-}
-.login-modal__left::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,.20));
-  pointer-events:none;
-}
-.login-modal__left-inner{
-  position: relative;
-  z-index: 1;
-  padding: 34px;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Logo redondito */
-.login-modal__logo{
-  width: 42px; height: 42px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius: 12px;
-  font-weight: 800;
-  background: linear-gradient(135deg, rgba(124,58,237,1), rgba(251,191,36,.9));
-  color: #0b0814;
-}
-
-/* Badge / texto */
-.login-modal__badge{
-  margin-top: auto;
-  padding: 14px 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  font-size: .95rem;
-  opacity: .95;
-}
-
-/* Panel derecho */
-.login-modal__right{
-  padding: 34px;
-  color: #fff;
-}
-
-/* Inputs oscuros, estilo home */
-.login-modal .form-label{
-  opacity: .85;
-}
-.login-modal .form-control{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  color: #fff;
-  border-radius: 14px;
-}
-.login-modal .form-control::placeholder{
-  color: rgba(255,255,255,.45);
-}
-.login-modal .form-control:focus{
-  border-color: rgba(124,58,237,.55);
-  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
-}
-
-/* Botón estilo Jediga */
-.btn-jediga{
-  border: 0;
-  color: #0b0814;
-  font-weight: 700;
-  border-radius: 14px;
-  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
-  box-shadow: 0 16px 45px rgba(124,58,237,.22);
-}
-.btn-jediga:hover{
-  filter: brightness(1.04);
-}
-
-
-/* Overlay fullscreen */
+/* =========================================================
+   14) LOADER 
+   ========================================================= */
 .loader-wrap{
   position: fixed;
   inset: 0;
@@ -621,8 +610,6 @@ footer{
   color: #d69a22;
 }
 
-
-
 @keyframes letterIn{
   to{
     opacity: 1;
@@ -639,14 +626,4 @@ footer{
     opacity: 1 !important;
     transform: none !important;
   }
-}
-
-p {
-  font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.logoNombre{
-  font-family: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: .0.6em;
-  font-size: 25px;
 }

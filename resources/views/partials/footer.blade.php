@@ -4,7 +4,7 @@
         <!-- Marca -->
         <div class="col-md-4">
           <div class="d-flex align-items-center gap-3 mb-2">
-            <span class="jg-brand">JG</span>
+            <img class="jg-brand" src="{{ asset('images/logo_jediga_provisional.png') }}" alt="Logo Jediga">
             <div class="lh-sm">
               <div class="fw-bold">Jediga</div>
               <div class="small jg-muted">© 2026 • Canarias</div>
