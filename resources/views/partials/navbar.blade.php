@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top jg-nav">
     <div class="container py-1">
-      <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url('/') }}">
+      <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url('/home') }}">
         <img src="{{ asset('images/logo_jediga_provisional.png') }}" alt="Logo">
         <div class="lh-sm">
           <div class="logoNombre">Jediga</div>

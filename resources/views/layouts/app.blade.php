@@ -46,16 +46,15 @@
       <div class="row g-0">
 
         {{-- IZQUIERDA: panel branding --}}
-<div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
-  <div class="login-modal__left-inner">
-    <a href="{{ url('/') }}" class="login-modal__mark" aria-label="Ir a inicio">
-      <img class="login-modal__mark-img"
-           src="{{ asset('images/logo_jediga_provisional.png') }}"
-           alt="Logo Jediga">
-    </a>
-  </div>
-</div>
-
+      <div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
+        <div class="login-modal__left-inner">
+          <a href="{{ url('/home') }}" class="login-modal__mark" aria-label="Ir a inicio">
+            <img class="login-modal__mark-img"
+                src="{{ asset('images/logo_jediga_provisional.png') }}"
+                alt="Logo Jediga">
+          </a>
+        </div>
+      </div>
 
         {{-- DERECHA: formulario --}}
         <div class="col-lg-8 col-md-8 login-modal__right">
@@ -114,21 +113,21 @@
   </div>
 </div>
 
-  {{-- Capa de fondo --}}
-  <div class="jg-site-bg" aria-hidden="true"></div>
+{{-- Capa de fondo --}}
+<div class="jg-site-bg" aria-hidden="true"></div>
 
-  {{-- Navbar --}}
-  @include('partials.navbar')
+{{-- Navbar --}}
+@include('partials.navbar')
 
-  <main>
-    @yield('content')
-  </main>
+<main>
+  @yield('content')
+</main>
 
-  {{-- Footer --}}
-  @include('partials.footer')
+{{-- Footer --}}
+@include('partials.footer')
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  @stack('scripts')
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
 </body>
 </html>
