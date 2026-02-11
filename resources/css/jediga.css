@@ -627,3 +627,190 @@ footer{
     transform: none !important;
   }
 }
+
+/* =========================================================
+   LOGIN MODAL (estilos glass)
+   ========================================================= */
+
+/* Backdrop más guapo */
+.modal-backdrop.show{
+  opacity: .70;
+}
+
+/* Tamaño extra (además de modal-xl) */
+.login-modal .modal-dialog{
+  width: min(980px, 92vw);
+  max-width: 980px;
+}
+@media (max-width: 1200px){
+  .login-modal .modal-dialog{ max-width: 980px; }
+}
+@media (max-width: 768px){
+  .login-modal .modal-dialog{ max-width: 94vw; }
+}
+
+/* Caja glass + borde suave */
+.login-modal .modal-content{
+  max-height: 78vh;
+  border-radius: 26px;
+  background: rgba(14, 12, 24, .78);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 30px 120px rgba(0,0,0,.65);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.login-modal .modal-content .row{
+  min-height: auto;
+}
+
+/* =========================
+   Panel izquierdo (branding)
+   ========================= */
+.login-modal__left{
+  position: relative;
+  color: #fff;
+  overflow: hidden; /* para que el logo grande no “escape” */
+  background:
+    radial-gradient(1200px 700px at 10% 20%, rgba(124,58,237,.70), transparent 55%),
+    radial-gradient(900px 600px at 90% 80%, rgba(251,191,36,.22), transparent 60%),
+    linear-gradient(135deg, rgba(18,16,30,.95), rgba(10,8,20,.95));
+}
+
+.login-modal__left::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,.20));
+  pointer-events:none;
+}
+
+.login-modal__left-inner{
+  position: relative;
+  z-index: 1;
+  padding: 26px;
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Logo grande (nuevo) ===== */
+.login-modal__mark{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-modal__mark-img{
+  width: 100%;
+  max-height: 260px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Texto marca debajo del logo (nuevo) */
+.login-modal__brand{
+  text-align: left;
+}
+
+/* (Tu logo redondito: lo dejo por si lo sigues usando en algún sitio) */
+.login-modal__logo{
+  width: 42px; height: 42px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius: 12px;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(124,58,237,1), rgba(251,191,36,.9));
+  color: #0b0814;
+}
+
+/* Badge / texto */
+.login-modal__badge{
+  margin-top: auto;
+  padding: 14px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  font-size: .95rem;
+  opacity: .95;
+}
+
+/* =========================
+   Panel derecho (formulario)
+   ========================= */
+.login-modal__right{
+  padding: 26px;
+  color: #fff;
+}
+
+/* Inputs oscuros, estilo home */
+.login-modal .form-label{
+  opacity: .85;
+}
+.login-modal .form-control{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #fff;
+  border-radius: 14px;
+}
+.login-modal .form-control::placeholder{
+  color: rgba(255,255,255,.45);
+}
+.login-modal .form-control:focus{
+  border-color: rgba(124,58,237,.55);
+  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
+}
+
+.login-modal__right .modal-head{
+  position: relative;
+  text-align: center;
+}
+
+.login-modal__right .modal-head .btn-close{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* Botón estilo Jediga */
+.btn-jediga{
+  border: 0;
+  color: #0b0814;
+  font-weight: 700;
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  box-shadow: 0 16px 45px rgba(124,58,237,.22);
+}
+.btn-jediga:hover{
+  filter: brightness(1.04);
+}
+
+.login-modal .input-group .btn{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  border-radius: 14px;
+}
+
+/* ===== Password input-group (sin línea morada) ===== */
+.login-modal .input-group{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  overflow: hidden; /* clave: mata la “costura” vertical */
+}
+
+/* Quitamos bordes/focus individuales */
+.login-modal .input-group .form-control,
+.login-modal .input-group .btn{
+  border: 0 !important;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+/* Focus solo en el conjunto (no en cada pieza) */
+.login-modal .input-group:focus-within{
+  border-color: rgba(124,58,237,.55);
+  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
+}

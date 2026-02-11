@@ -46,30 +46,22 @@
       <div class="row g-0">
 
         {{-- IZQUIERDA: panel branding --}}
-        <div class="col-md-5 d-none d-md-block login-modal__left">
-          <div class="login-modal__left-inner">
-            <div class="d-flex align-items-center gap-2 mb-4">
-              <div class="login-modal__logo">JG</div>
-              <div>
-                <div class="fw-semibold">Jediga</div>
-                <div class="opacity-75 small">Videojuegos • Canarias</div>
-              </div>
-            </div>
+<div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
+  <div class="login-modal__left-inner">
+    <a href="{{ url('/') }}" class="login-modal__mark" aria-label="Ir a inicio">
+      <img class="login-modal__mark-img"
+           src="{{ asset('images/logo_jediga_provisional.png') }}"
+           alt="Logo Jediga">
+    </a>
+  </div>
+</div>
 
-            <h3 class="fw-bold mb-2">Bienvenido</h3>
-            <p class="opacity-75 mb-4">Inicia sesión para continuar</p>
-
-            <div class="login-modal__badge">
-              Acceso al panel de administración y gestión de productos
-            </div>
-          </div>
-        </div>
 
         {{-- DERECHA: formulario --}}
-        <div class="col-md-7 login-modal__right">
-          <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="col-lg-8 col-md-8 login-modal__right">
+          <div class="modal-head mb-3">
             <div>
-              <h4 class="fw-bold mb-1">Iniciar sesión</h4>
+              <h2>Iniciar sesión</h2>
               <div class="opacity-75 small">Accede con tu cuenta</div>
             </div>
 
@@ -81,15 +73,7 @@
 
             <div class="mb-3">
               <label class="form-label">Email</label>
-              <input
-                type="email"
-                name="email"
-                class="form-control form-control-lg"
-                value="{{ old('email') }}"
-                required
-                autofocus
-                placeholder="tuemail@ejemplo.com"
-              >
+              <input type="email" name="email" class="form-control form-control-lg" value="{{ old('email') }}" required autofocus placeholder="tuemail@ejemplo.com">
               @error('email')
                 <div class="text-danger small mt-1">{{ $message }}</div>
               @enderror
@@ -97,13 +81,14 @@
 
             <div class="mb-3">
               <label class="form-label">Contraseña</label>
-              <input
-                type="password"
-                name="password"
-                class="form-control form-control-lg"
-                required
-                placeholder="••••••••"
-              >
+                
+              <div class="input-group input-group-lg">
+                  <input id="loginPassword" type="password" name="password" class="form-control" required placeholder="••••••••" autocomplete="current-password">
+                  <button class="btn" type="button" id="togglePassword" aria-label="Mostrar contraseña">
+                    <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                  </button>
+              </div>
+              
               @error('password')
                 <div class="text-danger small mt-1">{{ $message }}</div>
               @enderror

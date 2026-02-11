@@ -1,3 +1,5 @@
+
+//Recargar de la página
 (() => {
   const preloader = document.getElementById('preloader');
   if (!preloader) return;
@@ -27,3 +29,26 @@
   if (document.readyState === 'complete') start();
   else window.addEventListener('load', start);
 })();
+
+//Botón de mostrar contraseña
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('loginPassword');
+  const btn = document.getElementById('togglePassword');
+  const icon = document.getElementById('togglePasswordIcon');
+
+  if (!input || !btn || !icon) return;
+
+  const render = () => {
+    const isHidden = input.type === 'password'; // oculto = password
+    icon.classList.toggle('bi-eye', isHidden);
+    icon.classList.toggle('bi-eye-slash', !isHidden);
+    btn.setAttribute('aria-label', isHidden ? 'Mostrar contraseña' : 'Ocultar contraseña');
+  };
+
+  render();
+
+  btn.addEventListener('click', () => {
+    input.type = (input.type === 'password') ? 'text' : 'password';
+    render();
+  });
+});
