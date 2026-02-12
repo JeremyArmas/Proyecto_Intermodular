@@ -48,7 +48,7 @@
         {{-- IZQUIERDA: panel branding --}}
       <div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
         <div class="login-modal__left-inner">
-          <a href="{{ url('/home') }}" class="login-modal__mark" aria-label="Ir a inicio">
+          <a href="{{ url('/') }}" class="login-modal__mark" aria-label="Ir a inicio">
             <img class="login-modal__mark-img"
                 src="{{ asset('images/logo_jediga_provisional.png') }}"
                 alt="Logo Jediga">
@@ -66,6 +66,8 @@
 
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
+
+          <div id="contenedorErrores" class="alert alert-danger d-none mb-3"></div>
 
           <form method="POST" action="{{ route('login') }}" class="mt-3">
             @csrf

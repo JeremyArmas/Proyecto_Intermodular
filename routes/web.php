@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 //Ruta del home principal
-Route::get('/home', function () { return view('home'); });
+Route::get('/', function () { return view('home'); });
 
 //Rutas del login y logout
 Route::post('/login', [AuthController::class, 'login'])->name('login');

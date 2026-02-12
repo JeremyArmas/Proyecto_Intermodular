@@ -7,45 +7,103 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(Request $request){
-        
-        //Validaciones
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+    private int $maxIntentos = 3;
+    private int $minutosBloqueo = 5;
+
+    //Función del login
+    public function login(Request $request)
+    {
+        //Valida cada campo del lógin
+        $validated = $request->validate([
+            'email'    => ['required','email'],
+            'password' => ['required','string'],
+        ], [
+            'email.required' => 'El email es obligatorio',
+            'email.email' => 'El email debe ser válido',
+            'password.required' => 'La contraseña es obligatoria',
         ]);
 
-        $remember = $request->boolean('remember');
+        //Revisa en la session si el usuario está bloqueado y cuanto lleva de bloqueo
+        $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta'); 
+        if ($bloqueadoHasta && now()->lt($bloqueadoHasta)) {
+            $mins = (int) ceil(now()->diffInSeconds($bloqueadoHasta) / 60);
 
-        if(Auth::attempt($request->only('email', 'password'), $remember)) {
-            
-            $request->session()->regenerate();
-
-            //Redirecciona según el rol
-            $user = Auth::user();
-
-            if ($user->es_admin) {
-                return redirect()->route('adminPanel');
-            }
-
-            return redirect()->route('home');
+            return response()->json([
+                'success' => false,
+                'message' => "Demasiados intentos. Inténtalo de nuevo en {$mins} min.",
+                'blocked' => true,
+                'minutes_remaining' => $mins,
+            ], 423);
         }
 
-        //Si falla vuelve con error
-        return back()
-            ->withErrors(['email' => 'Credenciales incorrectas.'])
-            ->onlyInput('email');
+        //Recoge de la session el contador de fallos que se tenga
+        $intentos = (int) $request->session()->get('login_intentos', 0);
+
+        //Intenta verificar las credenciales con las de base de datos, si no lo consigue acumula intentos
+        $remember = $request->boolean('remember');
+        if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
+            $intentos++;
+            $request->session()->put('login_intentos', $intentos);
+
+            //Si llegó al maximo de intentos establece los 5 minutos de espera y reinicia los intentos
+            if ($intentos >= $this->maxIntentos) {
+                $request->session()->put('login_bloqueado_hasta', now()->addMinutes($this->minutosBloqueo));
+                $request->session()->forget('login_intentos');
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Demasiados intentos. Bloqueado {$this->minutosBloqueo} min.",
+                    'blocked' => true,
+                    'minutes_remaining' => $this->minutosBloqueo,
+                ], 423);
+            }
+
+            //Si no llegó al limite canta el mensaje de correción con los intentos restantes
+            return response()->json([
+                'success' => false,
+                'message' => "Credenciales incorrectas. Te quedan " . ($this->maxIntentos - $intentos) . " intento(s).",
+                'blocked' => false,
+                'attempts_remaining' => ($this->maxIntentos - $intentos),
+            ], 401);
+        }
+
+        //Limpia los intentos y el tiempo de espera si consiguió loguearse
+        $request->session()->forget(['login_intentos', 'login_bloqueado_hasta']); // <-- misma clave
+        $request->session()->regenerate();
+
+        //Redirige al usuario según el rol que tenga
+        $user = Auth::user();
+        $redirect = ($user && $user->es_admin) ? route('adminPanel') : url('/');
+
+        return response()->json([
+            'success' => true,
+            'redirect' => $redirect,
+        ]);
     }
 
-    public function logout(Request $request){
+    //Función del logout
+    public function logout(Request $request)
+    {
+        //Guarda el carrito en la session incluso después del logout
+        $carrito = $request->session()->get('carrito', []);
+
+        //Desconecta al usuario
         Auth::logout();
 
-        //Limpia las sesiones y el token por seguridad
+        //Destruye la sesión actual
         $request->session()->invalidate();
+
+        //Genera un token nuevo por seguridad
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        //Restaura el carrito si existía con los datos que tuviera
+        if (!empty($carrito)) {
+            $request->session()->put('carrito', $carrito);
+        }
+
+        return response()->json([
+            'success' => true,
+            'redirect' => url('/'),
+        ]);
     }
-
-
 }
