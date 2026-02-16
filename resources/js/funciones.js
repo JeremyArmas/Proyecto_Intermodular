@@ -1,4 +1,3 @@
-
 //LOGICAS FRONTEND
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +10,10 @@ function iniciarPreloader() {
 
   //Recoge el elemento preloader
   const preloader = document.getElementById('preloader');
-  if (!preloader) return;
+  
+  if (!preloader){
+    return;
+  }
 
   //Bloquea el scroll mientras se ve el loader
   document.documentElement.style.overflow = 'hidden';
@@ -49,6 +51,10 @@ function mostrarIconoContraseña() {
   const input = document.getElementById('loginPassword');
   const btn = document.getElementById('togglePassword');
   const icon = document.getElementById('togglePasswordIcon');
+
+  if(!input || !btn || !icon){
+    return;
+  }
 
   //Muestra inicialmente el icono del ojo tachado
   actualizarIcono();
@@ -127,12 +133,14 @@ async function login(form, contenedorErrores) {
 
     //Muestra el error en caso de fallar la red
     const msg = 'Error de red. Inténtalo de nuevo.';
+    
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
     } else {
       alert(msg);
     }
+
   }
 }
 
@@ -140,7 +148,10 @@ async function login(form, contenedorErrores) {
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('#loginModal form');
   const contenedorErrores = document.getElementById('contenedorErrores');
-  if (!form) return;
+  
+  if (!form){
+    return
+  }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -178,4 +189,110 @@ async function logout() {
     //En caso de haber errores de red lo muestra
     alert(err.message || 'Error de red. Inténtalo de nuevo.');
   }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // Busca los botones que abren/cierra el panel del nav:
+  const toggles = document.querySelectorAll('[data-jg-nav-toggle], #jgNavToggle');
+
+  // “Móvil/Tablet” según breakpoint de Bootstrap (lg = 992px)
+  const esTabletMovil = () => window.innerWidth < 992;
+
+  // Por cada botón encontrado…
+  toggles.forEach((btn) => {
+
+    // Saca el id del panel desde aria-controls
+    const id = btn.getAttribute('aria-controls') || 'navJediga';
+    const panel = document.getElementById(id);
+
+    // Si no existe el panel, no hacemos nada con este botón
+    if (!panel){
+      return;
+    }
+
+    // Abre el panel: añade clase y actualiza aria-expanded
+    const open = () => {
+      panel.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    };
+
+    // Cierra el panel: quita clase y actualiza aria-expanded
+    const close = () => {
+      panel.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    };
+
+    btn.addEventListener('click', (e) => {
+
+      // En escritorio NO controla el panel
+      if (!esTabletMovil()){
+        return;
+      }
+
+      // En móvil/tablet evita comportamiento por defecto (links / bootstrap)
+      e.preventDefault();
+
+      // Alterna abierto/cerrado
+      panel.classList.contains('is-open') ? close() : open();
+    });
+
+    // En móvil/tablet:
+
+    // Si haces click en un link normal dentro del panel, cierra el panel
+    panel.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        if (!esTabletMovil()){
+          return;
+        }
+
+        const isDropdownToggle =
+          a.classList.contains('dropdown-toggle') ||
+          a.getAttribute('data-bs-toggle') === 'dropdown';
+
+        // Si es el “botón” del dropdown, no cierres el panel
+        if (isDropdownToggle) {
+          return;
+        }
+
+        // Si es un link real, cierra el panel
+        close();
+      });
+    });
+
+    // Click fuera del panel:
+    // si estás en móvil/tablet y clicas fuera del panel y fuera del botón, cierra
+    document.addEventListener('click', (e) => {
+      if (!esTabletMovil()){
+        return;
+      }
+
+      if (!panel.contains(e.target) && !btn.contains(e.target)){
+        close();
+      }
+    });
+
+    // Tecla ESC para cerrar (solo móvil/tablet)
+    document.addEventListener('keydown', (e) => {
+      if (!esTabletMovil()){
+        return;
+      }
+
+      if (e.key === 'Escape'){
+        close();
+      }
+    });
+
+    // Si cambia el tamaño a escritorio (>= 992), fuerza cierre del panel
+    window.addEventListener('resize', () => {
+      if (!esTabletMovil()){
+        close();
+      }
+    });
+  });
+});
+
+
+function crearCuenta(){
+  
 }

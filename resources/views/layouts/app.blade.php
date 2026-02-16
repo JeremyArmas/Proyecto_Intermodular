@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-
+<!-- Link de las tipografías de google fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Coral+Pixels&family=Jersey+10&family=Jersey+25&family=Tiny5&display=swap" rel="stylesheet">
 
 
@@ -119,7 +119,15 @@
 <div class="jg-site-bg" aria-hidden="true"></div>
 
 {{-- Navbar --}}
-@include('partials.navbar')
+@php
+  $isAdminRoute = request()->is('admin*');
+@endphp
+
+@if($isAdminRoute)
+  @include('partials.navbar-admin')
+@else
+  @include('partials.navbar-public')
+@endif
 
 <main>
   @yield('content')
@@ -127,8 +135,6 @@
 
 {{-- Footer --}}
 @include('partials.footer')
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @stack('scripts')
 </body>

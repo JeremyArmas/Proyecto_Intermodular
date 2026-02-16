@@ -84,26 +84,14 @@ class AuthController extends Controller
     //Función del logout
     public function logout(Request $request)
     {
-        //Guarda el carrito en la session incluso después del logout
-        $carrito = $request->session()->get('carrito', []);
-
-        //Desconecta al usuario
         Auth::logout();
-
-        //Destruye la sesión actual
         $request->session()->invalidate();
-
-        //Genera un token nuevo por seguridad
         $request->session()->regenerateToken();
 
-        //Restaura el carrito si existía con los datos que tuviera
-        if (!empty($carrito)) {
-            $request->session()->put('carrito', $carrito);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'redirect' => url('/')]);
         }
 
-        return response()->json([
-            'success' => true,
-            'redirect' => url('/'),
-        ]);
+        return redirect('/');
     }
 }

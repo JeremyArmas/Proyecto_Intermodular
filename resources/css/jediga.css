@@ -1,5 +1,5 @@
 /* =========================================================
-   JEDIGA — CSS (ordenado)
+   JEDIGA — CSS
    ========================================================= 
 */
 
@@ -33,7 +33,7 @@
   /* OJO: rgb no acepta alpha así -> usa rgba */
   --jg-shadow: 0 20px 70px rgba(0,0,0,.40);
 
-  /* Tipografías (solo se añaden variables; no cambian valores ya usados) */
+  /* Tipografías  */
   --jg-font-title: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   --jg-font-body:  "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   --jg-font-loader:"Tiny5", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -61,22 +61,24 @@ h1,h2,h3,h4,h5,h6{
   font-family: var(--jg-font-title);
 }
 
-/* Muted (mantiene tus valores actuales, solo ordenado) */
+/* Muted */
 .jg-muted{
   font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--jg-muted);
 }
 
-/* Párrafos (ya lo tenías; queda igual) */
+/* Párrafos */
 p{
   font-family: "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+/* Hace que los controles nativos usen esquema oscuro (muy importante en Windows/Chrome) */
+html { color-scheme: dark; }
+
 
 /* =========================================================
-   3) FONDO / CAPAS
+   3) FONDO / CAPAS (body)
    ========================================================= */
-
 body::before{
   content:"";
   position: fixed;
@@ -109,6 +111,7 @@ body::after{
   backdrop-filter: blur(14px);
   background: rgba(14,14,26,.62) !important;
   border-bottom: 1px solid var(--jg-border);
+  z-index: 1030;
 }
 
 .jg-nav .navbar-brand img{
@@ -155,7 +158,7 @@ body::after{
 
 
 /* =========================================================
-   5) COMPONENTES UI (PANEL / PILL)
+   5) COMPONENTES UI 
    ========================================================= */
 .jg-panel{
   border-radius: calc(var(--jg-radius) + 6px);
@@ -237,7 +240,6 @@ body::after{
 /* =========================================================
    7) SECCIONES / HERO / TÍTULOS
    ========================================================= */
-
 .jg-hero{
   padding: 110px 0 26px;
 }
@@ -316,31 +318,77 @@ body::after{
 /* =========================================================
    9) BADGES
    ========================================================= */
-.badge-soft{
-  background: rgba(124,58,237,.14);
-  border: 1px solid rgba(124,58,237,.28);
-  color: var(--jg-text);
+/* ===== Badges más limpios en fondo glass ===== */
+.jg-admin .badge{
+  padding: .45em .70em;
+  border-radius: 12px;
   font-weight: 800;
+  letter-spacing: .02em;
 }
 
-.badge-sun{
-  background: rgba(246,196,83,.14);
-  border: 1px solid rgba(246,196,83,.30);
-  color: var(--jg-text);
-  font-weight: 800;
+.jg-admin .badge-soft{
+  background: rgba(124,58,237,.20);
+  border-color: rgba(124,58,237,.36);
+  color: #fff;
 }
 
-.badge-mint{
-  background: rgba(52,211,153,.14);
-  border: 1px solid rgba(52,211,153,.30);
-  color: var(--jg-text);
-  font-weight: 800;
+.jg-admin .badge-mint{
+  background: rgba(52,211,153,.20);
+  border-color: rgba(52,211,153,.36);
+  color: #fff;
+}
+
+.jg-admin .badge-sun{
+  background: rgba(246,196,83,.22);
+  border-color: rgba(246,196,83,.38);
+  color: #fff;
 }
 
 
 /* =========================================================
-   10) MEGA DROPDOWN (JUEGOS)
+   10) DROPDOWNS (NAVBAR) + MEGA DROPDOWN (JUEGOS)
    ========================================================= */
+
+/* Dropdowns normales del navbar (ej: selector idioma, etc) */
+.jg-nav .dropdown-menu{
+  border-radius: 18px;
+  border: 1px solid var(--jg-border);
+  background: rgba(14,14,26,.94);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 70px rgba(0,0,0,.55);
+  padding: 10px;
+  overflow: hidden;
+  z-index: 2000;
+}
+
+/* Items del dropdown */
+.jg-nav .dropdown-item{
+  color: rgba(255,255,255,.85);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: var(--jg-font-title);
+}
+
+/* Hover / focus */
+.jg-nav .dropdown-item:hover,
+.jg-nav .dropdown-item:focus{
+  background: rgba(246,196,83,.10);
+  color: #fff;
+}
+
+/* Activo */
+.jg-nav .dropdown-item.active,
+.jg-nav .dropdown-item:active{
+  background: rgba(124,58,237,.25);
+  color: #fff;
+}
+
+/* Divider (si lo usas) */
+.jg-nav .dropdown-divider{
+  border-top-color: rgba(255,255,255,.10);
+}
+
+/* Mega dropdown (juegos) */
 .dropdown-menu.megamenu{
   width: min(780px, 92vw);
   border-radius: 18px;
@@ -444,7 +492,7 @@ footer{
   border: 2px outset rgba(250, 177, 8, 0.536);
   overflow: hidden;
   box-shadow: var(--jg-shadow);
-  min-height: 380px; /* ajusta si quieres más/menos alto */
+  min-height: 380px;
   background: rgba(255,255,255,.04);
 }
 
@@ -455,7 +503,7 @@ footer{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.03); /* evita bordes raros */
+  transform: scale(1.03);
   filter: saturate(1.05) contrast(1.05);
 }
 
@@ -504,21 +552,21 @@ footer{
 
 
 /* =========================================================
-   13) FONDO “TEXTURA PREMIUM” (CAPA .jg-site-bg)
+   13) FONDO (CAPA .jg-site-bg)
    ========================================================= */
 .jg-site-bg{
   position: fixed;
   inset: 0;
-  z-index: -1;        /* detrás del contenido */
+  z-index: -1;
   pointer-events: none;
 }
 
-/* 1) Líneas topográficas muy suaves (abstracto sin llamar la atención) */
+/* 1) Líneas topográficas muy suaves */
 .jg-site-bg::before{
   content:"";
   position:absolute;
   inset:-12%;
-  opacity: .14;        /* sube a .18 si lo quieres más presente */
+  opacity: .14;   
   filter: blur(.2px);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.12)' stroke-width='1.2'%3E%3Cpath d='M-30 95 C 40 40, 120 150, 210 90 S 380 55, 460 120'/%3E%3Cpath d='M-40 170 C 30 115, 125 220, 220 165 S 380 130, 470 195'/%3E%3Cpath d='M-35 245 C 35 190, 140 295, 230 240 S 385 205, 465 270'/%3E%3Cpath d='M-45 320 C 25 265, 150 370, 240 315 S 390 280, 475 345'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(246,192,83,0.10)' stroke-width='1.0'%3E%3Cpath d='M-25 132 C 55 85, 125 178, 205 128 S 360 100, 450 160'/%3E%3Cpath d='M-25 282 C 55 235, 145 325, 225 275 S 360 248, 450 308'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
@@ -526,7 +574,7 @@ footer{
   transform: rotate(-7deg);
 }
 
-/* 2) Grain ultra ligero + halos (da vida y profundidad) */
+/* 2) Grain ultra ligero + halos */
 .jg-site-bg::after{
   content:"";
   position:absolute;
@@ -628,11 +676,11 @@ footer{
   }
 }
 
+
 /* =========================================================
-   LOGIN MODAL (estilos glass)
+   15) LOGIN MODAL (estilos glass)
    ========================================================= */
 
-/* Backdrop más guapo */
 .modal-backdrop.show{
   opacity: .70;
 }
@@ -669,7 +717,7 @@ footer{
 .login-modal__left{
   position: relative;
   color: #fff;
-  overflow: hidden; /* para que el logo grande no “escape” */
+  overflow: hidden;
   background:
     radial-gradient(1200px 700px at 10% 20%, rgba(124,58,237,.70), transparent 55%),
     radial-gradient(900px 600px at 90% 80%, rgba(251,191,36,.22), transparent 60%),
@@ -715,7 +763,6 @@ footer{
   text-align: left;
 }
 
-/* (Tu logo redondito: lo dejo por si lo sigues usando en algún sitio) */
 .login-modal__logo{
   width: 42px; height: 42px;
   display:flex; align-items:center; justify-content:center;
@@ -793,12 +840,12 @@ footer{
   border-radius: 14px;
 }
 
-/* ===== Password input-group (sin línea morada) ===== */
+/* ===== Password input-group ===== */
 .login-modal .input-group{
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 14px;
-  overflow: hidden; /* clave: mata la “costura” vertical */
+  overflow: hidden;
 }
 
 /* Quitamos bordes/focus individuales */
@@ -813,4 +860,339 @@ footer{
 .login-modal .input-group:focus-within{
   border-color: rgba(124,58,237,.55);
   box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
+}
+
+
+/* =========================================================
+   16) ADMIN UI (solo para esta vista)
+   ========================================================= */
+.jg-admin-wrap{
+  padding-top: 110px; /* navbar fixed-top */
+  padding-bottom: 40px;
+}
+
+.jg-admin-header{
+  border-radius: calc(var(--jg-radius) + 10px);
+  border: 1px solid var(--jg-border);
+  background:
+    radial-gradient(760px 240px at 18% 0%, rgba(124,58,237,.16), transparent 62%),
+    radial-gradient(720px 240px at 92% 18%, rgba(246,196,83,.12), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  box-shadow: var(--jg-shadow);
+  overflow: hidden;
+}
+
+.jg-admin .jg-kpi{
+  border: 1px solid var(--jg-border);
+  background: linear-gradient(180deg, var(--jg-card2), var(--jg-card));
+  border-radius: var(--jg-radius);
+  box-shadow: 0 14px 50px rgba(0,0,0,.25);
+}
+
+/* Tabs */
+/* ===== Tabs admin ===== */
+.jg-admin-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(10px);
+}
+
+.jg-admin-tabs .nav-link{
+  border: 0 !important;
+  background: transparent;
+  border-radius: 14px;
+  padding: .65rem 1rem;
+  color: rgba(255,255,255,.72);
+  position: relative;
+  overflow: hidden;
+}
+
+.jg-admin-tabs .nav-link::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.14);
+  pointer-events:none;
+}
+
+.jg-admin-tabs .nav-link:hover{
+  color:#fff;
+}
+
+.jg-admin-tabs .nav-link:hover::after{
+  border-color: rgba(246,196,83,.28);
+}
+
+.jg-admin-tabs .nav-link.active{
+  color:#0b0b12;
+  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  box-shadow: 0 16px 45px rgba(124,58,237,.18);
+}
+
+.jg-admin-tabs .nav-link.active::after{
+  border-color: transparent;
+}
+
+
+/* 
+  =========================
+  Sección de vista de Admin
+  ========================= 
+*/
+
+/* Table (dark glass) */
+.jg-admin .jg-table-wrap{
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.04);
+  overflow: hidden;
+}
+
+.jg-table{
+  --bs-table-color: var(--jg-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: rgba(255,255,255,.10);
+  --bs-table-striped-bg: rgba(255,255,255,.03);
+  --bs-table-hover-bg: rgba(246,196,83,.06);
+  margin: 0;
+  color: var(--jg-text);
+}
+
+/* Solo cuerpo: transparente */
+.jg-admin .jg-table tbody td,
+.jg-admin .jg-table tbody th{
+  background: transparent !important;
+}
+
+/* Header: oscuro sí o sí */
+.jg-admin .jg-table thead th{
+  background: rgba(14,14,26,.55) !important;
+}
+
+.jg-table thead th{
+  font-family: var(--jg-font-title);
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.75);
+  background: rgba(14,14,26,.55) !important;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  white-space: nowrap;
+}
+
+.jg-table tbody td{
+  border-color: rgba(255,255,255,.08);
+  vertical-align: middle;
+}
+.jg-table tbody tr:hover{
+  background: rgba(246,196,83,.06);
+}
+
+.jg-actions .btn{
+  border-radius: 12px;
+}
+
+.jg-admin .jg-filterbar{
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+
+.jg-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.25rem .55rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.80);
+  font-size: .85rem;
+}
+
+.jg-admin-note{
+  border-left: 4px solid rgba(246,196,83,.55);
+  background: rgba(246,196,83,.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* ===== Pagination ===== */
+.jg-admin .pagination{
+  gap: 10px;
+}
+
+.jg-admin .page-item .page-link{
+  border: 0 !important; 
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  border-radius: 14px;
+  padding: .55rem .9rem;
+  box-shadow: none !important;
+}
+
+.jg-admin .page-item .page-link:hover{
+  background: rgba(246,196,83,.10);
+  color: #fff;
+}
+
+.jg-admin .page-item.active .page-link{
+  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  color: #0b0b12;
+}
+
+.jg-admin .page-item.disabled .page-link{
+  opacity: .45;
+  background: rgba(255,255,255,.03);
+}
+
+/* ===== Admin: inputs legibles ===== */
+.jg-admin .form-control,
+.jg-admin .form-select{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #fff !important;
+}
+
+.jg-admin .form-control:focus,
+.jg-admin .form-select:focus{
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(124,58,237,.55) !important;
+  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18) !important;
+  color: #fff !important;
+}
+
+/* Placeholder legible */
+.jg-admin .form-control::placeholder{
+  color: rgba(255,255,255,.55) !important;
+  opacity: 1;
+}
+
+.jg-admin .input-group-text{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.85) !important;
+}
+
+.jg-admin .input-group .form-control{
+  border-left: 0 !important;
+}
+
+
+/* =========================================================
+   17) CONTROLES NATIVOS / SELECTS
+   ========================================================= */
+
+/* Selects estilo Jediga */
+select, .form-select{
+  color-scheme: dark;
+  background-color: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #fff !important;
+}
+
+/* El menú de opciones (cuando se despliega) */
+select option,
+.form-select option{
+  background-color: #0f0f1b !important; /* sólido, no transparente */
+  color: #fff !important;
+}
+
+
+/* =========================================================
+   18) NAV RESPONSIVE (COLLAPSE)
+   ========================================================= */
+
+/* Móvil/Tablet */
+@media (max-width: 991.98px){
+  .jg-nav-collapse{
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    order: 3;
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+
+    transition: max-height .25s ease, padding .2s ease, margin-top .2s ease;
+  }
+
+  .jg-nav-collapse.is-open{
+    max-height: 80vh;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--jg-border);
+    border-radius: 18px;
+    background: rgba(14,14,26,.94);
+    backdrop-filter: blur(16px);
+    overflow-y: auto;
+    overflow-x: visible;
+  }
+
+  #jgNavToggle{
+    order: 2;
+    margin-left: auto;
+  }
+
+  /* dropdowns dentro del panel: en flujo, no flotantes */
+  .jg-nav-collapse .dropdown-menu{
+    position: static !important;
+    transform: none !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin-top: 8px;
+  }
+
+  .jg-nav-collapse .dropdown-menu.megamenu{
+    box-shadow: none;
+  }
+}
+
+/* Escritorio: siempre visible */
+@media (min-width: 992px){
+  .jg-nav-collapse{
+    display: flex !important;
+    max-height: none !important;
+    overflow: visible !important;
+    flex-basis: auto;
+  }
+
+  /* Mega menú por hover (y focus con teclado) */
+  .jg-nav .nav-item.dropdown{ position: relative; }
+
+  .jg-nav .dropdown-menu.megamenu{
+    position: absolute;
+    left: 120% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    top: calc(100% + 14px);
+    transition: opacity .16s ease, top .16s ease;
+  }
+
+  .jg-nav .nav-item.dropdown:hover > .dropdown-menu.megamenu,
+  .jg-nav .nav-item.dropdown:focus-within > .dropdown-menu.megamenu,
+  .jg-nav .nav-item.dropdown.show > .dropdown-menu.megamenu{ /* por si Bootstrap mete show */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    top: calc(82% + 8px);
+  }
+
+  /* Evita que el enlace parezca dropdown */
+  .jg-nav .nav-item.dropdown > .nav-link.dropdown-toggle{
+    pointer-events: auto !important;
+  }
 }
