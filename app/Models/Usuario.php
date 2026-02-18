@@ -4,19 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Usuario extends Authenticatable
+class User extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
-    protected $table = 'usuarios';
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role', // Importante para poder registrar admins/empresas
+    ];
 
-    protected $fillable = ['name', 'email', 'password', 'es_admin'];
-
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     protected $casts = [
-        'email_verificado' => 'datetime',
-        'es_admin' => 'boolean',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
+    // Relación con el perfil de empresa
+    public function companyProfile()
+    {
+        return $this->hasOne(CompanyProfile::class);
+    }
+
+    // Funciones de ayuda
+    public function isAdmin() { return $this->role === 'admin'; }
+    public function isCompany() { return $this->role === 'company'; }
+    public function isClient() { return $this->role === 'client'; }
 }
