@@ -104,9 +104,10 @@
         </div>
 
         @php
-          $esAdmin = auth()->check() && (bool) (auth()->user()->es_admin ?? false);
+          $isAdmin = auth()->check() && auth()->user()->isAdmin();
+          $isCompany = auth()->check() && auth()->user()->isCompany();
+          $isUser = auth()->check() && auth()->user()->isClient();
         @endphp
-
 
         {{-- NO logueado --}}
         @guest
@@ -120,7 +121,7 @@
 
         {{-- Logueado --}}
         @auth
-          @if($esAdmin)
+          @if($isAdmin)
             <a class="btn jg-btn jg-btn-outline" href="{{ url('/admin') }}">
               <i class="bi bi-speedometer2 me-1"></i> Volver al panel
             </a>

@@ -10,5 +10,5 @@ Route::get('/', function () { return view('home'); });
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-//Ruta a la vista del paneld el admin
+//Ruta a la vista del panel del admin
 Route::get('/admin', function(){ return view('adminPanel'); })->name('adminPanel');

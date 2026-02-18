@@ -121,9 +121,10 @@
 {{-- Navbar --}}
 @php
   $isAdminRoute = request()->is('admin*');
+  $isAdmin = auth()->check() && auth()->user()->isAdmin();
 @endphp
 
-@if($isAdminRoute)
+@if($isAdminRoute && $isAdmin)
   @include('partials.navbar-admin')
 @else
   @include('partials.navbar-public')
