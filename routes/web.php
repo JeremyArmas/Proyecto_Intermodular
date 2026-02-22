@@ -6,6 +6,22 @@ use App\Http\Controllers\AuthController;
 //Ruta del home principal
 Route::get('/', function () { return view('home'); });
 
+//Ruta a sobre nosotros
+Route::get('/sobre-nosotros', function() {return view('sobre-nosotros'); });
+
+//Ruta a noticias
+Route::get('/noticias', function() {return view('noticias'); });
+
+//Ruta a soporte
+Route::get('/soporte', function() {return view('soporte'); });
+
+//Ruta a FAQ
+Route::get('/faq', function() {return view('faq'); });
+
+//Ruta a contacto
+Route::get('/contacto', function() {return view('contacto'); });
+
+
 //Rutas del login y logout
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -8,19 +8,22 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     private int $maxIntentos = 3;
-    private int $minutosBloqueo = 5;
+    private int $minutosBloqueo = 3;
 
     //Función del login
     public function login(Request $request)
     {
         //Valida cada campo del lógin
         $validated = $request->validate([
-            'email'    => ['required','email'],
-            'password' => ['required','string'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'captcha' => ['required', 'captcha'],
         ], [
             'email.required' => 'El email es obligatorio',
             'email.email' => 'El email debe ser válido',
             'password.required' => 'La contraseña es obligatoria',
+            'captcha.required' => 'El captcha es obligatorio',
+            'captcha.captcha' => 'El captcha no es correcto',
         ]);
 
         //Revisa en la session si el usuario está bloqueado y cuanto lleva de bloqueo

@@ -3,42 +3,6 @@
 @section('title', 'Jediga')
 
 @section('content')
-  <!-- HERO -->
-  <header class="jg-hero">
-    <div class="container">
-      <div class="hero-video">
-        <video autoplay muted loop playsinline preload="metadata">
-          <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4">
-        </video>
-
-        <div class="hero-video-content">
-          <div class="jg-pill mb-3">
-            <span class="jg-dot"></span>
-            <span>Bienvenido a Jediga</span>
-          </div>
-
-          <h1 class="jg-hero-title display-6 mb-2">
-            Juegos, comunidad y presencia profesional — con un toque cercano
-          </h1>
-
-          <p class="jg-muted mb-4" style="max-width: 58ch;">
-            Explora por secciones: próximos lanzamientos, lo más popular y juegos gratuitos.
-          </p>
-
-          <div class="d-flex flex-wrap gap-2">
-            <a class="btn jg-btn jg-btn-primary" href="{{ url('/catalogo') }}">Ver catálogo</a>
-            <a class="btn jg-btn jg-btn-sun" href="{{ url('/catalogo?price=free') }}">
-              <i class="bi bi-gift me-1"></i> Gratis
-            </a>
-            <a class="btn jg-btn jg-btn-outline" href="{{ url('/noticias') }}">Noticias</a>
-          </div>
-
-          <div class="mt-4 small jg-muted">
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
 
   @php
     $upcoming = $upcoming ?? [
@@ -58,7 +22,116 @@
       ['title'=>'Starter Pack','desc'=>'Pack de bienvenida','tag'=>'PC','slug'=>'starter-pack'],
       ['title'=>'Trial Access','desc'=>'Acceso limitado','tag'=>'PS','slug'=>'trial-access'],
     ];
+
+    $heroSlides = [
+      [
+        'pill' => 'Próximamente',
+        'desc2' => 'Descubre lo que viene en camino y guarda tus favoritos.',
+        'badgeClass' => 'badge-soft',
+        'badgeText' => 'Soon',
+        'game' => $upcoming[0],
+        'mediaType' => 'video',
+        'mediaSrc' => 'videos/hero.mp4',
+        'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$upcoming[0]['slug']), 'class'=>'jg-btn-sun'],
+        'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?status=upcoming'), 'class'=>'jg-btn-primary'],
+        'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
+      ],
+      [
+        'pill' => 'Más populares',
+        'desc2' => 'Lo más jugado ahora mismo. Entra a la ficha o mira el top completo.',
+        'badgeClass' => 'badge-sun',
+        'badgeText' => 'Top',
+        'game' => $popular[0],
+        'mediaType' => 'video',
+        'mediaSrc' => 'videos/hero3.mp4',
+        'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$popular[0]['slug']), 'class'=>'jg-btn-sun'],
+        'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?sort=popular'), 'class'=>'jg-btn-primary'],
+        'tertiary' => ['text'=>'Noticias', 'href'=> url('/noticias'), 'class'=>'jg-btn-outline'],
+      ],
+      [
+        'pill' => 'Gratis',
+        'desc2' => 'Entra sin pagar: juegos y packs para empezar rápido.',
+        'badgeClass' => 'badge-mint',
+        'badgeText' => 'Free',
+        'game' => $free[0],
+        'mediaType' => 'video',
+        'mediaSrc' => 'videos/hero2.mp4',
+        'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$free[0]['slug']), 'class'=>'jg-btn-sun'],
+        'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?price=free'), 'class'=>'jg-btn-primary'],
+        'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
+      ],
+    ];
   @endphp
+
+  <!-- HERO -->
+  <header class="jg-hero">
+    <div class="container">
+
+      <div class="jg-hero-container">
+        <div class="swiper jg-hero-swiper">
+        <div class="swiper-wrapper">
+
+          @foreach($heroSlides as $s)
+            <div class="hero-video swiper-slide">
+
+              @if($s['mediaType'] === 'video')
+                <video class="jg-hero-media" muted loop playsinline preload="metadata">
+                  <source src="{{ asset($s['mediaSrc']) }}" type="video/mp4">
+                </video>
+              @else
+                <img class="jg-hero-media" src="{{ asset($s['mediaSrc']) }}" alt="">
+              @endif
+
+              <div class="hero-video-content">
+                <div class="jg-pill mb-3">
+                  <span class="jg-dot"></span>
+                  <span>{{ $s['pill'] }}</span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge badge-soft">{{ $s['game']['tag'] }}</span>
+                  <span class="badge {{ $s['badgeClass'] }}">{{ $s['badgeText'] }}</span>
+                </div>
+
+                <h1 class="jg-hero-title display-6 mb-2">
+                  {{ $s['game']['title'] }}
+                </h1>
+
+                <p class="jg-hero-desc mb-4" style="max-width: 62ch;">
+                  {{ $s['game']['desc'] }}
+                  <span class="jg-hero-desc2 d-block mt-1">{{ $s['desc2'] }}</span>
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <a class="btn jg-btn {{ $s['primary']['class'] }}" href="{{ $s['primary']['href'] }}">
+                    {{ $s['primary']['text'] }}
+                  </a>
+                  <a class="btn jg-btn {{ $s['secondary']['class'] }}" href="{{ $s['secondary']['href'] }}">
+                    {{ $s['secondary']['text'] }}
+                  </a>
+                  <a class="btn jg-btn {{ $s['tertiary']['class'] }}" href="{{ $s['tertiary']['href'] }}">
+                    {{ $s['tertiary']['text'] }}
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          @endforeach
+
+        </div>
+
+        <!-- Botones de paginación -->
+        <div class="swiper-pagination"></div>
+        
+      </div>
+      
+      <!-- Flechas de paginación -->
+        <div class="swiper-button-prev" aria-label="Anterior"></div>
+        <div class="swiper-button-next" aria-label="Siguiente"></div>
+      </div>
+      
+    </div>
+  </header>
 
   <!-- PRÓXIMAMENTE -->
   <section class="jg-section" id="proximamente">

@@ -22,7 +22,7 @@ return [
         'fontColors' => ['#2c3e50', '#c0392b', '#16a085', '#c0392b', '#8e44ad', '#303f9f', '#f57c00', '#795548'],
         'width' => 345,
         'height' => 65,
-        'math' => false,
+        'math' => true,
         'quality' => 100,
         'lines' => 6,
         'bgImage' => true,

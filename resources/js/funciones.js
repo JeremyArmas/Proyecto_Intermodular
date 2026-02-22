@@ -191,6 +191,7 @@ async function logout() {
   }
 }
 
+//Espera al DOM y ajusta la pantalla según si es tablet o movil
 document.addEventListener('DOMContentLoaded', () => {
   
   // Busca los botones que abren/cierra el panel del nav:
@@ -292,7 +293,57 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+//Espera al DOM y ajusta el slider del hero
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.querySelector('.jg-hero-swiper');
+  if (!el || typeof window.Swiper === 'undefined') return;
 
-function crearCuenta(){
-  
-}
+  const contenedor = el.closest('.jg-hero-container') || el.parentElement;
+
+  //Ajusta el slider
+  const swiper = new Swiper(el, {
+    loop: true,
+    speed: 600,
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+
+    //Ajusta el autoplay 
+    autoplay: {
+      delay: 5400,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+
+    //Ajusta la paginación del slider (botones de abajo)
+    pagination: {
+      el: el.querySelector('.swiper-pagination'),
+      clickable: true,
+    },
+
+    navigation: {
+      nextEl: contenedor.querySelector('.swiper-button-next'),
+      prevEl: contenedor.querySelector('.swiper-button-prev'),
+    },
+  });
+
+  //Sincroniza los videos con el slider
+  const syncVideos = () => {
+    
+    // Pausa y resetea todos
+    el.querySelectorAll('video').forEach(v => {
+      v.pause();
+      v.currentTime = 0;
+    });
+
+    // Reproduce solo el del slide activo
+    const activeVideo = el.querySelector('.swiper-slide-active video');
+    if (activeVideo) {
+      const p = activeVideo.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  };
+
+  // Al cargar y cada cambio
+  syncVideos();
+  swiper.on('slideChangeTransitionStart', syncVideos);
+});
