@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra un listado del recurso.
      */
     public function index()
     {
@@ -18,7 +18,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un nuevo recurso.
      */
     public function create()
     {
@@ -26,7 +26,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un recurso recién creado en la base de datos.
      */
     public function store(Request $request)
     {
@@ -37,11 +37,11 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría creada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a creada correctamente.');
     }
 
     /**
-     * Display the specified resource.
+     * Muestra el recurso especificado.
      */
     public function show(Category $category)
     {
@@ -49,7 +49,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar el recurso especificado.
      */
     public function edit(Category $category)
     {
@@ -57,7 +57,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el recurso especificado en la base de datos.
      */
     public function update(Request $request, Category $category)
     {
@@ -68,15 +68,15 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría actualizada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a actualizada correctamente.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina el recurso especificado de la base de datos.
      */
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría eliminada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a eliminada correctamente.');
     }
 }

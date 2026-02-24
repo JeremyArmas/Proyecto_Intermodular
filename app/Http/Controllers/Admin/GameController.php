@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class GameController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra un listado del recurso.
      */
     public function index()
     {
@@ -18,7 +18,7 @@ class GameController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un nuevo recurso.
      */
     public function create()
     {
@@ -28,7 +28,7 @@ class GameController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un recurso recién creado en la base de datos.
      */
     public function store(Request $request)
     {
@@ -63,7 +63,7 @@ class GameController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra el recurso especificado.
      */
     public function show(Game $game)
     {
@@ -71,7 +71,7 @@ class GameController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar el recurso especificado.
      */
     public function edit(Game $game)
     {
@@ -81,7 +81,7 @@ class GameController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el recurso especificado en la base de datos.
      */
     public function update(Request $request, Game $game)
     {
@@ -121,7 +121,7 @@ class GameController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina el recurso especificado de la base de datos.
      */
     public function destroy(Game $game)
     {

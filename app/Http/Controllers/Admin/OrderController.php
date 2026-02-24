@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra un listado del recurso.
      */
     public function index()
     {
@@ -18,16 +18,16 @@ class OrderController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un nuevo recurso.
      */
     public function create()
     {
-        // Generalmente no se crean pedidos manualmente desde aquí
-        return redirect()->route('admin.orders.index')->with('error', 'La creación manual de pedidos no está habilitada.');
+        // Generalmente no se crean pedidos manualmente desde aquÃ­
+        return redirect()->route('admin.orders.index')->with('error', 'La creaciÃ³n manual de pedidos no estÃ¡ habilitada.');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un recurso recién creado en la base de datos.
      */
     public function store(Request $request)
     {
@@ -35,16 +35,16 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra el recurso especificado.
      */
     public function show(Order $order)
     {
-        $order->load(['user']); // Cargar también los items si existieran luego
+        $order->load(['user']); // Cargar tambiÃ©n los items si existieran luego
         return view('admin.orders.show', compact('order'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar el recurso especificado.
      */
     public function edit(Order $order)
     {
@@ -52,7 +52,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el recurso especificado en la base de datos.
      */
     public function update(Request $request, Order $order)
     {
@@ -66,7 +66,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina el recurso especificado de la base de datos.
      */
     public function destroy(Order $order)
     {

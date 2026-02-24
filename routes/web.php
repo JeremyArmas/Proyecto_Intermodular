@@ -32,10 +32,12 @@ use App\Http\Controllers\Admin\UserController;
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+use App\Http\Controllers\Admin\AdminController;
+
 // Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
 Route::prefix('admin')->name('admin.')->group(function () {
     // Vista del panel principal
-    Route::get('/', function(){ return view('adminPanel'); })->name('panel');
+    Route::get('/', [AdminController::class, 'index'])->name('panel');
     
     // CRUDs
     Route::resource('games', GameController::class);

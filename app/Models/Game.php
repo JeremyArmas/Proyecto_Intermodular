@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model
 {
+    // Permite usar Factories para insertar datos de prueba desde Seeders
     use HasFactory;
 
     // Campos que permitimos rellenar masivamente
@@ -15,19 +16,19 @@ class Game extends Model
         'stock', 'cover_image', 'developer', 'platform_id', 'is_active'
     ];
 
-    // Relación: Un juego pertenece a una plataforma
+    // RelaciÃ³n: Un juego pertenece a una plataforma
     public function platform()
     {
         return $this->belongsTo(Platform::class);
     }
 
-    // Relación: Un juego tiene muchas categorías
+    // RelaciÃ³n: Un juego tiene muchas categorÃ­as
     public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
     
-    // Función para obtener el precio según quién lo mire
+    // FunciÃ³n para obtener el precio segÃºn quiÃ©n lo mire
     public function getPriceForUser($user)
     {
         if ($user && $user->isCompany() && $this->b2b_price) {
