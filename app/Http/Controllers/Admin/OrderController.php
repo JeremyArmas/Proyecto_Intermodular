@@ -22,7 +22,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        // Generalmente no se crean pedidos manualmente desde aquí
+        return redirect()->route('admin.orders.index')->with('error', 'La creación manual de pedidos no está habilitada.');
     }
 
     /**
@@ -38,7 +39,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        $order->load(['user']); // Cargar también los items si existieran luego
+        return view('admin.orders.show', compact('order'));
     }
 
     /**
@@ -46,7 +48,7 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        return view('admin.orders.edit', compact('order'));
     }
 
     /**
@@ -54,7 +56,13 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|in:pending,paid,shipped,cancelled',
+        ]);
+
+        $order->update($validated);
+
+        return redirect()->route('admin.orders.index')->with('success', 'Estado del pedido actualizado correctamente.');
     }
 
     /**
@@ -62,6 +70,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $order->delete();
+        return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado de la base de datos.');
     }
 }
