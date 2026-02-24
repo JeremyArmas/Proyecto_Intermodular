@@ -113,7 +113,7 @@
 
             <div class="d-flex align-items-stretch gap-2 mb-2">
               <div class="jg-captcha-frame flex-grow-1">
-                {!! captcha_img('flat') !!}
+                {{-- {!! captcha_img('flat') !!} --}}
               </div>
 
               <button type="button" class="btn jg-captcha-reload" id="reloadCaptcha" aria-label="Recargar captcha">
