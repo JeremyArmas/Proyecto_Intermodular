@@ -22,7 +22,7 @@ class PlatformController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.platforms.create');
     }
 
     /**
@@ -30,7 +30,14 @@ class PlatformController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:platforms,slug',
+        ]);
+
+        Platform::create($validated);
+
+        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma creada correctamente.');
     }
 
     /**
@@ -38,7 +45,7 @@ class PlatformController extends Controller
      */
     public function show(Platform $platform)
     {
-        //
+        return view('admin.platforms.show', compact('platform')); // Optional
     }
 
     /**
@@ -46,7 +53,7 @@ class PlatformController extends Controller
      */
     public function edit(Platform $platform)
     {
-        //
+        return view('admin.platforms.edit', compact('platform'));
     }
 
     /**
@@ -54,7 +61,14 @@ class PlatformController extends Controller
      */
     public function update(Request $request, Platform $platform)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:platforms,slug,' . $platform->id,
+        ]);
+
+        $platform->update($validated);
+
+        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma actualizada correctamente.');
     }
 
     /**
@@ -62,6 +76,7 @@ class PlatformController extends Controller
      */
     public function destroy(Platform $platform)
     {
-        //
+        $platform->delete();
+        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma eliminada correctamente.');
     }
 }
