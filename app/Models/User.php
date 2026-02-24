@@ -34,7 +34,14 @@ class User extends Authenticatable
     }
 
     // Funciones de ayuda
-    public function isAdmin() { return $this->role === 'admin'; }
-    public function isCompany() { return $this->role === 'company'; }
-    public function isClient() { return $this->role === 'client'; }
+    public function isAdmin() { 
+        return $this->role === 'admin'; 
+    }
+    public function isCompany() { 
+        return $this->role === 'company'; 
+    }
+    public function isClient() { 
+        return $this->role === 'client'; 
+    }
+    
 }

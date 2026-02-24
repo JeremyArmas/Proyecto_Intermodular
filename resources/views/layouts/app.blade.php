@@ -9,6 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Slider Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,6 +106,29 @@
               {{-- <a href="#" class="link-light small">¿Olvidaste la contraseña?</a> --}}
             </div>
 
+            {{-- BLOQUE DEL CAPTCHA --}}
+
+            <div class="mb-3">
+            <label class="form-label">Verificación</label>
+
+            <div class="d-flex align-items-stretch gap-2 mb-2">
+              <div class="jg-captcha-frame flex-grow-1">
+                {!! captcha_img('flat') !!}
+              </div>
+
+              <button type="button" class="btn jg-captcha-reload" id="reloadCaptcha" aria-label="Recargar captcha">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+
+            <input type="text" name="captcha" class="form-control form-control-lg"
+                  placeholder="Escribe el texto de la imagen" autocomplete="off">
+
+            @error('captcha')
+              <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+
             <button type="submit" class="btn btn-jediga w-100 btn-lg">
               Entrar
             </button>
@@ -121,9 +146,10 @@
 {{-- Navbar --}}
 @php
   $isAdminRoute = request()->is('admin*');
+  $isAdmin = auth()->check() && auth()->user()->isAdmin();
 @endphp
 
-@if($isAdminRoute)
+@if($isAdminRoute && $isAdmin)
   @include('partials.navbar-admin')
 @else
   @include('partials.navbar-public')
@@ -135,7 +161,10 @@
 
 {{-- Footer --}}
 @include('partials.footer')
+<!-- Link Bootstrap js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Link Swiper js -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 @stack('scripts')
 </body>
 </html>
