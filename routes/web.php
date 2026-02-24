@@ -22,9 +22,25 @@ Route::get('/faq', function() {return view('faq'); });
 Route::get('/contacto', function() {return view('contacto'); });
 
 
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PlatformController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\UserController;
+
 //Rutas del login y logout
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-//Ruta a la vista del panel del admin
-Route::get('/admin', function(){ return view('adminPanel'); })->name('adminPanel');
+// Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Vista del panel principal
+    Route::get('/', function(){ return view('adminPanel'); })->name('panel');
+    
+    // CRUDs
+    Route::resource('games', GameController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('platforms', PlatformController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('orders', OrderController::class);
+});
