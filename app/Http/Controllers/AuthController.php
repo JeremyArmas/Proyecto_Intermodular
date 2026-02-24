@@ -17,13 +17,10 @@ class AuthController extends Controller
         $validated = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
-            'captcha' => ['required', 'captcha'],
         ], [
             'email.required' => 'El email es obligatorio',
             'email.email' => 'El email debe ser válido',
             'password.required' => 'La contraseña es obligatoria',
-            'captcha.required' => 'El captcha es obligatorio',
-            'captcha.captcha' => 'El captcha no es correcto',
         ]);
 
         //Revisa en la session si el usuario está bloqueado y cuanto lleva de bloqueo
@@ -77,7 +74,7 @@ class AuthController extends Controller
         //Redirige al usuario según el rol que tenga
         $user = Auth::user();
         $redirect = match ($user->role) {
-            'admin'   => route('adminPanel'),
+            'admin'   => route('admin.panel'),
             'company' => url('/'),
             'client'  => url('/'),
             default   => url('/'),

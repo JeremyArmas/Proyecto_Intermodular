@@ -29,13 +29,16 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 
 //Rutas del login y logout
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/login', function () { 
+    return redirect('/')->with('error', 'Debes iniciar sesión para acceder.'); 
+})->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 use App\Http\Controllers\Admin\AdminController;
 
 // Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Vista del panel principal
     Route::get('/', [AdminController::class, 'index'])->name('panel');
     
