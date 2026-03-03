@@ -100,7 +100,7 @@ class AuthController extends Controller
         // Redirección según rol del usuario autenticado
         $user = Auth::user();
         $redirect = match ($user->role) {
-            'admin'   => route('adminPanel'),
+            'admin'   => route('admin.panel'),
             'company' => url('/'),
             'client'  => url('/'),
             default   => url('/'),

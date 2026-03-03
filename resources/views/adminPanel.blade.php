@@ -4,39 +4,16 @@
 
 @section('content')
 @php
-  /* ===== Datos mock (solo para maqueta) ===== */
-  $productos = [
-    ['id'=>101,'nombre'=>'Neon Rift','categoria'=>'Shooter','plataforma'=>'PC','tipo'=>'Juego','precio'=>19.99,'stock'=>42,'estado'=>'Publicado','actualizado'=>'2026-02-10'],
-    ['id'=>102,'nombre'=>'Astra Runner','categoria'=>'Acción','plataforma'=>'PS','tipo'=>'Juego','precio'=>49.99,'stock'=>8,'estado'=>'Publicado','actualizado'=>'2026-02-08'],
-    ['id'=>103,'nombre'=>'Echoes DLC','categoria'=>'Contenido','plataforma'=>'PC','tipo'=>'DLC','precio'=>9.99,'stock'=>999,'estado'=>'Borrador','actualizado'=>'2026-02-06'],
-    ['id'=>104,'nombre'=>'Zero Byte','categoria'=>'Indie','plataforma'=>'Xbox','tipo'=>'Juego','precio'=>0.00,'stock'=>999,'estado'=>'Publicado','actualizado'=>'2026-02-03'],
-    ['id'=>105,'nombre'=>'Skyforge Lite','categoria'=>'Aventura','plataforma'=>'Switch','tipo'=>'Juego','precio'=>29.99,'stock'=>0,'estado'=>'Oculto','actualizado'=>'2026-01-30'],
-  ];
+  // Esta vista empezó como maqueta con datos fijos. el controlador
+  // inyecta colecciones reales ($productos, $categorias, $usuarios,
+  // $pedidos) y ya no hace falta sobrescribirlas aquí. retirar este
+  // bloque y adaptar el resto de la plantilla si lo vas a mantener.
 
-  $categorias = [
-    ['id'=>1,'nombre'=>'Acción','slug'=>'accion','productos'=>12,'actualizado'=>'2026-02-01'],
-    ['id'=>2,'nombre'=>'Shooter','slug'=>'shooter','productos'=>7,'actualizado'=>'2026-01-26'],
-    ['id'=>3,'nombre'=>'Aventura','slug'=>'aventura','productos'=>9,'actualizado'=>'2026-01-15'],
-    ['id'=>4,'nombre'=>'Indie','slug'=>'indie','productos'=>18,'actualizado'=>'2026-02-09'],
-  ];
+  // Si mantienes el `AdminController@index` activo, puedes usar los
+  // KPI que te pasa desde allá; en cualquier caso se calcularán mejor
+  // en el controlador o usando métodos de colección.
 
-  $usuarios = [
-    ['id'=>1,'nombre'=>'Admin','email'=>'admin@demo.com','rol'=>'Admin','estado'=>'Activo','alta'=>'2026-01-12'],
-    ['id'=>2,'nombre'=>'Cliente demo','email'=>'cliente@demo.com','rol'=>'Cliente','estado'=>'Activo','alta'=>'2026-02-01'],
-    ['id'=>3,'nombre'=>'Gestor demo','email'=>'gestor@demo.com','rol'=>'Gestor','estado'=>'Suspendido','alta'=>'2026-01-20'],
-  ];
-
-  $pedidos = [
-    ['id'=>5001,'usuario'=>'cliente@demo.com','total'=>59.98,'estado'=>'Pagado','fecha'=>'2026-02-10'],
-    ['id'=>5002,'usuario'=>'cliente@demo.com','total'=>0.00,'estado'=>'Pendiente','fecha'=>'2026-02-09'],
-    ['id'=>5003,'usuario'=>'cliente@demo.com','total'=>19.99,'estado'=>'Reembolsado','fecha'=>'2026-02-05'],
-  ];
-
-  $totalProductos = count($productos);
-  $bajoStock = collect($productos)->filter(fn($p) => $p['stock'] > 0 && $p['stock'] <= 10)->count();
-  $sinStock = collect($productos)->filter(fn($p) => $p['stock'] === 0)->count();
-  $borradores = collect($productos)->filter(fn($p) => $p['estado'] === 'Borrador')->count();
-
+  // $fmt sirve para formatear precios, se puede seguir usando.
   $fmt = fn($n) => number_format($n, 2, ',', '.');
 @endphp
 
@@ -62,10 +39,10 @@
           </div>
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
-          <button type="button" class="btn jg-btn jg-btn-primary" disabled title="Aún sin backend">
-            <i class="bi bi-plus-circle me-1"></i> Nuevo producto
-          </button>
+        <div class="ms-auto">
+          <a href="{{ route('admin.games.create') }}" class="btn jg-btn jg-btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Añadir Juego
+          </a>
         </div>
         
         <div class="jg-admin-note mt-3 small">
@@ -198,9 +175,6 @@
               <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
                 <i class="bi bi-funnel me-1"></i> Filtro avanzado
               </button>
-              <button class="btn jg-btn jg-btn-primary" type="button" disabled title="Placeholder">
-                <i class="bi bi-plus-circle me-1"></i> Añadir
-              </button>
             </div>
           </div>
         </div>
@@ -215,11 +189,10 @@
                     <input class="form-check-input" type="checkbox" disabled>
                   </th>
                   <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Categoría</th>
+                  <th>Título</th>
+                  <th>Categorías</th>
                   <th>Plataforma</th>
-                  <th>Tipo</th>
-                  <th class="text-end">Precio</th>
+                  <th class="text-end">Precio Base</th>
                   <th class="text-end">Stock</th>
                   <th>Estado</th>
                   <th>Actualizado</th>
@@ -229,34 +202,48 @@
               <tbody>
                 @foreach($productos as $p)
                   @php
-                    $badgeEstado = $p['estado']==='Publicado' ? 'badge-mint' : ($p['estado']==='Borrador' ? 'badge-soft' : 'badge-sun');
-                    $stockWarn = $p['stock']===0 ? 'badge-sun' : ($p['stock']<=10 ? 'badge-sun' : 'badge-soft');
+                    // Lógica para etiquetas visuales según los datos de la bbdd
+                    $estadoStr = $p->is_active ? 'Publicado' : 'Borrador';
+                    $badgeEstado = $p->is_active ? 'badge-mint' : 'badge-soft';
+                    $stockWarn = $p->stock === 0 ? 'badge-sun' : ($p->stock <= 10 ? 'badge-sun' : 'badge-soft');
+                    $categoriasStr = $p->categories->pluck('name')->join(', ');
                   @endphp
-                  <tr data-nombre="{{ strtolower($p['nombre']) }}"
-                      data-categoria="{{ strtolower($p['categoria']) }}"
-                      data-plataforma="{{ strtolower($p['plataforma']) }}"
-                      data-estado="{{ strtolower($p['estado']) }}"
-                      data-precio="{{ $p['precio'] }}"
-                      data-stock="{{ $p['stock'] }}"
-                      data-fecha="{{ $p['actualizado'] }}">
-                    <td><input class="form-check-input" type="checkbox" disabled></td>
-                    <td class="text-nowrap">#{{ $p['id'] }}</td>
-                    <td class="fw-bold">{{ $p['nombre'] }}</td>
-                    <td>{{ $p['categoria'] }}</td>
-                    <td><span class="badge badge-soft">{{ $p['plataforma'] }}</span></td>
-                    <td>{{ $p['tipo'] }}</td>
-                    <td class="text-end">{{ $fmt($p['precio']) }} €</td>
+                  {{-- Atributos data-* usados por nuestro JS local para ordenar y buscar --}}
+                  <tr data-nombre="{{ strtolower($p->title) }}"
+                      data-categoria="{{ strtolower($categoriasStr) }}"
+                      data-plataforma="{{ strtolower($p->platform->name ?? '') }}"
+                      data-estado="{{ strtolower($estadoStr) }}"
+                      data-precio="{{ $p->price }}"
+                      data-stock="{{ $p->stock }}"
+                      data-fecha="{{ $p->updated_at }}">
+                    
+                    <td>
+                        @if($p->cover_image)
+                            <img src="{{ asset('storage/' . $p->cover_image) }}" alt="Img" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+                        @else
+                            <div style="width: 32px; height: 32px; border-radius: 4px; background: rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-joystick text-white-50"></i>
+                            </div>
+                        @endif
+                    </td>
+                    <td class="text-nowrap">#{{ $p->id }}</td>
+                    <td class="fw-bold">{{ $p->title }}</td>
+                    <td>{{ $categoriasStr ?: 'Sin categorizar' }}</td>
+                    <td><span class="badge badge-soft">{{ $p->platform->name ?? 'N/A' }}</span></td>
+                    <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->price) }} €</td>
                     <td class="text-end">
                       <span class="badge {{ $stockWarn }}">
-                        {{ $p['stock'] }}
+                        {{ $p->stock }}
                       </span>
                     </td>
-                    <td><span class="badge {{ $badgeEstado }}">{{ $p['estado'] }}</span></td>
-                    <td class="text-nowrap">{{ $p['actualizado'] }}</td>
+                    <td><span class="badge {{ $badgeEstado }}">{{ $estadoStr }}</span></td>
+                    <td class="text-nowrap">{{ $p->updated_at->format('Y-m-d') }}</td>
                     <td class="text-end jg-actions">
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-pencil"></i></button>
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-trash"></i></button>
+                      <a href="{{ route('admin.games.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
                 @endforeach
@@ -267,7 +254,8 @@
 
         {{-- PAGINACIÓN (placeholder) --}}
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <div class="jg-muted small">Mostrando 1–{{ count($productos) }} de {{ count($productos) }} (mock)</div>
+          <div class="jg-muted small">Mostrando {{ $productos->count() }} de {{ $totalProductos ?? $productos->count() }}</div>
+          {{-- si se implementa paginación, sustituir por links reales --}}
           <nav aria-label="Paginación" class="ms-auto">
             <ul class="pagination mb-0">
               <li class="page-item disabled"><a class="page-link" href="#">«</a></li>
@@ -284,9 +272,18 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="h4 mb-1">Categorías</div>
-              <div class="jg-muted">Estructura del catálogo (maqueta).</div>
+              <div class="jg-muted">Estructura del catálogo.</div>
             </div>
-            <button class="btn jg-btn jg-btn-primary" disabled><i class="bi bi-plus-circle me-1"></i> Nueva categoría</button>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.categories.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todas las categorías
+              </a>
+              <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Añadir categoría
+              </a>
+            </div>
+            
+              
           </div>
         </div>
 
@@ -296,27 +293,32 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Slug</th>
-                  <th class="text-end">Productos</th>
-                  <th>Actualizado</th>
+                  <th>Nombre Genérico</th>
+                  <th>Identificador (Slug)</th>
+                  <th class="text-end">Juegos Asignados</th>
+                  <th>Fecha de Creación</th>
                   <th class="text-end">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach($categorias as $c)
+                @forelse($categorias as $c)
                   <tr>
-                    <td>#{{ $c['id'] }}</td>
-                    <td class="fw-bold">{{ $c['nombre'] }}</td>
-                    <td><span class="badge badge-soft">{{ $c['slug'] }}</span></td>
-                    <td class="text-end">{{ $c['productos'] }}</td>
-                    <td class="text-nowrap">{{ $c['actualizado'] }}</td>
+                    <td>#{{ $c->id }}</td>
+                    <td class="fw-bold">{{ $c->name }}</td>
+                    <td><span class="badge badge-soft">{{ $c->slug }}</span></td>
+                    <td class="text-end">{{ $c->games_count }}</td>
+                    <td class="text-nowrap">{{ $c->created_at->format('Y-m-d') }}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-pencil"></i></button>
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-trash"></i></button>
+                      <a href="{{ route('admin.categories.edit', $c) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
-                @endforeach
+                @empty
+                 <tr><td colspan="6" class="text-center py-4 jg-muted">No hay categorías.</td></tr>
+                @endforelse
               </tbody>
             </table>
           </div>
@@ -329,9 +331,16 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="h4 mb-1">Usuarios</div>
-              <div class="jg-muted">Gestión de roles y estado (maqueta).</div>
+              <div class="jg-muted">Gestión de roles y estado.</div>
             </div>
-            <button class="btn jg-btn jg-btn-outline" disabled><i class="bi bi-person-plus me-1"></i> Invitar</button>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todos los usuarios
+              </a>
+              <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Invitar
+              </a>
+            </div>
           </div>
         </div>
 
@@ -341,33 +350,36 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Email</th>
-                  <th>Rol</th>
-                  <th>Estado</th>
-                  <th>Alta</th>
-                  <th class="text-end">Acciones</th>
+                  <th>Nombre y Apellidos</th>
+                  <th>Correo Electrónico</th>
+                  <th>Rol Asignado</th>
+                  <th>Fecha de Registro</th>
+                  <th class="text-end">Acción Rápida</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach($usuarios as $u)
+                @forelse($usuarios as $u)
                   @php
-                    $bRol = $u['rol']==='Admin' ? 'badge-sun' : ($u['rol']==='Gestor' ? 'badge-soft' : 'badge-mint');
-                    $bEst = $u['estado']==='Activo' ? 'badge-mint' : 'badge-sun';
+                    $bRol = $u->role === 'admin' ? 'badge-sun' : ($u->role === 'company' ? 'badge-soft' : 'badge-mint');
                   @endphp
                   <tr>
-                    <td>#{{ $u['id'] }}</td>
-                    <td class="fw-bold">{{ $u['nombre'] }}</td>
-                    <td>{{ $u['email'] }}</td>
-                    <td><span class="badge {{ $bRol }}">{{ $u['rol'] }}</span></td>
-                    <td><span class="badge {{ $bEst }}">{{ $u['estado'] }}</span></td>
-                    <td class="text-nowrap">{{ $u['alta'] }}</td>
+                    <td>#{{ $u->id }}</td>
+                    <td class="fw-bold">{{ $u->name }}</td>
+                    <td><a href="mailto:{{ $u->email }}" class="text-white text-decoration-none">{{ $u->email }}</a></td>
+                    <td><span class="badge {{ $bRol }}">{{ ucfirst($u->role) }}</span></td>
+                    <td class="text-nowrap">{{ $u->created_at->format('Y-m-d H:i') }}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-pencil"></i></button>
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-slash-circle"></i></button>
+                      <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
-                @endforeach
+                @empty
+                  <tr><td colspan="6" class="text-center py-4 jg-muted">No hay usuarios registrados.</td></tr>
+                @endforelse
               </tbody>
             </table>
           </div>
@@ -380,9 +392,17 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="h4 mb-1">Pedidos</div>
-              <div class="jg-muted">Histórico y estados (maqueta).</div>
+              <div class="jg-muted">Histórico y estados.</div>
             </div>
-            <button class="btn jg-btn jg-btn-outline" disabled><i class="bi bi-download me-1"></i> Exportar</button>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todos los pedidos
+              </a>
+              <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-sun disabled">
+                <i class="bi bi-download me-1"></i> Exportar
+              </a>
+            </div>
+            
           </div>
         </div>
 
@@ -391,35 +411,50 @@
             <table class="table jg-table align-middle">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Usuario</th>
-                  <th class="text-end">Total</th>
-                  <th>Estado</th>
-                  <th>Fecha</th>
-                  <th class="text-end">Acciones</th>
+                  <th>Referencia</th>
+                  <th>Datos del Comprador</th>
+                  <th>Tipo (B2B/B2C)</th>
+                  <th class="text-end">Total Cobrado</th>
+                  <th>Estado del Envío</th>
+                  <th>Fecha y Hora</th>
+                  <th class="text-end">Auditar</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach($pedidos as $p)
+                @forelse($pedidos as $p)
                   @php
-                    $b = $p['estado']==='Pagado' ? 'badge-mint' : ($p['estado']==='Pendiente' ? 'badge-soft' : 'badge-sun');
+                    $bOrder = $p->status === 'paid' ? 'badge-primary' : ($p->status === 'shipped' ? 'badge-mint' : ($p->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
+                    $st = ['pending'=>'Pendiente','paid'=>'Pagado','shipped'=>'Enviado','cancelled'=>'Cancelado'];
                   @endphp
                   <tr>
-                    <td>#{{ $p['id'] }}</td>
-                    <td>{{ $p['usuario'] }}</td>
-                    <td class="text-end">{{ $fmt($p['total']) }} €</td>
-                    <td><span class="badge {{ $b }}">{{ $p['estado'] }}</span></td>
-                    <td class="text-nowrap">{{ $p['fecha'] }}</td>
+                    <td><span class="fw-bold">#{{ str_pad($p->id, 5, '0', STR_PAD_LEFT) }}</span></td>
+                    <td>
+                        {{ $p->user->name ?? 'Usuario borrado' }}<br>
+                        <small class="jg-muted">{{ $p->user->email ?? '--' }}</small>
+                    </td>
+                    <td><span class="badge badge-soft">{{ strtoupper($p->order_type) }}</span></td>
+                    <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->total_amount) }} €</td>
+                    <td><span class="badge {{ $bOrder }}">{{ $st[$p->status] ?? $p->status }}</span></td>
+                    <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm jg-btn jg-btn-outline" disabled><i class="bi bi-arrow-repeat"></i></button>
+                      <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
+                      <form action="{{ route('admin.orders.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
-                @endforeach
+                @empty
+                  <tr>
+                    <td colspan="7" class="text-center py-4 jg-muted">No existen transacciones recientes.</td>
+                  </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
         </div>
+      </div>
       </div>
 
     </div>

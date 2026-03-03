@@ -1,4 +1,4 @@
-//LOGICAS FRONTEND / BACKEND (comentarios en español)
+//LOGICAS FRONTEND / BACKEND
 
 /* Inicialización al cargar el DOM:
    - inicia el preloader
@@ -22,7 +22,7 @@ function iniciarPreloader() {
   window.addEventListener('load', () => {
     setTimeout(() => {
       preloader.classList.add('is-leaving');
-    }, 700);
+    }, 100);
   });
 
   // Cuando termina la animación del propio preloader, lo elimina del DOM
