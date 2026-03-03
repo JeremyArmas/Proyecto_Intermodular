@@ -7,18 +7,50 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    // Máximo de intentos permitidos antes de bloqueo
     private int $maxIntentos = 3;
+
+    // Minutos que dura el bloqueo cuando se exceden los intentos
     private int $minutosBloqueo = 3;
 
-    //Función del login
+    // Función del login: valida credenciales, gestiona intentos, captcha y bloqueo temporal
     public function login(Request $request)
     {
-        //Valida cada campo del lógin
-        $validated = $request->validate([
+        // Comprueba si la sesión tiene un bloqueo activo y si sigue vigente
+        $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta');
+        if ($bloqueadoHasta && now()->lt($bloqueadoHasta)) {
+            // Calcula minutos restantes (redondeando hacia arriba)
+            $mins = (int) ceil(now()->diffInSeconds($bloqueadoHasta) / 60);
+
+            // Respuesta JSON indicando bloqueo (HTTP 423 Locked)
+            return response()->json([
+                'success' => false,
+                'message' => "Demasiados intentos. Inténtalo de nuevo en {$mins} min.",
+                'blocked' => true,
+                'minutes_remaining' => $mins,
+                'show_captcha' => false,
+            ], 423);
+        }
+
+        // Obtiene el número de intentos fallidos almacenados en sesión (antes del intento actual)
+        $intentos = (int) $request->session()->get('login_intentos', 0);
+
+        // Requiere captcha si ya se han fallado (maxIntentos - 1) intentos (es decir, queda 1 intento)
+        $captchaRequerido = $intentos >= ($this->maxIntentos - 1);
+
+        // Reglas base de validación
+        $rules = [
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
-            'captcha' => ['required', 'captcha'],
-        ], [
+        ];
+
+        // Añade regla de captcha si procede
+        if ($captchaRequerido) {
+            $rules['captcha'] = ['required', 'captcha'];
+        }
+
+        // Valida la request y define mensajes de error en español
+        $validated = $request->validate($rules, [
             'email.required' => 'El email es obligatorio',
             'email.email' => 'El email debe ser válido',
             'password.required' => 'La contraseña es obligatoria',
@@ -26,29 +58,18 @@ class AuthController extends Controller
             'captcha.captcha' => 'El captcha no es correcto',
         ]);
 
-        //Revisa en la session si el usuario está bloqueado y cuanto lleva de bloqueo
-        $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta'); 
-        if ($bloqueadoHasta && now()->lt($bloqueadoHasta)) {
-            $mins = (int) ceil(now()->diffInSeconds($bloqueadoHasta) / 60);
-
-            return response()->json([
-                'success' => false,
-                'message' => "Demasiados intentos. Inténtalo de nuevo en {$mins} min.",
-                'blocked' => true,
-                'minutes_remaining' => $mins,
-            ], 423);
-        }
-
-        //Recoge de la session el contador de fallos que se tenga
-        $intentos = (int) $request->session()->get('login_intentos', 0);
-
-        //Intenta verificar las credenciales con las de base de datos, si no lo consigue acumula intentos
+        // Si el usuario pidió "recordarme"
         $remember = $request->boolean('remember');
+
+        // Intenta autenticar con las credenciales validadas
         if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
+            // Incrementa intentos fallidos en sesión
             $intentos++;
             $request->session()->put('login_intentos', $intentos);
 
-            //Si llegó al maximo de intentos establece los 5 minutos de espera y reinicia los intentos
+            $restantes = $this->maxIntentos - $intentos;
+
+            // Si se excede el máximo, establece bloqueo temporal y borra el contador de intentos
             if ($intentos >= $this->maxIntentos) {
                 $request->session()->put('login_bloqueado_hasta', now()->addMinutes($this->minutosBloqueo));
                 $request->session()->forget('login_intentos');
@@ -58,23 +79,25 @@ class AuthController extends Controller
                     'message' => "Demasiados intentos. Bloqueado {$this->minutosBloqueo} min.",
                     'blocked' => true,
                     'minutes_remaining' => $this->minutosBloqueo,
+                    'show_captcha' => false,
                 ], 423);
             }
 
-            //Si no llegó al limite canta el mensaje de correción con los intentos restantes
+            // Si no está bloqueado pero queda 1 intento, indicar al front que muestre captcha
             return response()->json([
                 'success' => false,
-                'message' => "Credenciales incorrectas. Te quedan " . ($this->maxIntentos - $intentos) . " intento(s).",
+                'message' => "Credenciales incorrectas. Te quedan {$restantes} intento(s).",
                 'blocked' => false,
-                'attempts_remaining' => ($this->maxIntentos - $intentos),
+                'attempts_remaining' => $restantes,
+                'show_captcha' => ($restantes === 1),
             ], 401);
         }
 
-        //Limpia los intentos y el tiempo de espera si consiguió loguearse
-        $request->session()->forget(['login_intentos', 'login_bloqueado_hasta']); // <-- misma clave
+        // Si la autenticación es correcta: limpiar datos de sesión relacionados con login y regenerar
+        $request->session()->forget(['login_intentos', 'login_bloqueado_hasta']);
         $request->session()->regenerate();
 
-        //Redirige al usuario según el rol que tenga
+        // Redirección según rol del usuario autenticado
         $user = Auth::user();
         $redirect = match ($user->role) {
             'admin'   => route('adminPanel'),
@@ -82,20 +105,19 @@ class AuthController extends Controller
             'client'  => url('/'),
             default   => url('/'),
         };
-        
-        return response()->json([
-            'success' => true,
-            'redirect' => $redirect,
-        ]);
+
+        // Respuesta JSON indicando éxito y URL de redirección
+        return response()->json(['success' => true, 'redirect' => $redirect]);
     }
 
-    //Función del logout
+    // Función del logout: cierra sesión y regenera token CSRF
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->session()->invalidate();      // Invalida la sesión actual
+        $request->session()->regenerateToken(); // Regenera token CSRF
 
+        // Si la petición espera JSON, devolver JSON; si no, redirigir a /
         if ($request->expectsJson()) {
             return response()->json(['success' => true, 'redirect' => url('/')]);
         }

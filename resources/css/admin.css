@@ -1,0 +1,241 @@
+/* =========================================================
+   JEDIGA — ADMIN
+   (Solo panel /admin)
+   Archivo de estilos para el panel de administración:
+   contiene wrappers, header, tarjetas KPI, tabs, tablas,
+   filtros, paginación e inputs con temática oscura y acentos
+   cálidos (violeta/amarillo).
+   ========================================================= */
+
+/* Wrapper general del admin (para que las reglas no afecten al resto)
+   - Añade espacio superior para navbar fixed-top y padding inferior. */
+.jg-admin-wrap{
+  padding-top: 110px; /* navbar fixed-top */
+  padding-bottom: 40px;
+}
+
+/* Header del admin (panel superior)
+   - Estilo visual con bordes redondeados, gradientes y sombra. */
+.jg-admin-header{
+  border-radius: calc(var(--jg-radius) + 10px);
+  border: 1px solid var(--jg-border);
+  background:
+    radial-gradient(760px 240px at 18% 0%, rgba(124,58,237,.16), transparent 62%),
+    radial-gradient(720px 240px at 92% 18%, rgba(246,196,83,.12), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  box-shadow: var(--jg-shadow);
+  overflow: hidden;
+}
+
+/* KPI cards
+   - Tarjetas de métricas con borde, fondo degradado y sombra. */
+.jg-admin .jg-kpi{
+  border: 1px solid var(--jg-border);
+  background: linear-gradient(180deg, var(--jg-card2), var(--jg-card));
+  border-radius: var(--jg-radius);
+  box-shadow: 0 14px 50px rgba(0,0,0,.25);
+}
+
+/* Tabs
+   - Contenedor de tabs con gap y fondo translúcido. */
+.jg-admin-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(10px);
+}
+
+/* Estilo general de los links de las tabs */
+.jg-admin-tabs .nav-link{
+  border: 0 !important;
+  background: transparent;
+  border-radius: 14px;
+  padding: .65rem 1rem;
+  color: rgba(255,255,255,.72);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Borde interior de las tabs (pseudo-elemento) */
+.jg-admin-tabs .nav-link::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.14);
+  pointer-events:none;
+}
+
+/* Hover de las tabs */
+.jg-admin-tabs .nav-link:hover{ 
+  color:#fff; 
+}
+
+.jg-admin-tabs .nav-link:hover::after{ 
+  border-color: rgba(246,196,83,.28); 
+}
+
+/* Tab activa: colores y sombra */
+.jg-admin-tabs .nav-link.active{
+  color:#0b0b12;
+  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  box-shadow: 0 16px 45px rgba(124,58,237,.18);
+}
+
+/* Quitar borde del pseudo-elemento en tab activa */
+.jg-admin-tabs .nav-link.active::after{ 
+  border-color: transparent; 
+}
+
+/* Tabla (wrap)
+   - Contenedor de tabla con borde y fondo sutil. */
+.jg-admin .jg-table-wrap{
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.04);
+  overflow: hidden;
+}
+
+/* Tabla (variables bootstrap)
+   - Sobrescribe variables CSS de Bootstrap para adaptar colores. */
+.jg-table{
+  --bs-table-color: var(--jg-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: rgba(255,255,255,.10);
+  --bs-table-striped-bg: rgba(255,255,255,.03);
+  --bs-table-hover-bg: rgba(246,196,83,.06);
+  margin: 0;
+  color: var(--jg-text);
+}
+
+/* Header tabla
+   - Tipografía de título, espaciado de letras y fondo oscuro. */
+.jg-table thead th{
+  font-family: var(--jg-font-title);
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.75);
+  background: rgba(14,14,26,.55) !important;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  white-space: nowrap;
+}
+
+/* Cuerpo tabla transparente para ver el fondo del contenedor */
+.jg-admin .jg-table tbody td,
+.jg-admin .jg-table tbody th{
+  background: transparent !important;
+}
+
+/* Celdas: borde tenue y alineación vertical centrada */
+.jg-table tbody td{
+  border-color: rgba(255,255,255,.08);
+  vertical-align: middle;
+}
+
+/* Hover de filas */
+.jg-table tbody tr:hover{ 
+  background: rgba(246,196,83,.06); 
+}
+
+/* Acciones (botones) con radios más suaves */
+.jg-actions .btn{ 
+  border-radius: 12px; 
+}
+
+/* Filterbar
+   - Barra de filtros con padding y fondo translúcido. */
+.jg-admin .jg-filterbar{
+  border: 1px solid var(--jg-border);
+  border-radius: var(--jg-radius);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+
+/* Chip pequeño reutilizable para etiquetas/filtros */
+.jg-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.25rem .55rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.80);
+  font-size: .85rem;
+}
+
+/* Nota destacada en admin (estilo alerta informativa) */
+.jg-admin-note{
+  border-left: 4px solid rgba(246,196,83,.55);
+  background: rgba(246,196,83,.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* Pagination
+   - Espaciado y estilos para links de paginación. */
+.jg-admin .pagination{ 
+  gap: 10px; 
+}
+
+.jg-admin .page-item .page-link{
+  border: 0 !important;
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  border-radius: 14px;
+  padding: .55rem .9rem;
+  box-shadow: none !important;
+}
+
+.jg-admin .page-item .page-link:hover{
+  background: rgba(246,196,83,.10);
+  color: #fff;
+}
+
+/* Página activa con degradado violeta/amarillo */
+.jg-admin .page-item.active .page-link{
+  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  color: #0b0b12;
+}
+
+/* Página deshabilitada con menor opacidad */
+.jg-admin .page-item.disabled .page-link{
+  opacity: .45;
+  background: rgba(255,255,255,.03);
+}
+
+/* Inputs admin
+   - Estilos para form-control y form-select dentro del admin:
+     fondo, borde y colores adaptados al tema oscuro. */
+.jg-admin .form-control,
+.jg-admin .form-select{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #fff !important;
+}
+
+/* Focus: color de borde y halo violeta suave */
+.jg-admin .form-control:focus,
+.jg-admin .form-select:focus{
+  border-color: rgba(124,58,237,.55) !important;
+  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18) !important;
+}
+
+/* Placeholder con menor intensidad */
+.jg-admin .form-control::placeholder{
+  color: rgba(255,255,255,.55) !important;
+  opacity: 1;
+}
+
+/* Input group text (prefijos/sufijos) */
+.jg-admin .input-group-text{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.85) !important;
+}
+
+/* Ajuste visual para inputs dentro de input-group */
+.jg-admin .input-group .form-control{ border-left: 0 !important; }
