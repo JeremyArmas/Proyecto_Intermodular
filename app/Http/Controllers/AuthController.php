@@ -16,18 +16,6 @@ class AuthController extends Controller
     // Función del login: valida credenciales, gestiona intentos, captcha y bloqueo temporal
     public function login(Request $request)
     {
-        //Valida cada campo del lógin
-        $validated = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ], [
-            'email.required' => 'El email es obligatorio',
-            'email.email' => 'El email debe ser válido',
-            'password.required' => 'La contraseña es obligatoria',
-        ]);
-
-        //Revisa en la session si el usuario está bloqueado y cuanto lleva de bloqueo
-        $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta'); 
         // Comprueba si la sesión tiene un bloqueo activo y si sigue vigente
         $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta');
         if ($bloqueadoHasta && now()->lt($bloqueadoHasta)) {
@@ -112,7 +100,6 @@ class AuthController extends Controller
         // Redirección según rol del usuario autenticado
         $user = Auth::user();
         $redirect = match ($user->role) {
-            'admin'   => route('admin.panel'),
             'admin'   => route('admin.panel'),
             'company' => url('/'),
             'client'  => url('/'),

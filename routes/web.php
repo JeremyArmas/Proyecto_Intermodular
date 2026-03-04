@@ -2,11 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\GameController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PlatformController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\UserController;
+
 use App\Http\Controllers\Admin\AdminController;
 
 //Ruta del home principal
@@ -26,14 +22,6 @@ Route::get('/faq', function() {return view('faq'); });
 
 //Ruta a contacto
 Route::get('/contacto', function() {return view('contacto'); });
-
-
-use App\Http\Controllers\Admin\GameController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PlatformController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\UserController;
-
 //Rutas del login y logout
 Route::get('/login', function () { 
     return redirect('/')->with('error', 'Debes iniciar sesión para acceder.'); 
