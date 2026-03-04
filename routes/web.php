@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PlatformController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminController;
 
 //Ruta del home principal
 Route::get('/', function () { return view('home'); });
@@ -35,9 +41,10 @@ Route::get('/login', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-use App\Http\Controllers\Admin\AdminController;
+//Ruta del captcha a la hora de refrescar
+Route::get('/reload-captcha', function () {return response()->json(['captcha' => captcha_img('flat'),]);})->name('captcha.reload');
 
-// Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
+//Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Vista del panel principal
     Route::get('/', [AdminController::class, 'index'])->name('panel');

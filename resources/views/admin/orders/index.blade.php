@@ -15,6 +15,11 @@
           <h1 class="jg-section-title h3 mb-2" style="display:block;">Pedidos</h1>
           <div class="jg-muted">Historial de compras y gestión logística.</div>
         </div>
+        <div class="d-flex gap-2 align-items-center">
+          <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+          </a>
+        </div>
       </div>
     </div>
 

@@ -16,6 +16,10 @@
           <div class="jg-muted">Catálogo principal de la tienda.</div>
         </div>
         <div class="d-flex gap-2 align-items-center">
+          <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+          </a>
+          
           <a href="{{ route('admin.games.create') }}" class="btn jg-btn jg-btn-primary">
             <i class="bi bi-plus-circle me-1"></i> Añadir juego
           </a>

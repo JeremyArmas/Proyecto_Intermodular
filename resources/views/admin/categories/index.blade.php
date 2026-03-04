@@ -16,6 +16,9 @@
           <div class="jg-muted">Gestión de categorías/géneros publicados.</div>
         </div>
         <div class="d-flex gap-2 align-items-center">
+          <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+          </a>
           <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
             <i class="bi bi-plus-circle me-1"></i> Nueva categoría
           </a>

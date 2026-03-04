@@ -46,7 +46,7 @@
         'mediaSrc' => 'videos/hero3.mp4',
         'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$popular[0]['slug']), 'class'=>'jg-btn-sun'],
         'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?sort=popular'), 'class'=>'jg-btn-primary'],
-        'tertiary' => ['text'=>'Noticias', 'href'=> url('/noticias'), 'class'=>'jg-btn-outline'],
+        'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
       ],
       [
         'pill' => 'Gratis',
@@ -156,7 +156,7 @@
                 </div>
                 <div class="fw-bold">{{ $g['title'] }}</div>
                 <div class="small jg-muted mb-3">{{ $g['desc'] }}</div>
-                <a class="btn jg-btn jg-btn-outline btn-sm" href="{{ url('/juego/'.$g['slug']) }}">Ver ficha</a>
+                <a class="btn jg-btn jg-btn-sun btn-sm" href="{{ url('/juego/'.$g['slug']) }}">Ver ficha</a>
               </div>
             </div>
           </div>

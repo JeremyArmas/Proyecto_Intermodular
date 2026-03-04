@@ -16,6 +16,9 @@
           <div class="jg-muted">Gestión de roles y estado de clientes.</div>
         </div>
         <div class="d-flex gap-2 align-items-center">
+          <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+          </a>
           <a href="{{ route('admin.users.create') }}" class="btn jg-btn jg-btn-primary">
             <i class="bi bi-person-plus me-1"></i> Invitar/Crear
           </a>

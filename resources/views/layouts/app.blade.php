@@ -102,32 +102,28 @@
                 <input class="form-check-input" type="checkbox" name="remember" id="remember">
                 <label class="form-check-label" for="remember">Recordarme</label>
               </div>
-              {{-- si luego haces reset password, aquí pones link --}}
-              {{-- <a href="#" class="link-light small">¿Olvidaste la contraseña?</a> --}}
+         
+              <a href="#" class="link-light small">¿Olvidaste la contraseña?</a>
             </div>
 
             {{-- BLOQUE DEL CAPTCHA --}}
 
-            <div class="mb-3">
-            <label class="form-label">Verificación</label>
+            <div class="mb-3 d-none" id="captchaBlock">
+              <label class="form-label">Verificación</label>
 
-            <div class="d-flex align-items-stretch gap-2 mb-2">
-              <div class="jg-captcha-frame flex-grow-1">
-                {{-- {!! captcha_img('flat') !!} --}}
+              <div class="d-flex align-items-stretch gap-2 mb-2">
+                <div class="jg-captcha-frame flex-grow-1">
+                  {!! captcha_img('flat') !!}
+                </div>
+
+                <button type="button" class="btn jg-captcha-reload" id="reloadCaptcha" aria-label="Recargar captcha">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
               </div>
 
-              <button type="button" class="btn jg-captcha-reload" id="reloadCaptcha" aria-label="Recargar captcha">
-                <i class="bi bi-arrow-clockwise"></i>
-              </button>
+              <input type="text" name="captcha" class="form-control form-control-lg"
+                placeholder="Escribe el texto de la imagen" autocomplete="off">
             </div>
-
-            <input type="text" name="captcha" class="form-control form-control-lg"
-                  placeholder="Escribe el texto de la imagen" autocomplete="off">
-
-            @error('captcha')
-              <div class="text-danger small mt-1">{{ $message }}</div>
-            @enderror
-          </div>
 
             <button type="submit" class="btn btn-jediga w-100 btn-lg">
               Entrar

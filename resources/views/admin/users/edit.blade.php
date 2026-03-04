@@ -15,7 +15,7 @@
           <h1 class="jg-section-title h3 mb-0" style="display:block;">Editar Usuario: {{ $user->name }}</h1>
         </div>
         <div>
-          <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-outline">
+          <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
             <i class="bi bi-arrow-left me-1"></i> Volver
           </a>
         </div>

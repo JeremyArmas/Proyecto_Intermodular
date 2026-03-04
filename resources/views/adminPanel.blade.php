@@ -4,7 +4,16 @@
 
 @section('content')
 @php
-  // Función de ayuda para formatear precios en Blade
+  // Esta vista empezó como maqueta con datos fijos. el controlador
+  // inyecta colecciones reales ($productos, $categorias, $usuarios,
+  // $pedidos) y ya no hace falta sobrescribirlas aquí. retirar este
+  // bloque y adaptar el resto de la plantilla si lo vas a mantener.
+
+  // Si mantienes el `AdminController@index` activo, puedes usar los
+  // KPI que te pasa desde allá; en cualquier caso se calcularán mejor
+  // en el controlador o usando métodos de colección.
+
+  // $fmt sirve para formatear precios, se puede seguir usando.
   $fmt = fn($n) => number_format($n, 2, ',', '.');
 @endphp
 
@@ -30,10 +39,14 @@
           </div>
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
+        <div class="ms-auto">
           <a href="{{ route('admin.games.create') }}" class="btn jg-btn jg-btn-primary">
             <i class="bi bi-plus-circle me-1"></i> Añadir Juego
           </a>
+        </div>
+        
+        <div class="jg-admin-note mt-3 small">
+          Nota: esto es <strong>solo UI</strong>. Los botones están como “placeholder” para cuando conectéis BD + controladores.
         </div>
       </div>
     </div>
@@ -156,9 +169,12 @@
             </div>
 
             <div class="col-12 col-lg-4 d-flex gap-2 justify-content-lg-end">
-              <a href="{{ route('admin.games.index') }}" class="btn jg-btn jg-btn-outline" title="Ir al CRUD completo">
-                <i class="bi bi-table me-1"></i> Ver Catálogo Completo
-              </a>
+              <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
+                <i class="bi bi-download me-1"></i> Exportar
+              </button>
+              <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
+                <i class="bi bi-funnel me-1"></i> Filtro avanzado
+              </button>
             </div>
           </div>
         </div>
@@ -224,6 +240,10 @@
                     <td class="text-nowrap">{{ $p->updated_at->format('Y-m-d') }}</td>
                     <td class="text-end jg-actions">
                       <a href="{{ route('admin.games.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
                 @empty
@@ -233,6 +253,19 @@
             </table>
           </div>
         </div>
+
+        {{-- PAGINACIÓN (placeholder) --}}
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div class="jg-muted small">Mostrando {{ $productos->count() }} de {{ $totalProductos ?? $productos->count() }}</div>
+          {{-- si se implementa paginación, sustituir por links reales --}}
+          <nav aria-label="Paginación" class="ms-auto">
+            <ul class="pagination mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#">«</a></li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item disabled"><a class="page-link" href="#">»</a></li>
+            </ul>
+          </nav>
+        </div>
       </div>
 
       {{-- ===================== PESTAÑA CATEGORÍAS ===================== --}}
@@ -240,13 +273,19 @@
         <div class="jg-card p-3 mb-3">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="h4 mb-1">Top Categorías</div>
-              <div class="jg-muted">Listado rápido de géneros con más popularidad.</div>
+              <div class="h4 mb-1">Categorías</div>
+              <div class="jg-muted">Estructura del catálogo.</div>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.categories.index') }}" class="btn jg-btn jg-btn-outline"><i class="bi bi-table me-1"></i> Ver Todas</a>
-                <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary"><i class="bi bi-plus-circle me-1"></i> Nueva</a>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.categories.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todas las categorías
+              </a>
+              <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Añadir categoría
+              </a>
             </div>
+            
+              
           </div>
         </div>
 
@@ -273,6 +312,10 @@
                     <td class="text-nowrap">{{ $c->created_at->format('Y-m-d') }}</td>
                     <td class="text-end">
                       <a href="{{ route('admin.categories.edit', $c) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
                 @empty
@@ -289,11 +332,16 @@
         <div class="jg-card p-3 mb-3">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="h4 mb-1">Últimos Registros</div>
-              <div class="jg-muted">Nuevas cuentas de clientes y empresas.</div>
+              <div class="h4 mb-1">Usuarios</div>
+              <div class="jg-muted">Gestión de roles y estado.</div>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-outline"><i class="bi bi-table me-1"></i> Ver Todos</a>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todos los usuarios
+              </a>
+              <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Invitar
+              </a>
             </div>
           </div>
         </div>
@@ -324,6 +372,11 @@
                     <td class="text-nowrap">{{ $u->created_at->format('Y-m-d H:i') }}</td>
                     <td class="text-end">
                       <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                      <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
                 @empty
@@ -340,10 +393,18 @@
         <div class="jg-card p-3 mb-3">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="h4 mb-1">Histótico de Ventas</div>
-              <div class="jg-muted">Los últimos pedidos completados o en proceso.</div>
+              <div class="h4 mb-1">Pedidos</div>
+              <div class="jg-muted">Histórico y estados.</div>
             </div>
-            <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-outline"><i class="bi bi-table me-1"></i> Ver Todos los Pedidos</a>
+            <div class="justify-content-end d-flex gap-2">
+              <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-sun">
+                <i class="bi bi-eye me-1"></i> Ver todos los pedidos
+              </a>
+              <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-sun disabled">
+                <i class="bi bi-download me-1"></i> Exportar
+              </a>
+            </div>
+            
           </div>
         </div>
 
@@ -379,6 +440,11 @@
                     <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
                     <td class="text-end">
                       <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
+                      <form action="{{ route('admin.orders.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
                 @empty
@@ -390,6 +456,7 @@
             </table>
           </div>
         </div>
+      </div>
       </div>
 
     </div>
