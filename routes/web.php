@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PlatformController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\OrderController;
 
 //Ruta del home principal
 Route::get('/', function () { return view('home'); });
