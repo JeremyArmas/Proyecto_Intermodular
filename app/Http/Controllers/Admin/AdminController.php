@@ -11,29 +11,24 @@ use App\Models\Order;
 class AdminController extends Controller
 {
     /**
-     * Muestra el resumen y estadÃ­sticas del panel de administración.
+     * Muestra el resumen y estadísticas del panel de administración.
      */
     public function index()
     {
-        // Si prefieres que la ruta principal del panel apunte a este
-        // método, podrías dejar aquí las consultas y devolver la vista con
-        // datos reales. Hoy en día redireccionamos desde la ruta a un CRUD,
-        // así que este controlador puede quedar vacío o eliminarse.
         
-        // Ejemplo de cómo cargar estadísticas reales (opcional):
-        
-        $productos = Game::with(['categories', 'platform'])
-                         ->orderBy('updated_at', 'desc')->take(10)->get();
-        $categorias = Category::withCount('games')
-                              ->orderBy('updated_at', 'desc')->take(10)->get();
+        // Obtiene los últimos productos, categorías, usuarios y pedidos para mostrar en el panel
+        $productos = Game::with(['categories', 'platform'])->orderBy('updated_at', 'desc')->paginate(10)->withQueryString();
+        $categorias = Category::withCount('games')->orderBy('updated_at', 'desc')->take(10)->get();
         $usuarios = User::orderBy('created_at', 'desc')->take(10)->get();
         $pedidos = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
-
+        
+        // Estadísticas generales para mostrar en el panel
         $totalProductos = Game::count();
-        $bajoStock      = Game::where('stock', '>', 0)->where('stock', '<=', 10)->count();
-        $sinStock       = Game::where('stock', 0)->count();
-        $borradores     = Game::where('is_active', false)->count();
+        $bajoStock = Game::where('stock', '>', 0)->where('stock', '<=', 10)->count();
+        $sinStock = Game::where('stock', 0)->count();
+        $borradores = Game::where('is_active', false)->count();
 
+        // Retorna la vista del panel de administración con los datos obtenidos
         return view('/adminPanel', compact(
             'productos',
             'categorias',

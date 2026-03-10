@@ -12,8 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
    - muestra una pantalla de carga y la anima fuera cuando la página carga
    - bloquea el scroll mientras está visible */
 function iniciarPreloader() {
+  
+  // Obtiene el preloader por su ID
   const preloader = document.getElementById('preloader');
-  if (!preloader) return;
+
+  // Si no existe el preloader, no hace nada
+  if (!preloader){
+    return;
+  } 
 
   // Bloquea el scroll mientras se muestra el loader
   document.documentElement.style.overflow = 'hidden';
@@ -27,12 +33,15 @@ function iniciarPreloader() {
 
   // Cuando termina la animación del propio preloader, lo elimina del DOM
   preloader.addEventListener('animationend', (e) => {
+    
     // Ignora animaciones de elementos hijos
     if (e.target !== preloader) return;
+    
     // Asegura que la animación sea la esperada
     if (e.animationName !== 'jgLoaderLeave') return;
 
     preloader.remove();
+    
     // Restaura el scroll
     document.documentElement.style.overflow = '';
   });
@@ -66,10 +75,11 @@ function mostrarIconoContraseña() {
 }
 
 
-/* LÓGICAS BACKEND: LOGIN
-   - realiza la petición de login vía fetch
-   - gestiona errores, recarga de captcha y mensajes al usuario */
+// LÓGICAS BACKEND 
+
+// Login: realiza la petición de login vía fetch, maneja errores, muestra mensajes y controla la visibilidad del captcha según la respuesta del backend
 async function login(form, contenedorErrores) {
+  
   // CSRF token desde meta
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
 
@@ -77,6 +87,7 @@ async function login(form, contenedorErrores) {
     const res = await fetch(form.action, {
       method: 'POST',
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+      credentials: 'include',
       body: new FormData(form),
     });
 
@@ -89,16 +100,31 @@ async function login(form, contenedorErrores) {
     // Intenta parsear JSON (fallback a objeto vacío si falla)
     const data = await res.json().catch(() => ({}));
 
+    // Elemento del bloque de captcha para mostrar/ocultar según la respuesta
     const captchaBlock = document.getElementById('captchaBlock');
 
+    // Muestra el bloque de captcha
     const mostrarCaptcha = () => {
-      if (!captchaBlock) return;
+      
+      // Si no existe el bloque de captcha, no hace nada
+      if (!captchaBlock){
+        return; 
+      } 
+      
+      // Oculta el bloque de captcha para evitar mostrarlo innecesariamente
       captchaBlock.classList.remove('d-none');
       document.getElementById('reloadCaptcha')?.click(); // recarga la imagen
     };
 
+    // Oculta el bloque de captcha
     const ocultarCaptcha = () => {
-      if (!captchaBlock) return;
+      
+      // Si no existe el bloque de captcha, no hace nada
+      if (!captchaBlock){
+        return;
+      } 
+      
+      // Oculta el bloque de captcha para evitar mostrarlo innecesariamente 
       captchaBlock.classList.add('d-none');
     };
 
@@ -166,22 +192,10 @@ async function login(form, contenedorErrores) {
   }
 }
 
-/* Añade listener al formulario de login para usar la función login() */
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('#loginModal form');
-  const contenedorErrores = document.getElementById('contenedorErrores');
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    login(form, contenedorErrores);
-  });
-});
-
-
-/* LOGOUT
-   - petición POST a /logout y redirección al recibir success */
+// Logout: realiza la petición de logout vía fetch, maneja errores y redirige según respuesta
 async function logout() {
+  
+  // CSRF token desde meta
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
 
   try {
@@ -190,17 +204,36 @@ async function logout() {
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
     });
 
+    // Intenta parsear JSON 
     const data = await res.json().catch(() => ({}));
 
+    // Si el logout fue exitoso, redirige a la URL recibida; si no, muestra un error
     if (!res.ok || !data.success) {
       throw new Error(data.message || 'No se pudo cerrar sesión');
     }
 
+    // Redirige tras logout exitoso
     window.location.href = data.redirect || '/';
   } catch (err) {
     alert(err.message || 'Error de red. Inténtalo de nuevo.');
   }
 }
+
+/* Añade listener al formulario de login para usar la función login() */
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('#loginModal form');
+  const contenedorErrores = document.getElementById('contenedorErrores');
+  
+  if (!form){
+    return;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    login(form, contenedorErrores);
+  });
+});
+
 
 /* NAV COLLAPSE (móvil/tablet)
    - controla la apertura/ cierre del panel de navegación en dispositivos pequeños
@@ -209,37 +242,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggles = document.querySelectorAll('[data-jg-nav-toggle], #jgNavToggle');
   const esTabletMovil = () => window.innerWidth < 992;
 
+  // Para cada botón que controla un panel de navegación, asigna los eventos necesarios para abrir/cerrar el panel y gestionar la accesibilidad
   toggles.forEach((btn) => {
+    
+    // Obtiene el ID del panel asociado al botón a través del atributo aria-controls, o usa un ID por defecto si no se especifica
     const id = btn.getAttribute('aria-controls') || 'navJediga';
+    
+    // Busca el panel en el DOM usando el ID obtenido
     const panel = document.getElementById(id);
-    if (!panel) return;
+    
+    // Si no se encuentra el panel asociado al botón, no hacer nada (evita errores en consola)
+    if (!panel){
+      return;
+    } 
 
+    // Funciones para abrir y cerrar el panel, que también actualizan el atributo aria-expanded para mejorar la accesibilidad
     const open = () => {
       panel.classList.add('is-open');
       btn.setAttribute('aria-expanded', 'true');
     };
+
     const close = () => {
       panel.classList.remove('is-open');
       btn.setAttribute('aria-expanded', 'false');
     };
 
+    // Al hacer click en el botón, alterna el panel solo si estamos en móvil/tablet; en escritorio no interferir con el comportamiento normal (por ejemplo, si es un dropdown)
     btn.addEventListener('click', (e) => {
-      // En escritorio no interferir con comportamiento normal
-      if (!esTabletMovil()) return;
+
+      // En escritorio no interfiere con comportamiento normal
+      if (!esTabletMovil()){
+        return;
+      } 
 
       e.preventDefault();
+      
+      // Alterna el panel: si ya está abierto, lo cierra; si está cerrado, lo abre
       panel.classList.contains('is-open') ? close() : open();
     });
 
-    // Si se pulsa un enlace dentro del panel, cerrarlo (salvo toggles de dropdown)
+    // Si se pulsa un enlace dentro del panel, lo cierra (salvo toggles de dropdown)
     panel.querySelectorAll('a').forEach(a => {
+      
+      // Al hacer click en un enlace dentro del panel, si estamos en móvil/tablet y el enlace no es un toggle de dropdown, cierra el panel para mejorar la navegación
       a.addEventListener('click', () => {
-        if (!esTabletMovil()) return;
+        
+        // En escritorio no interfiere con comportamiento normal de los enlaces
+        if (!esTabletMovil()){
+          return; 
+        } 
 
-        const isDropdownToggle =
-          a.classList.contains('dropdown-toggle') ||
-          a.getAttribute('data-bs-toggle') === 'dropdown';
+        // Si el enlace es un toggle de dropdown (tiene clase o atributo específico), no cierra el panel para permitir la interacción con el dropdown 
+        const isDropdownToggle = a.classList.contains('dropdown-toggle') || a.getAttribute('data-bs-toggle') === 'dropdown';
 
+        // Si no es un toggle de dropdown, cierra el panel para mejorar la navegación en móvil/tablet, evitando que el menú quede abierto
         if (isDropdownToggle) return;
         close();
       });
@@ -269,12 +325,18 @@ document.addEventListener('DOMContentLoaded', () => {
    - inicializa el slider si existe y sincroniza la reproducción de vídeos
    - autoplay con pausa en interacción del usuario */
 document.addEventListener('DOMContentLoaded', () => {
-  const el = document.querySelector('.jg-hero-swiper');
-  if (!el || typeof window.Swiper === 'undefined') return;
+  const swiperJG = document.querySelector('.jg-hero-swiper');
+  
+  // Si no hay slider o Swiper no está cargado, no hacer nada
+  if (!swiperJG || typeof window.Swiper === 'undefined'){
+    return;
+  } 
 
-  const contenedor = el.closest('.jg-hero-container') || el.parentElement;
+  // Busca el contenedor principal del slider para asignar correctamente los botones de navegación, ya sea un elemento padre directo o un contenedor específico
+  const contenedor = swiperJG.closest('.jg-hero-container') || swiperJG.parentElement;
 
-  const swiper = new Swiper(el, {
+  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto fade, autoplay cada 5.4s con pausa al interactuar o al pasar el mouse, paginación clicable y navegación con flechas
+  const swiper = new Swiper(swiperJG, {
     loop: true,
     speed: 600,
     effect: 'fade',
@@ -285,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pauseOnMouseEnter: true,
     },
     pagination: {
-      el: el.querySelector('.swiper-pagination'),
+      el: swiperJG.querySelector('.swiper-pagination'),
       clickable: true,
     },
     navigation: {
@@ -296,14 +358,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sincroniza vídeos: pausa todos y reproduce solo el del slide activo
   const syncVideos = () => {
-    el.querySelectorAll('video').forEach(v => {
-      v.pause();
-      v.currentTime = 0;
+    
+    // Pausa y reinicia todos los vídeos para evitar que sigan sonando al cambiar de slide
+    swiperJG.querySelectorAll('video').forEach(vid => {
+      vid.pause();
+      vid.currentTime = 0;
     });
-    const activeVideo = el.querySelector('.swiper-slide-active video');
+    
+    // Reproduce el vídeo del slide activo, si existe (algunos slides pueden no tener vídeo)
+    const activeVideo = swiperJG.querySelector('.swiper-slide-active video');
+    
+    // El método play() devuelve una promesa que puede ser rechazada si el navegador bloquea la reproducción automática, por eso se maneja con catch para evitar errores no controlados en la consola
     if (activeVideo) {
-      const p = activeVideo.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
+      const play = activeVideo.play();
+      
+      // Si la promesa es rechazada (por ejemplo, por bloqueo de autoplay), se captura el error para evitar que se muestre en la consola, pero no es necesario hacer nada más en ese caso
+      if (play && typeof play.catch === 'function'){
+        play.catch(() => {});
+      } 
     }
   };
 
@@ -320,15 +392,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const frame = document.querySelector('.jg-captcha-frame');
   const input = document.querySelector('input[name="captcha"]');
 
-  if (!btn || !frame) return;
+  // Si no se encuentran el btn o el frame, devuelve
+  if (!btn || !frame){
+    return;
+  } 
 
+  // Función para recargar el captcha: hace una petición al backend y actualiza el contenido del frame
   const recargarCaptcha = async () => {
+    
+    // Deshabilita el botón mientras se carga para evitar múltiples clicks
     btn.disabled = true;
+    
+    // Agrega un timestamp a la URL para evitar caché
     try {
       const res = await fetch(`/reload-captcha?_=${Date.now()}`, {
         headers: { 'Accept': 'application/json' },
       });
+
       const data = await res.json();
+      
+      // Si el backend devuelve un nuevo captcha, actualiza el contenido del frame y limpia el input
       if (data?.captcha) {
         frame.innerHTML = data.captcha;
         if (input) input.value = '';
@@ -340,8 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Agrega el listener al botón de recarga
   btn.addEventListener('click', recargarCaptcha);
 
-  // Si se desea recargar al abrir el modal, se puede descomentar:
-  // document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
+  // Recarga al abrir el modal
+  document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });

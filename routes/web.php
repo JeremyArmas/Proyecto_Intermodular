@@ -1,7 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+
+//Web Controllers
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\AuthController as WebAuthController;
+
+//Admin Controllers
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PlatformController;
@@ -10,7 +15,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
 
 //Ruta del home principal
-Route::get('/', function () { return view('home'); });
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 //Ruta a sobre nosotros
 Route::get('/sobre-nosotros', function() {return view('sobre-nosotros'); });
@@ -27,10 +32,9 @@ Route::get('/faq', function() {return view('faq'); });
 //Ruta a contacto
 Route::get('/contacto', function() {return view('contacto'); });
 
-
 //Rutas del login y logout
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/login', [WebAuthController::class, 'login'])->name('login');
+Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar
 Route::get('/reload-captcha', function () {return response()->json(['captcha' => captcha_img('flat'),]);})->name('captcha.reload');

@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a creada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categorí­a creada correctamente.');
     }
 
     /**
@@ -45,7 +45,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return view('admin.categories.show', compact('category')); // Optional, though not explicitly required
+        return view('admin.categories.show', compact('category'));
     }
 
     /**
@@ -68,7 +68,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a actualizada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categorí­a actualizada correctamente.');
     }
 
     /**
@@ -77,6 +77,6 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'CategorÃ­a eliminada correctamente.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categorí­a eliminada correctamente.');
     }
 }

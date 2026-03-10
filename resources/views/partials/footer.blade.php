@@ -1,6 +1,7 @@
 <footer class="py-5">
     <div class="container">
       <div class="row g-4">
+        
         <!-- Marca -->
         <div class="col-md-4">
           <div class="d-flex align-items-center gap-3 mb-2">
@@ -26,6 +27,7 @@
             <option>LatAm (USD)</option>
           </select>
 
+          <!-- Enlaces legales -->
           <div class="mt-3 d-flex flex-wrap gap-3 small">
             <a class="jg-link-muted" href="{{ url('/aviso-legal') }}">Aviso legal</a>
             <a class="jg-link-muted" href="{{ url('/privacidad') }}">Privacidad</a>
@@ -41,10 +43,11 @@
           <div class="d-flex gap-2">
             <a class="social-btn" href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
             <a class="social-btn" href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-            <a class="social-btn" href="#" aria-label="Twitch"><i class="bi bi-twitch"></i></a>
+            <a class="social-btn" href="#" aria-label="x (Twitter)"><i class="bi bi-twitter-x"></i></a>
             <a class="social-btn" href="#" aria-label="Discord"><i class="bi bi-discord"></i></a>
           </div>
 
+          <!-- Enlaces de soporte -->
           <div class="mt-3 small jg-muted">
             ¿Necesitas ayuda? Visita <a class="jg-link-muted" href="{{ url('/soporte') }}">Soporte</a> o <a class="jg-link-muted" href="{{ url('/faq') }}">FAQ</a>.
           </div>

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +19,9 @@ class AuthController extends Controller
     {
         // Comprueba si la sesión tiene un bloqueo activo y si sigue vigente
         $bloqueadoHasta = $request->session()->get('login_bloqueado_hasta');
+        
         if ($bloqueadoHasta && now()->lt($bloqueadoHasta)) {
+            
             // Calcula minutos restantes (redondeando hacia arriba)
             $mins = (int) ceil(now()->diffInSeconds($bloqueadoHasta) / 60);
 
@@ -63,6 +66,7 @@ class AuthController extends Controller
 
         // Intenta autenticar con las credenciales validadas
         if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
+            
             // Incrementa intentos fallidos en sesión
             $intentos++;
             $request->session()->put('login_intentos', $intentos);
@@ -110,14 +114,20 @@ class AuthController extends Controller
         return response()->json(['success' => true, 'redirect' => $redirect]);
     }
 
-    // Función del logout: cierra sesión y regenera token CSRF
+    // Función del logout: cierra sesión, limpia remember_token y regenera token CSRF
     public function logout(Request $request)
     {
+        // Limpia el remember_token del usuario antes de logout
+        $user = Auth::user();
+        if ($user) {
+            $user->update(['remember_token' => null]);
+        }
+
         Auth::logout();
-        $request->session()->invalidate();      // Invalida la sesión actual
+        $request->session()->invalidate(); // Invalida la sesión actual
         $request->session()->regenerateToken(); // Regenera token CSRF
 
-        // Si la petición espera JSON, devolver JSON; si no, redirigir a /
+        // Si la petición espera JSON, devolver JSON; si no, redirigir a home
         if ($request->expectsJson()) {
             return response()->json(['success' => true, 'redirect' => url('/')]);
         }

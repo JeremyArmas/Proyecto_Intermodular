@@ -3,6 +3,8 @@
 @section('title', 'Editar Usuario • Administración')
 
 @section('content')
+
+<!-- Vista para editar un usuario existente en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container" style="max-width: 800px;">
     <div class="jg-admin-header p-4 mb-4">
@@ -22,6 +24,7 @@
       </div>
     </div>
 
+    <!-- Muestra mensaje de error si hay problemas con la validación del formulario -->
     @if ($errors->any())
         <div class="alert alert-danger" style="background-color: var(--jg-sun-fade); border-color: var(--jg-sun); color: #fff;">
             <ul>
@@ -32,34 +35,43 @@
         </div>
     @endif
 
+    <!-- Formulario para editar los detalles del usuario, incluyendo nombre, email, rol y contraseña -->
     <div class="jg-card p-4">
       <form action="{{ route('admin.users.update', $user) }}" method="POST">
         @csrf
+        
+        <!-- Usamos el método PUT para actualizar el usuario existente -->
         @method('PUT')
 
+
+        <!-- Campo para el nombre del usuario -->
         <div class="mb-3">
           <label for="name" class="form-label text-white">Nombre</label>
           <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
         </div>
 
-        <div class="mb-3">
+        <!-- Campo para el email del usuario -->
+         <div class="mb-3">
           <label for="email" class="form-label text-white">Email</label>
           <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
         </div>
 
-        <div class="mb-4">
+        <!-- Campo para seleccionar el rol del usuario -->
+         <div class="mb-3">
           <label for="role" class="form-label text-white">Rol</label>
           <select class="form-select" id="role" name="role" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
-            <option value="client" {{ old('role', $user->role) == 'client' ? 'selected' : '' }}>Cliente B2C</option>
-            <option value="company" {{ old('role', $user->role) == 'company' ? 'selected' : '' }}>Empresa B2B</option>
+            <option value="client" {{ old('role', $user->role) == 'client' ? 'selected' : '' }}>Cliente</option>
+            <option value="company" {{ old('role', $user->role) == 'company' ? 'selected' : '' }}>Empresa</option>
             <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
           </select>
         </div>
 
+        <!-- Sección para cambiar la contraseña del usuario, con campos opcionales para la nueva contraseña y su confirmación -->
         <hr style="border-color: rgba(255,255,255,0.1);">
         <h5 class="text-white mb-3">Cambiar contraseña (opcional)</h5>
         <div class="form-text jg-muted mb-3">Deja estos campos en blanco si no quieres cambiar la contraseña actual del usuario.</div>
 
+        <!-- Campos para la nueva contraseña -->
         <div class="row mb-4">
           <div class="col-md-6 mb-3 mb-md-0">
             <label for="password" class="form-label text-white">Nueva Contraseña</label>
@@ -71,11 +83,13 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-end">
+        <!-- Botón para enviar el formulario y actualizar el usuario -->
+         <div class="d-flex justify-content-end">
           <button type="submit" class="btn jg-btn jg-btn-primary">
             Actualizar usuario
           </button>
-        </div>
+          </div>
+
       </form>
     </div>
   </div>

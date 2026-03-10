@@ -3,6 +3,8 @@
 @section('title', 'Editar Plataforma • Administración')
 
 @section('content')
+
+<!-- Vista para editar una plataforma existente en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container" style="max-width: 800px;">
     <div class="jg-admin-header p-4 mb-4">
@@ -22,11 +24,15 @@
       </div>
     </div>
 
+    <!-- Muestra mensaje de éxito después de guardar la plataforma -->
     <div class="jg-card p-4">
       <form action="{{ route('admin.platforms.update', $platform) }}" method="POST">
         @csrf
+        
+        <!-- Usamos el método PUT para actualizar la plataforma existente -->
         @method('PUT')
 
+        <!-- Campo para el nombre de la plataforma, con validación y estilos personalizados -->
         <div class="mb-3">
           <label for="name" class="form-label text-white">Nombre</label>
           <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $platform->name) }}" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
@@ -35,6 +41,7 @@
           @enderror
         </div>
 
+        <!-- Campo para el slug de la plataforma, con validación y estilos personalizados -->
         <div class="mb-4">
           <label for="slug" class="form-label text-white">Slug (URL amigable)</label>
           <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug', $platform->slug) }}" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
@@ -43,7 +50,8 @@
           @enderror
         </div>
 
-        <div class="d-flex justify-content-end">
+        <!-- Botón para enviar el formulario y actualizar la plataforma -->
+         <div class="d-flex justify-content-end">
           <button type="submit" class="btn jg-btn jg-btn-primary">
             Actualizar plataforma
           </button>

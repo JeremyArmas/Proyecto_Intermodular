@@ -3,6 +3,8 @@
 @section('title', 'Actualizar Pedido • Administración')
 
 @section('content')
+
+<!-- Vista para editar el estado de un pedido en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container" style="max-width: 600px;">
     <div class="jg-admin-header p-4 mb-4">
@@ -22,6 +24,7 @@
       </div>
     </div>
 
+    <!-- Mostrar errores de validación si los hay -->
     @if ($errors->any())
         <div class="alert alert-danger" style="background-color: var(--jg-sun-fade); border-color: var(--jg-sun); color: #fff;">
             <ul>
@@ -32,6 +35,7 @@
         </div>
     @endif
 
+    <!-- Tarjeta con el formulario para actualizar el estado del pedido -->
     <div class="jg-card p-4">
       <div class="mb-4">
         <p class="mb-1"><strong>Cliente:</strong> {{ $order->user->name ?? 'Usuario Eliminado' }}</p>
@@ -39,10 +43,14 @@
         <p class="mb-0"><strong>Fecha:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
       </div>
     
+      <!-- Formulario para actualizar el estado del pedido -->
       <form action="{{ route('admin.orders.update', $order) }}" method="POST">
         @csrf
+        
+        <!-- Usamos el método PUT para actualizar el pedido -->
         @method('PUT')
 
+        <!-- Campo para seleccionar el nuevo estado del pedido -->
         <div class="mb-4">
           <label for="status" class="form-label text-white">Estado del pedido</label>
           <select class="form-select" id="status" name="status" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
@@ -56,6 +64,7 @@
           </div>
         </div>
 
+        <!-- Botón para guardar los cambios -->
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn jg-btn jg-btn-primary w-100">
             Guardar cambios

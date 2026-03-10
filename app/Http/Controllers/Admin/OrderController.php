@@ -23,7 +23,7 @@ class OrderController extends Controller
     public function create()
     {
         // Generalmente no se crean pedidos manualmente desde aquÃ­
-        return redirect()->route('admin.orders.index')->with('error', 'La creaciÃ³n manual de pedidos no estÃ¡ habilitada.');
+        return redirect()->route('admin.orders.index')->with('error', 'La creación manual de pedidos no está habilitada.');
     }
 
     /**
@@ -39,7 +39,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load(['user']); // Cargar tambiÃ©n los items si existieran luego
+        $order->load(['user']); // Cargar también los items si existieran luego
         return view('admin.orders.show', compact('order'));
     }
 

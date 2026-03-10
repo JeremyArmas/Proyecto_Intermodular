@@ -3,6 +3,8 @@
 @section('title', 'Categorías • Administración')
 
 @section('content')
+
+<!-- Vista para listar y gestionar las categorías de juegos en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container">
     <div class="jg-admin-header p-4 mb-4">
@@ -16,9 +18,13 @@
           <div class="jg-muted">Gestión de categorías/géneros publicados.</div>
         </div>
         <div class="d-flex gap-2 align-items-center">
+          
+          <!-- Botón para volver al panel de administración -->
           <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-outline">
             <i class="bi bi-arrow-left me-1"></i> Volver
           </a>
+          
+          <!-- Botón para crear una nueva categoría -->
           <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
             <i class="bi bi-plus-circle me-1"></i> Nueva categoría
           </a>
@@ -26,12 +32,14 @@
       </div>
     </div>
 
+    <!-- Mostrar mensaje de éxito después de crear/editar/eliminar una categoría -->
     @if(session('success'))
       <div class="alert alert-success mt-3" style="background-color: var(--jg-mint-fade); border-color: var(--jg-mint); color: #fff;">
         {{ session('success') }}
       </div>
     @endif
 
+    <!-- Tabla con el listado de categorías -->
     <div class="jg-card p-3 mb-3">
       <div class="jg-table-wrap">
         <div class="table-responsive">
@@ -46,8 +54,12 @@
               </tr>
             </thead>
             <tbody>
+              
+              <!-- Itera sobre las categorías y las muestra en la tabla -->
               @forelse($categories as $c)
                 <tr>
+                  
+                  <!-- Muestra el ID, nombre, slug, fecha de actualización y acciones para cada categoría -->
                   <td>#{{ $c->id }}</td>
                   <td class="fw-bold">{{ $c->name }}</td>
                   <td><span class="badge badge-soft">{{ $c->slug }}</span></td>

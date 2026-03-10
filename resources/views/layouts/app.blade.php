@@ -27,7 +27,7 @@
 
 <body>
 
-  {{-- Animación de refrescar --}}
+  <!-- Animación del preloader -->
   <div class="loader-wrap" id="preloader" aria-hidden="true">
     <div class="loader-wrap-heading">
       <div class="load-load-text">
@@ -41,14 +41,17 @@
     </div>
   </div>
 
-  <!-- Modal del login -->
+
+  <!-- Modal (ventana emergente) del login -->
 <div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content overflow-hidden border-0">
       <div class="row g-0">
 
-        {{-- IZQUIERDA: panel branding --}}
+        <!-- IZQUIERDA: panel branding -->
       <div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
+        
+        <!-- Contenedor del logo -->
         <div class="login-modal__left-inner">
           <a href="{{ url('/') }}" class="login-modal__mark" aria-label="Ir a inicio">
             <img class="login-modal__mark-img"
@@ -58,22 +61,28 @@
         </div>
       </div>
 
-        {{-- DERECHA: formulario --}}
+        <!-- DERECHA: formulario -->
         <div class="col-lg-8 col-md-8 login-modal__right">
           <div class="modal-head mb-3">
+            
+            <!-- Título del modal -->
             <div>
               <h2>Iniciar sesión</h2>
               <div class="opacity-75 small">Accede con tu cuenta</div>
             </div>
 
+            <!-- Botón para cerrar el modal -->
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
 
+          <!-- Contenedor para mostrar errores generales -->
           <div id="contenedorErrores" class="alert alert-danger d-none mb-3"></div>
 
+          <!-- Formulario de login -->
           <form method="POST" action="{{ route('login') }}" class="mt-3">
             @csrf
 
+            <!-- Campo de email -->
             <div class="mb-3">
               <label class="form-label">Email</label>
               <input type="email" name="email" class="form-control form-control-lg" value="{{ old('email') }}" required autofocus placeholder="tuemail@ejemplo.com">
@@ -82,6 +91,7 @@
               @enderror
             </div>
 
+            <!-- Campo de contraseña con botón para mostrar/ocultar -->
             <div class="mb-3">
               <label class="form-label">Contraseña</label>
                 
@@ -97,6 +107,7 @@
               @enderror
             </div>
 
+            <!-- Bloque con checkbox de "Recordarme" y enlace de "¿Olvidaste la contraseña?" -->
             <div class="d-flex justify-content-between align-items-center mb-4">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="remember" id="remember">
@@ -106,8 +117,8 @@
               <a href="#" class="link-light small">¿Olvidaste la contraseña?</a>
             </div>
 
-            {{-- BLOQUE DEL CAPTCHA --}}
 
+            <!-- Bloque de captcha, inicialmente oculto, se mostrará después de varios intentos fallidos -->
             <div class="mb-3 d-none" id="captchaBlock">
               <label class="form-label">Verificación</label>
 
@@ -136,29 +147,34 @@
   </div>
 </div>
 
-{{-- Capa de fondo --}}
+<!-- Fondo decorativo del sitio -->
 <div class="jg-site-bg" aria-hidden="true"></div>
 
-{{-- Navbar --}}
+<!-- Navbar (Barra de navegación) -->
 @php
+  // Verifica si la ruta actual es una ruta de administrador y si el usuario lo es
   $isAdminRoute = request()->is('admin*');
   $isAdmin = auth()->check() && auth()->user()->isAdmin();
 @endphp
 
+<!-- Incluye la barra de navegación correspondiente según el tipo de usuario -->
 @if($isAdminRoute && $isAdmin)
   @include('partials.navbar-admin')
 @else
   @include('partials.navbar-public')
 @endif
 
+<!-- Contenedor principal donde se renderizará el contenido específico de cada página -->
 <main>
   @yield('content')
 </main>
 
-{{-- Footer --}}
+<!-- Footer -->
 @include('partials.footer')
+
 <!-- Link Bootstrap js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- Link Swiper js -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 @stack('scripts')

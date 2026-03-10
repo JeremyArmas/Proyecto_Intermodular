@@ -45,7 +45,7 @@ class PlatformController extends Controller
      */
     public function show(Platform $platform)
     {
-        return view('admin.platforms.show', compact('platform')); // Optional
+        return view('admin.platforms.show', compact('platform'));
     }
 
     /**

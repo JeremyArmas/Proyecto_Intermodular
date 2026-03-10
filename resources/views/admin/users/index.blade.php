@@ -3,6 +3,8 @@
 @section('title', 'Usuarios • Administración')
 
 @section('content')
+
+<!-- Vista para listar y gestionar los usuarios en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container">
     <div class="jg-admin-header p-4 mb-4">
@@ -26,12 +28,14 @@
       </div>
     </div>
 
+    <!-- Muestra mensaje de error si hay problemas con la validación del formulario -->
     @if(session('success'))
       <div class="alert alert-success mt-3" style="background-color: var(--jg-mint-fade); border-color: var(--jg-mint); color: #fff;">
         {{ session('success') }}
       </div>
     @endif
 
+    <!-- Tabla para listar los usuarios con opciones de edición y eliminación -->
     <div class="jg-card p-3 mb-3">
       <div class="jg-table-wrap">
         <div class="table-responsive">
@@ -47,11 +51,16 @@
               </tr>
             </thead>
             <tbody>
+              
+              <!-- Recorremos los usuarios y mostramos cada uno en una fila de la tabla, con opciones para editar o eliminar -->
               @forelse($users as $u)
+                
+                <!-- Asignamos una clase de badge diferente según el rol del usuario para mejorar la visualización -->
                 @php
-                  // 'client', 'company', 'admin'
                   $bRol = $u->role === 'admin' ? 'badge-sun' : ($u->role === 'company' ? 'badge-soft' : 'badge-mint');
                 @endphp
+                
+                <!-- Fila de la tabla para cada usuario, mostrando su ID, nombre, email, rol y fecha de alta, junto con botones para editar o eliminar -->
                 <tr>
                   <td>#{{ $u->id }}</td>
                   <td class="fw-bold">{{ $u->name }}</td>

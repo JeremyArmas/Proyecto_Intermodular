@@ -3,6 +3,8 @@
 @section('title', 'Plataformas • Administración')
 
 @section('content')
+
+<!-- Vista para listar y gestionar las plataformas en el panel de administración -->
 <div class="jg-admin jg-admin-wrap">
   <div class="container">
     <div class="jg-admin-header p-4 mb-4">
@@ -23,12 +25,14 @@
       </div>
     </div>
 
+    <!-- Muestra mensaje de éxito después de una acción -->
     @if(session('success'))
       <div class="alert alert-success mt-3" style="background-color: var(--jg-mint-fade); border-color: var(--jg-mint); color: #fff;">
         {{ session('success') }}
       </div>
     @endif
 
+    <!-- Tabla para listar las plataformas con opciones de edición y eliminación -->
     <div class="jg-card p-3 mb-3">
       <div class="jg-table-wrap">
         <div class="table-responsive">
@@ -43,6 +47,8 @@
               </tr>
             </thead>
             <tbody>
+              
+              <!-- Recorremos las plataformas y mostramos cada una en una fila de la tabla, con opciones para editar o eliminar -->
               @forelse($platforms as $p)
                 <tr>
                   <td>#{{ $p->id }}</td>
