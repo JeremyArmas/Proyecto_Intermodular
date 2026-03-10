@@ -59,7 +59,7 @@ class GameController extends Controller
             $game->categories()->sync($validated['categories']);
         }
 
-        return redirect()->route('admin.games.index')->with('success', 'Juego creado correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Juego creado correctamente.');
     }
 
     /**
@@ -117,7 +117,7 @@ class GameController extends Controller
             $game->categories()->sync([]);
         }
 
-        return redirect()->route('admin.games.index')->with('success', 'Juego actualizado correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Juego actualizado correctamente.');
     }
 
     /**
@@ -131,6 +131,6 @@ class GameController extends Controller
         $game->categories()->detach();
         $game->delete();
 
-        return redirect()->route('admin.games.index')->with('success', 'Juego eliminado correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Juego eliminado correctamente.');
     }
 }

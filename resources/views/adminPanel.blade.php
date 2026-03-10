@@ -44,10 +44,6 @@
             <i class="bi bi-plus-circle me-1"></i> Añadir Juego
           </a>
         </div>
-        
-        <div class="jg-admin-note mt-3 small">
-          Nota: esto es <strong>solo UI</strong>. Los botones están como “placeholder” para cuando conectéis BD + controladores.
-        </div>
       </div>
     </div>
 
@@ -244,6 +240,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
                 @empty
@@ -316,6 +313,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                      </form>
                     </td>
                   </tr>
                 @empty
@@ -339,8 +337,8 @@
               <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-sun">
                 <i class="bi bi-eye me-1"></i> Ver todos los usuarios
               </a>
-              <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
-                <i class="bi bi-plus-circle me-1"></i> Invitar
+              <a href="{{ route('admin.users.create') }}" class="btn jg-btn jg-btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Añadir Usuario
               </a>
             </div>
           </div>
@@ -423,24 +421,24 @@
                 </tr>
               </thead>
               <tbody>
-                @forelse($pedidos as $p)
+                @forelse($pedidos as $order)
                   @php
-                    $bOrder = $p->status === 'paid' ? 'badge-primary' : ($p->status === 'shipped' ? 'badge-mint' : ($p->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
+                    $bOrder = $order->status === 'paid' ? 'badge-primary' : ($order->status === 'shipped' ? 'badge-mint' : ($order->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
                     $st = ['pending'=>'Pendiente','paid'=>'Pagado','shipped'=>'Enviado','cancelled'=>'Cancelado'];
                   @endphp
                   <tr>
-                    <td><span class="fw-bold">#{{ str_pad($p->id, 5, '0', STR_PAD_LEFT) }}</span></td>
+                    <td><span class="fw-bold">#{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</span></td>
                     <td>
-                        {{ $p->user->name ?? 'Usuario borrado' }}<br>
-                        <small class="jg-muted">{{ $p->user->email ?? '--' }}</small>
+                        {{ $order->user->name ?? 'Usuario borrado' }}<br>
+                        <small class="jg-muted">{{ $order->user->email ?? '--' }}</small>
                     </td>
-                    <td><span class="badge badge-soft">{{ strtoupper($p->order_type) }}</span></td>
-                    <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->total_amount) }} €</td>
-                    <td><span class="badge {{ $bOrder }}">{{ $st[$p->status] ?? $p->status }}</span></td>
-                    <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
+                    <td><span class="badge badge-soft">{{ strtoupper($order->order_type) }}</span></td>
+                    <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($order->total_amount) }} €</td>
+                    <td><span class="badge {{ $bOrder }}">{{ $st[$order->status] ?? $order->status }}</span></td>
+                    <td class="text-nowrap">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                     <td class="text-end">
-                      <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
-                      <form action="{{ route('admin.orders.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                      <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
+                      <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
@@ -457,8 +455,6 @@
           </div>
         </div>
       </div>
-      </div>
-
     </div>
   </div>
 </div>
