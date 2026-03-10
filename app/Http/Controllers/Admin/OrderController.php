@@ -62,7 +62,7 @@ class OrderController extends Controller
 
         $order->update($validated);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Estado del pedido actualizado correctamente.');
+        return redirect()->route('admin.panel', ['#pedidos'])->with('success', 'Estado del pedido actualizado correctamente.');
     }
 
     /**
@@ -71,6 +71,6 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         $order->delete();
-        return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado de la base de datos.');
+        return redirect()->route('admin.panel', ['#pedidos'])->with('success', 'Pedido eliminado de la base de datos.');
     }
 }

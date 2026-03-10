@@ -41,7 +41,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('admin.panel', ['#usuarios'])->with('success', 'Usuario creado correctamente.');
     }
 
     /**
@@ -84,7 +84,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('admin.panel', ['#usuarios'])->with('success', 'Usuario actualizado correctamente.');
     }
 
     /**

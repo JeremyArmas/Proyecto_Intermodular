@@ -72,7 +72,7 @@ class AdminCrudTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('admin.games.store'), $gameData);
 
-        $response->assertRedirect(route('admin.games.index'));
+        $response->assertRedirect(route('admin.panel', ['#productos']));
         $this->assertDatabaseHas('games', ['title' => 'New Test Game']);
     }
 
@@ -90,7 +90,7 @@ class AdminCrudTest extends TestCase
             'is_active' => 1
         ]);
 
-        $response->assertRedirect(route('admin.games.index'));
+        $response->assertRedirect(route('admin.panel', ['#productos']));
         $this->assertDatabaseHas('games', ['title' => 'Updated Title']);
     }
 
@@ -101,7 +101,7 @@ class AdminCrudTest extends TestCase
 
         $response = $this->actingAs($admin)->delete(route('admin.games.destroy', $game));
 
-        $response->assertRedirect(route('admin.games.index'));
+        $response->assertRedirect(route('admin.panel', ['#productos']));
         $this->assertDatabaseMissing('games', ['id' => $game->id]);
     }
 
@@ -117,7 +117,7 @@ class AdminCrudTest extends TestCase
             'slug' => 'indie'
         ]);
 
-        $response->assertRedirect(route('admin.categories.index'));
+        $response->assertRedirect(route('admin.panel', ['#categorias']));
         $this->assertDatabaseHas('categories', ['name' => 'Indie']);
     }
 
@@ -136,7 +136,7 @@ class AdminCrudTest extends TestCase
             'role' => 'client'
         ]);
 
-        $response->assertRedirect(route('admin.users.index'));
+        $response->assertRedirect(route('admin.panel', ['#usuarios']));
         $this->assertDatabaseHas('users', ['email' => 'newuser@example.com']);
     }
 
@@ -152,7 +152,7 @@ class AdminCrudTest extends TestCase
             'status' => 'paid'
         ]);
 
-        $response->assertRedirect(route('admin.orders.index'));
+        $response->assertRedirect(route('admin.panel', ['#pedidos']));
         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'paid']);
     }
 }

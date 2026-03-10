@@ -37,7 +37,7 @@ class PlatformController extends Controller
 
         Platform::create($validated);
 
-        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma creada correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Plataforma creada correctamente.');
     }
 
     /**
@@ -68,7 +68,7 @@ class PlatformController extends Controller
 
         $platform->update($validated);
 
-        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma actualizada correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Plataforma actualizada correctamente.');
     }
 
     /**
@@ -77,6 +77,6 @@ class PlatformController extends Controller
     public function destroy(Platform $platform)
     {
         $platform->delete();
-        return redirect()->route('admin.platforms.index')->with('success', 'Plataforma eliminada correctamente.');
+        return redirect()->route('admin.panel', ['#productos'])->with('success', 'Plataforma eliminada correctamente.');
     }
 }
