@@ -114,7 +114,7 @@
           <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="{{ url('/login') }}">
             Iniciar sesión
           </a>
-          <a class="btn jg-btn jg-btn-primary" href="{{ url('/register') }}">
+          <a class="btn jg-btn jg-btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" href="#">
             Crear cuenta
           </a>
         @endguest

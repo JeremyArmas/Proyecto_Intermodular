@@ -178,6 +178,72 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* LÓGICAS BACKEND: REGISTRO
+   - realiza la petición de registro vía fetch
+   - gestiona errores de validación y recarga de captcha */
+async function register(form, contenedorErrores) {
+  const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+      body: new FormData(form),
+    });
+
+    if (res.status === 419) {
+      window.location.reload();
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.success) {
+      window.location.href = data.redirect || '/';
+      return;
+    }
+
+    let msg = 'Error al crear la cuenta';
+    if (data && data.message) {
+      msg = data.message;
+    } else if (data && data.errors) {
+      // Tomamos el primer error de cualquier campo si no hay mensaje general
+      msg = Object.values(data.errors)[0][0];
+    }
+
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else {
+      alert(msg);
+    }
+
+    // Recarga el captcha del registro
+    document.getElementById('reloadCaptchaRegistro')?.click();
+
+  } catch {
+    const msg = 'Error de red. Inténtalo de nuevo.';
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else {
+      alert(msg);
+    }
+  }
+}
+
+/* Listener para el formulario de registro */
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('#registerModal form');
+  const contenedorErrores = document.getElementById('contenedorErroresRegistro');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    register(form, contenedorErrores);
+  });
+});
+
 
 /* LOGOUT
    - petición POST a /logout y redirección al recibir success */
@@ -303,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeVideo = el.querySelector('.swiper-slide-active video');
     if (activeVideo) {
       const p = activeVideo.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
+      if (p && typeof p.catch === 'function') p.catch(() => { });
     }
   };
 
@@ -344,4 +410,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Si se desea recargar al abrir el modal, se puede descomentar:
   // document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
+});
+
+
+/* RELOAD CAPTCHA REGISTRO
+   - igual que el anterior pero para el modal de registro */
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('reloadCaptchaRegistro');
+  const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
+  const input = document.querySelector('#registerModal input[name="captcha"]');
+
+  if (!btn || !frame) return;
+
+  const recargarCaptcha = async () => {
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/reload-captcha?_=${Date.now()}`, {
+        headers: { 'Accept': 'application/json' },
+      });
+      const data = await res.json();
+      if (data?.captcha) {
+        frame.innerHTML = data.captcha;
+        if (input) input.value = '';
+      }
+    } catch (e) {
+      console.error('No se pudo recargar captcha registro', e);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  btn.addEventListener('click', recargarCaptcha);
+
+  // Recargar al abrir el modal para asegurar una imagen fresca
+  document.getElementById('registerModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });

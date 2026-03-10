@@ -32,6 +32,7 @@ Route::get('/login', function () {
     return redirect('/')->with('error', 'Debes iniciar sesión para acceder.'); 
 })->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar
