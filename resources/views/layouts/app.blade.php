@@ -139,6 +139,99 @@
             <button type="submit" class="btn btn-jediga w-100 btn-lg">
               Entrar
             </button>
+
+            <div class="mt-4 text-center small opacity-75">
+              ¿No tienes cuenta? 
+              <a href="#" class="link-sun fw-bold" data-bs-toggle="modal" data-bs-target="#registerModal">Regístrate</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal del registro -->
+<div class="modal fade login-modal" id="registerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content overflow-hidden border-0">
+      <div class="row g-0">
+
+        {{-- IZQUIERDA: panel branding --}}
+      <div class="col-lg-4 col-md-4 d-none d-md-block login-modal__left">
+        <div class="login-modal__left-inner">
+          <a href="{{ url('/') }}" class="login-modal__mark" aria-label="Ir a inicio">
+            <img class="login-modal__mark-img"
+                src="{{ asset('images/logo_jediga_provisional.png') }}"
+                alt="Logo Jediga">
+          </a>
+        </div>
+      </div>
+
+        {{-- DERECHA: formulario --}}
+        <div class="col-lg-8 col-md-8 login-modal__right">
+          <div class="modal-head mb-3">
+            <div>
+              <h2>Crear cuenta</h2>
+              <div class="opacity-75 small">Únete a la comunidad de Jediga</div>
+            </div>
+
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div id="contenedorErroresRegistro" class="alert alert-danger d-none mb-3"></div>
+
+          <form method="POST" action="{{ route('register') }}" class="mt-3">
+            @csrf
+
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input type="text" name="name" class="form-control form-control-lg" required placeholder="Tu nombre">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control form-control-lg" required placeholder="tuemail@ejemplo.com">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" name="password" class="form-control form-control-lg" required placeholder="••••••••">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Confirmar contraseña</label>
+                    <input type="password" name="password_confirmation" class="form-control form-control-lg" required placeholder="••••••••">
+                </div>
+            </div>
+
+            {{-- BLOQUE DEL CAPTCHA (siempre visible en registro para evitar spam) --}}
+            <div class="mb-4" id="captchaBlockRegistro">
+              <label class="form-label">Verificación</label>
+
+              <div class="d-flex align-items-stretch gap-2 mb-2">
+                <div class="jg-captcha-frame flex-grow-1">
+                  {!! captcha_img('flat') !!}
+                </div>
+
+                <button type="button" class="btn jg-captcha-reload" id="reloadCaptchaRegistro" aria-label="Recargar captcha">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+
+              <input type="text" name="captcha" class="form-control form-control-lg"
+                placeholder="Escribe el texto de la imagen" autocomplete="off" required>
+            </div>
+
+            <button type="submit" class="btn btn-jediga w-100 btn-lg">
+              Crear cuenta
+            </button>
+
+            <div class="mt-4 text-center small opacity-75">
+              ¿Ya tienes cuenta? 
+              <a href="#" class="link-sun fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal">Inicia sesión</a>
+            </div>
           </form>
         </div>
 

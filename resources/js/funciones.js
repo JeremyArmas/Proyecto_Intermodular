@@ -429,3 +429,64 @@ document.addEventListener('DOMContentLoaded', () => {
   // Recarga al abrir el modal
   document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });
+
+async function register(form, contenedorErrores) {
+  const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+      body: new FormData(form),
+    });
+    if (res.status === 419) { window.location.reload(); return; }
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
+    let msg = 'Error al crear la cuenta';
+    if (data && data.message) msg = data.message;
+    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else alert(msg);
+    document.getElementById('reloadCaptchaRegistro')?.click();
+  } catch {
+    const msg = 'Error de red. Inténtalo de nuevo.';
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else alert(msg);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('#registerModal form');
+  const contenedorErrores = document.getElementById('contenedorErroresRegistro');
+  if (!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    register(form, contenedorErrores);
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('reloadCaptchaRegistro');
+  const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
+  const input = document.querySelector('#registerModal input[name="captcha"]');
+  if (!btn || !frame) return;
+  const recargarCaptcha = async () => {
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/reload-captcha?_=${Date.now()}`, {
+        headers: { 'Accept': 'application/json' },
+      });
+      const data = await res.json();
+      if (data?.captcha) {
+        frame.innerHTML = data.captcha;
+        if (input) input.value = '';
+      }
+    } catch (e) { console.error('No se pudo recargar captcha registro', e); }
+    finally { btn.disabled = false; }
+  };
+  btn.addEventListener('click', recargarCaptcha);
+  document.getElementById('registerModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
+});

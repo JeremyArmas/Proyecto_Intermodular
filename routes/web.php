@@ -34,6 +34,7 @@ Route::get('/contacto', function() {return view('contacto'); });
 
 //Rutas del login y logout
 Route::post('/login', [WebAuthController::class, 'login'])->name('login');
+Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar
