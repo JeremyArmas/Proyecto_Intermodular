@@ -6,43 +6,37 @@
 document.addEventListener('DOMContentLoaded', () => {
   iniciarPreloader();
   mostrarIconoContraseña();
+  configurarUI();
 });
 
 /* PRELOADER
    - muestra una pantalla de carga y la anima fuera cuando la página carga
    - bloquea el scroll mientras está visible */
 function iniciarPreloader() {
-  
-  // Obtiene el preloader por su ID
   const preloader = document.getElementById('preloader');
-
-  // Si no existe el preloader, no hace nada
-  if (!preloader){
-    return;
-  } 
+  if (!preloader) return;
 
   // Bloquea el scroll mientras se muestra el loader
   document.documentElement.style.overflow = 'hidden';
 
-  // Cuando la página termina de cargar, lanza la animación de salida
-  window.addEventListener('load', () => {
+  const lanzarSalida = () => {
     setTimeout(() => {
       preloader.classList.add('is-leaving');
-    }, 100);
-  });
+    }, 200);
+  };
+
+  // Si la página ya cargó, lanzamos la salida directamente
+  if (document.readyState === 'complete') {
+    lanzarSalida();
+  } else {
+    window.addEventListener('load', lanzarSalida);
+  }
 
   // Cuando termina la animación del propio preloader, lo elimina del DOM
   preloader.addEventListener('animationend', (e) => {
-    
-    // Ignora animaciones de elementos hijos
     if (e.target !== preloader) return;
-    
-    // Asegura que la animación sea la esperada
     if (e.animationName !== 'jgLoaderLeave') return;
-
     preloader.remove();
-    
-    // Restaura el scroll
     document.documentElement.style.overflow = '';
   });
 }
@@ -384,9 +378,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/* LÓGICAS NAVEGACIÓN Y UI */
+function configurarUI() {
+  // Manejo de Logout: asegura que el formulario se envíe por POST
+  const btnLogout = document.querySelector('form[action$="/logout"] button[type="submit"]');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Iniciando cierre de sesión...');
+      // alert('Cerrando sesión...'); // Uncomment if needed for manual verification
+      btnLogout.closest('form').submit();
+    });
+  }
+}
+
 /* RELOAD CAPTCHA
    - solicita al backend un nuevo captcha y lo inserta en el DOM
-   - maneja estado disabled mientras carga */
+   - maneja estado disabled */
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('reloadCaptcha');
   const frame = document.querySelector('.jg-captcha-frame');

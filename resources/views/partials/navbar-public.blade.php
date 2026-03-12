@@ -135,7 +135,7 @@
 
         <!-- NO logueado -->
         @guest
-          <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="{{ url('/login') }}">
+          <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="#">
             Iniciar sesión
           </a>
           <a class="btn jg-btn jg-btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" href="#">
