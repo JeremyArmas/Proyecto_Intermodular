@@ -189,7 +189,7 @@
   /* Megamenu en escritorio: inicialmente oculto (opacity 0) y posicionado */
   .jg-nav .dropdown-menu.megamenu{
     position: absolute;
-    left: 120% !important;
+    left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
     display: block !important;

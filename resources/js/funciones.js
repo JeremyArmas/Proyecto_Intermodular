@@ -6,43 +6,37 @@
 document.addEventListener('DOMContentLoaded', () => {
   iniciarPreloader();
   mostrarIconoContraseña();
+  configurarUI();
 });
 
 /* PRELOADER
    - muestra una pantalla de carga y la anima fuera cuando la página carga
    - bloquea el scroll mientras está visible */
 function iniciarPreloader() {
-  
-  // Obtiene el preloader por su ID
   const preloader = document.getElementById('preloader');
-
-  // Si no existe el preloader, no hace nada
-  if (!preloader){
-    return;
-  } 
+  if (!preloader) return;
 
   // Bloquea el scroll mientras se muestra el loader
   document.documentElement.style.overflow = 'hidden';
 
-  // Cuando la página termina de cargar, lanza la animación de salida
-  window.addEventListener('load', () => {
+  const lanzarSalida = () => {
     setTimeout(() => {
       preloader.classList.add('is-leaving');
-    }, 100);
-  });
+    }, 200);
+  };
+
+  // Si la página ya cargó, lanzamos la salida directamente
+  if (document.readyState === 'complete') {
+    lanzarSalida();
+  } else {
+    window.addEventListener('load', lanzarSalida);
+  }
 
   // Cuando termina la animación del propio preloader, lo elimina del DOM
   preloader.addEventListener('animationend', (e) => {
-    
-    // Ignora animaciones de elementos hijos
     if (e.target !== preloader) return;
-    
-    // Asegura que la animación sea la esperada
     if (e.animationName !== 'jgLoaderLeave') return;
-
     preloader.remove();
-    
-    // Restaura el scroll
     document.documentElement.style.overflow = '';
   });
 }
@@ -386,9 +380,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/* LÓGICAS NAVEGACIÓN Y UI */
+function configurarUI() {
+  // Manejo de Logout: asegura que el formulario se envíe por POST
+  const btnLogout = document.querySelector('form[action$="/logout"] button[type="submit"]');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Iniciando cierre de sesión...');
+      // alert('Cerrando sesión...'); // Uncomment if needed for manual verification
+      btnLogout.closest('form').submit();
+    });
+  }
+}
+
 /* RELOAD CAPTCHA
    - solicita al backend un nuevo captcha y lo inserta en el DOM
-   - maneja estado disabled mientras carga */
+   - maneja estado disabled */
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('reloadCaptcha');
   const frame = document.querySelector('.jg-captcha-frame');
@@ -430,4 +438,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Recarga al abrir el modal
   document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
+});
+
+async function register(form, contenedorErrores) {
+  const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+      body: new FormData(form),
+    });
+    if (res.status === 419) { window.location.reload(); return; }
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
+    let msg = 'Error al crear la cuenta';
+    if (data && data.message) msg = data.message;
+    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else alert(msg);
+    document.getElementById('reloadCaptchaRegistro')?.click();
+  } catch {
+    const msg = 'Error de red. Inténtalo de nuevo.';
+    if (contenedorErrores) {
+      contenedorErrores.textContent = msg;
+      contenedorErrores.classList.remove('d-none');
+    } else alert(msg);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('#registerModal form');
+  const contenedorErrores = document.getElementById('contenedorErroresRegistro');
+  if (!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    register(form, contenedorErrores);
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('reloadCaptchaRegistro');
+  const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
+  const input = document.querySelector('#registerModal input[name="captcha"]');
+  if (!btn || !frame) return;
+  const recargarCaptcha = async () => {
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/reload-captcha?_=${Date.now()}`, {
+        headers: { 'Accept': 'application/json' },
+      });
+      const data = await res.json();
+      if (data?.captcha) {
+        frame.innerHTML = data.captcha;
+        if (input) input.value = '';
+      }
+    } catch (e) { console.error('No se pudo recargar captcha registro', e); }
+    finally { btn.disabled = false; }
+  };
+  btn.addEventListener('click', recargarCaptcha);
+  document.getElementById('registerModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });

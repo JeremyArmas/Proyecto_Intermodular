@@ -34,10 +34,15 @@ Route::get('/contacto', function() {return view('contacto'); });
 
 //Rutas del login y logout
 Route::post('/login', [WebAuthController::class, 'login'])->name('login');
+Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar
 Route::get('/reload-captcha', function () {return response()->json(['captcha' => captcha_img('flat'),]);})->name('captcha.reload');
+
+//Rutas de Juegos y Catálogo (Simuladas o con vistas básicas)
+Route::get('/catalogo', function() { return view('catalogo'); })->name('catalogo');
+Route::get('/juego/{slug}', function($slug) { return view('juego', ['slug' => $slug]); })->name('juego.show');
 
 //Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
