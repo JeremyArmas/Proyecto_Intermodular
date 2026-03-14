@@ -16,10 +16,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. CREAR CATEGORÍAS
-        $categories = ['Acción', 'Aventura', 'RPG', 'Deportes', 'Estrategia', 'Shooter', 'Indie'];
+        $categories = ['Acción', 'Aventura', 'RPG', 'Deportes', 'Estrategia', 'Shooter', 'Indie', 'Simulación', 'Carreras', 'Terror', 'Mundo Abierto', 'Multijugador',
+        'Cooperativo', 'Sandbox', 'Pixel Art', 'Puzzles', 'Plataformas']; 
+        
         $catModels = [];
         foreach ($categories as $cat) {
-            $catModels[] = Category::create(['name' => $cat, 'slug' => Str::slug($cat)]);
+            $catModels[] = Category::updateOrCreate(['slug' => Str::slug($cat)],['name' => $cat]);
         }
 
         // 2. CREAR PLATAFORMAS
@@ -31,42 +33,50 @@ class DatabaseSeeder extends Seeder
         ];
         $platModels = [];
         foreach ($platforms as $plat) {
-            $platModels[$plat['slug']] = Platform::create($plat);
+            $platModels[$plat['slug']] = Platform::updateOrCreate(['slug' => $plat['slug']],['name' => $plat['name']]);
         }
 
         // 3. CREAR USUARIOS
         // Admin
-        User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@gamezone.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@gamezone.com'],
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Cliente Normal
-        User::create([
-            'name' => 'Juan Cliente',
-            'email' => 'cliente@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'client',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'cliente@gmail.com'],
+            [
+                'name' => 'Juan Cliente',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+            ]
+        );
 
         // Empresa (B2B)
-        $empresaUser = User::create([
-            'name' => 'Tech Solutions SL', // Nombre del contacto o cuenta
-            'email' => 'compras@techsolutions.com',
-            'password' => Hash::make('password'),
-            'role' => 'company',
-        ]);
+        $empresaUser = User::updateOrCreate(
+            ['email' => 'compras@techsolutions.com'],
+            [
+                'name' => 'Tech Solutions SL',
+                'password' => Hash::make('password'),
+                'role' => 'company',
+            ]
+        );
         
         // Perfil de la empresa
-        CompanyProfile::create([
-            'user_id' => $empresaUser->id,
-            'company_name' => 'Tech Solutions S.L.',
-            'tax_id' => 'B12345678',
-            'phone' => '+34 912 345 678',
-            'address' => 'Calle Industria 45, Madrid',
-        ]);
+        CompanyProfile::updateOrCreate(
+            ['user_id' => $empresaUser->id],
+            [
+                'company_name' => 'Tech Solutions S.L.',
+                'tax_id' => 'B12345678',
+                'phone' => '+34 912 345 678',
+                'address' => 'Calle Industria 45, Madrid',
+            ]
+        );
 
         // 4. CREAR JUEGOS
         $games = [
@@ -80,7 +90,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Shadow+Realm+Chronicles',
                 'developer' => 'Mystic Studios',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => [1, 2], // Acción, Aventura
+                'categories' => ['Aventura', 'RPG', 'Pixel Art', 'Mundo Abierto'],
             ],
             [
                 'title' => 'Neon Blitz Arena',
@@ -92,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Neon+Blitz+Arena',
                 'developer' => 'Pixel Fury Games',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => [6], // Shooter
+                'categories' => ['Acción', 'Shooter', 'Multijugador', 'Cooperativo'],
             ],
             [
                 'title' => 'Echoes of Eternity',
@@ -104,7 +114,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Echoes+of+Eternity',
                 'developer' => 'Infinite Realms',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => [3], // RPG
+                'categories' => ['RPG', 'Plataformas', 'Puzzles', 'Cooperativo'],
             ],
             [
                 'title' => 'Jungle Dash Heroes',
@@ -116,7 +126,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Jungle+Dash+Heroes',
                 'developer' => 'Tropical Games',
                 'platform_id' => $platModels['switch']->id,
-                'categories' => [4], // Deportes
+                'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'], 
             ],
             [
                 'title' => 'Galactic Conquest',
@@ -128,7 +138,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Galactic+Conquest',
                 'developer' => 'Star Forge Studios',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => [5], // Estrategia
+                'categories' => ['Estrategia', 'Mundo Abierto', 'Multijugador', 'Cooperativo'],
             ],
             [
                 'title' => 'Mystic Isles Adventure',
@@ -140,7 +150,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Mystic+Isles+Adventure',
                 'developer' => 'Enchanted Worlds',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => [2], // Aventura
+                'categories' => ['Aventura', 'RPG', 'Mundo Abierto', 'Pixel Art'],
             ],
             [
                 'title' => 'Pixel Quest Legends',
@@ -152,7 +162,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Pixel+Quest+Legends',
                 'developer' => 'Retro Pixel Co.',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => [3, 7], // RPG, Indie
+                'categories' => ['RPG', 'Indie', 'Mundo Abierto', 'Multijugador'], 
             ],
             [
                 'title' => 'Aqua Racing Championship',
@@ -164,7 +174,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Aqua+Racing+Championship',
                 'developer' => 'Oceanic Sports',
                 'platform_id' => $platModels['switch']->id,
-                'categories' => [4], // Deportes
+                'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'],
             ],
             [
                 'title' => 'Void Hunter Elite',
@@ -176,7 +186,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Void+Hunter+Elite',
                 'developer' => 'Cosmic Hunters',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => [1, 6], // Acción, Shooter
+                'categories' => ['Acción', 'Shooter', 'Terror', 'Multijugador'],
             ],
             [
                 'title' => 'Kingdom Builder Saga',
@@ -188,7 +198,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Kingdom+Builder+Saga',
                 'developer' => 'Medieval Masters',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => [5], // Estrategia
+                'categories' => ['Estrategia', 'Simulación', 'Mundo Abierto', 'Multijugador'],
             ],
             [
                 'title' => 'Dream Weaver Chronicles',
@@ -200,7 +210,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Dream+Weaver+Chronicles',
                 'developer' => 'Surreal Studios',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => [3, 7], // RPG, Indie
+                'categories' => ['RPG', 'Indie', 'Mundo Abierto', 'Sandbox'],
             ],
             [
                 'title' => 'Skybound Racers',
@@ -212,7 +222,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Skybound+Racers',
                 'developer' => 'Aerial Adventures',
                 'platform_id' => $platModels['switch']->id,
-                'categories' => [4], // Deportes
+                'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'],
             ],
             [
                 'title' => 'Infernal Realms',
@@ -224,7 +234,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Infernal+Realms',
                 'developer' => 'Dark Abyss Games',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => [1, 2], // Acción, Aventura
+                'categories' => ['Acción', 'Terror', 'Mundo Abierto', 'Multijugador'],
             ],
             [
                 'title' => 'Quantum Chess Masters',
@@ -236,7 +246,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Quantum+Chess+Masters',
                 'developer' => 'Quantum Minds',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => [5], // Estrategia
+                'categories' => ['Estrategia', 'Simulación', 'Multijugador', 'Cooperativo'],
             ],
             [
                 'title' => 'Lunar Colony Simulator',
@@ -248,14 +258,15 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => 'https://via.placeholder.com/300x400?text=Lunar+Colony+Simulator',
                 'developer' => 'Space Pioneers',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => [5, 7], // Estrategia, Indie
+                'categories' => ['Estrategia', 'Simulación', 'Indie', 'Multijugador'],
             ],
         ];
 
         foreach ($games as $gameData) {
-            $game = Game::create([
+            $game = Game::updateOrCreate(
+                ['slug' => $gameData['slug']],
+                [
                 'title' => $gameData['title'],
-                'slug' => $gameData['slug'],
                 'description' => $gameData['description'],
                 'price' => $gameData['price'],
                 'b2b_price' => $gameData['b2b_price'],
@@ -263,8 +274,10 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => $gameData['cover_image'],
                 'developer' => $gameData['developer'],
                 'platform_id' => $gameData['platform_id'],
-            ]);
-            $game->categories()->attach($gameData['categories']);
+                ]
+            );
+
+            $game->categories()->sync($gameData['categories']);
         }
     }
 }

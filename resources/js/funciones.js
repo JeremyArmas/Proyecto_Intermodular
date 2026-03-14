@@ -54,7 +54,9 @@ function mostrarIconoContraseña() {
   const btn = document.getElementById('togglePassword');
   const icon = document.getElementById('togglePasswordIcon');
 
-  if (!input || !btn || !icon) return;
+  if (!input || !btn || !icon){
+    return;
+  } 
 
   // Actualiza el icono inicial según el tipo
   actualizarIcono();
