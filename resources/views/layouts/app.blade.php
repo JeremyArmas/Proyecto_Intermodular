@@ -79,7 +79,7 @@
           <div id="contenedorErrores" class="alert alert-danger d-none mb-3"></div>
 
           <!-- Formulario de login -->
-          <form method="POST" action="{{ route('login') }}" class="mt-3">
+          <form method="POST" action="{{ route('login.submit') }}" class="mt-3">
             @csrf
 
             <!-- Campo de email -->

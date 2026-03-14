@@ -33,7 +33,8 @@ Route::get('/faq', function() {return view('faq'); });
 Route::get('/contacto', function() {return view('contacto'); });
 
 //Rutas del login y logout
-Route::post('/login', [WebAuthController::class, 'login'])->name('login');
+Route::get('/login', function () {return redirect()->route('home');})->name('login');
+Route::post('/login', [WebAuthController::class, 'login'])->name('login.submit');
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 

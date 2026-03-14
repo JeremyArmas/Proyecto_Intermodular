@@ -16,11 +16,11 @@ class AdminController extends Controller
     public function index()
     {
         
-        // Obtiene los últimos productos, categorías, usuarios y pedidos para mostrar en el panel
-        $productos = Game::with(['categories', 'platform'])->orderBy('updated_at', 'desc')->paginate(10)->withQueryString();
-        $categorias = Category::withCount('games')->orderBy('updated_at', 'desc')->take(10)->get();
-        $usuarios = User::orderBy('created_at', 'desc')->take(10)->get();
-        $pedidos = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
+        // Obtiene 10 productos, categorías, usuarios y pedidos para mostrar en el panel
+        $productos = Game::with(['categories', 'platform'])->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'productos_page')->withQueryString();
+        $categorias = Category::withCount('games')->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'categorias_page')->withQueryString();
+        $usuarios = User::orderBy('created_at', 'desc')->paginate(10, ['*'], 'usuarios_page')->withQueryString();
+        $pedidos = Order::with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'pedidos_page')->withQueryString();
         
         // Estadísticas generales para mostrar en el panel
         $totalProductos = Game::count();

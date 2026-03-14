@@ -277,7 +277,9 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            $game->categories()->sync($gameData['categories']);
+            // Asocia las categorías al juego (asegurando que existan)
+            $categoryIds = Category::whereIn('slug', $gameData['categories'])->pluck('id')->toArray();
+            $game->categories()->sync($categoryIds);
         }
     }
 }
