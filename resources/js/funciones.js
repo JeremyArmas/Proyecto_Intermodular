@@ -32,13 +32,24 @@ function iniciarPreloader() {
     window.addEventListener('load', lanzarSalida);
   }
 
-  // Cuando termina la animación del propio preloader, lo elimina del DOM
+  // Eliminación del preloader: usamos varios eventos y un timeout de seguridad
+  const removerLoader = () => {
+    if (preloader.parentNode) {
+      preloader.remove();
+      document.documentElement.style.overflow = '';
+    }
+  };
+
+  // Escucha ambos eventos de fin para mayor compatibilidad
   preloader.addEventListener('animationend', (e) => {
-    if (e.target !== preloader) return;
-    if (e.animationName !== 'jgLoaderLeave') return;
-    preloader.remove();
-    document.documentElement.style.overflow = '';
+    if (e.target === preloader && e.animationName === 'jgLoaderLeave') removerLoader();
   });
+  preloader.addEventListener('transitionend', (e) => {
+    if (e.target === preloader) removerLoader();
+  });
+
+  // Timeout de seguridad extra (por si fallan los eventos de CSS)
+  setTimeout(removerLoader, 2500);
 }
 
 /* Mostrar/ocultar contraseña en el input del login:
