@@ -9,30 +9,85 @@
         <p class="lead text-muted">Explora nuestra selección de los mejores videojuegos.</p>
     </div>
 
-    <div class="row g-4">
-        @php
-            $games = [
-                ['title' => 'Astra Runner', 'desc' => 'Acción / Roguelite', 'slug' => 'astra-runner'],
-                ['title' => 'Neon Rift', 'desc' => 'Shooter táctico', 'slug' => 'neon-rift'],
-                ['title' => 'Skyforge Lite', 'desc' => 'Aventura ligera', 'slug' => 'skyforge-lite'],
-                ['title' => 'Pulse Arena', 'desc' => 'Arena rápido', 'slug' => 'pulse-arena'],
-                ['title' => 'Echoes DLC', 'desc' => 'Contenido extra', 'slug' => 'echoes-dlc'],
-                ['title' => 'Zero Byte', 'desc' => 'Indie corto', 'slug' => 'zero-byte'],
-            ];
-        @endphp
+    @if(session('success'))
+        <div class="alert alert-success bg-dark text-success border-success mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
 
-        @foreach($games as $game)
-        <div class="col-md-4">
-            <div class="card jg-card h-100">
-                <div class="card-img-top jg-card-img" style="height: 200px; background: linear-gradient(45deg, #121212, #2a2a2a);"></div>
-                <div class="card-body">
-                    <h5 class="card-title text-white">{{ $game['title'] }}</h5>
-                    <p class="card-text text-muted">{{ $game['desc'] }}</p>
-                    <a href="{{ url('/juego/'.$game['slug']) }}" class="btn jg-btn jg-btn-sun w-100">Ver Ficha</a>
+    <div class="row g-4">
+        @forelse($games as $game)
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card jg-card h-100 overflow-hidden shadow-sm border-0">
+                <!-- Imagen de Portada -->
+                <div class="position-relative overflow-hidden" style="height: 240px; background: linear-gradient(45deg, #121212, #2a2a2a);">
+                    @if($game->cover_image)
+                        <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="w-100 h-100 object-fit-cover jg-card-hover-img">
+                    @endif
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <span class="badge badge-sun">{{ $game->platform->name ?? 'Multi' }}</span>
+                    </div>
+                </div>
+
+                <!-- Detalles del Juego -->
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="card-title text-white mb-1">{{ $game->title }}</h5>
+                    <p class="small text-muted mb-3">{{ $game->developer ?? 'Desarrollador N/A' }}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h4 text-sun mb-0 fw-bold">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
+                            @if($game->stock > 0)
+                                <span class="badge text-mint bg-dark border-mint small">Stock: {{ $game->stock }}</span>
+                            @else
+                                <span class="badge text-danger bg-dark border-danger small">Agotado</span>
+                            @endif
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            @auth
+                                <form action="{{ route('carrito.add') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="game_id" value="{{ $game->id }}">
+                                    <button type="submit" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}">
+                                        <i class="bi bi-cart-plus me-1"></i> Añadir
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <i class="bi bi-cart-plus me-1"></i> Añadir
+                                </button>
+                            @endauth
+                            <a href="{{ route('juego.show', $game->slug) }}" class="btn jg-btn jg-btn-outline w-100">Ver Ficha</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search display-3 text-muted mb-3"></i>
+            <h3 class="text-white">No hemos encontrado juegos</h3>
+            <p class="text-muted">Prueba con otros filtros o vuelve más tarde.</p>
+        </div>
+        @endforelse
+    </div>
+
+    <!-- Paginación Laravel -->
+    <div class="mt-5 d-flex justify-content-center">
+        @if(method_exists($games, 'links'))
+            {{ $games->links() }}
+        @endif
     </div>
 </div>
+
+<style>
+    .jg-card-hover-img {
+        transition: transform 0.4s ease;
+    }
+    .jg-card:hover .jg-card-hover-img {
+        transform: scale(1.1);
+    }
+    .border-mint { border: 1px solid var(--jg-mint); }
+</style>
 @endsection
