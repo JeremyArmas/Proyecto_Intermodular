@@ -3,18 +3,18 @@
 @section('title', 'Soporte - Jediga')
 
 @section('content')
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8 text-center text-white">
-            <h1 class="display-4 fw-bold mb-4">Centro de <span class="text-sun">Soporte</span></h1>
-            <p class="lead text-muted mb-5">¿Tienes problemas con algún juego o con tu cuenta? Estamos aquí para ayudarte.</p>
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 fw-bold mb-4">Centro de <span class="jg-sun">Soporte</span></h1>
+            <p class="lead mb-5">¿Tienes problemas con algún juego o con tu cuenta? Estamos aquí para ayudarte.</p>
             
             <div class="row g-4 text-start">
                 <div class="col-md-6">
                     <div class="bg-dark p-4 rounded-4 border border-secondary border-opacity-25 h-100">
                         <i class="bi bi-person-badge text-sun display-6 mb-3"></i>
                         <h5>Gestión de Cuenta</h5>
-                        <p class="text-muted small">Problemas con el login, recuperación de contraseña o cambio de datos personales.</p>
+                        <p class="small">Problemas con el login, recuperación de contraseña o cambio de datos personales.</p>
                         <a href="#" class="btn btn-outline-light btn-sm">Ver guías</a>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                     <div class="bg-dark p-4 rounded-4 border border-secondary border-opacity-25 h-100">
                         <i class="bi bi-controller text-sun display-6 mb-3"></i>
                         <h5>Técnico / Juegos</h5>
-                        <p class="text-muted small">Errores de instalación, fallos en partida o configuración de hardware.</p>
+                        <p class="small">Errores de instalación, fallos en partida o configuración de hardware.</p>
                         <a href="#" class="btn btn-outline-light btn-sm">Ver guías</a>
                     </div>
                 </div>

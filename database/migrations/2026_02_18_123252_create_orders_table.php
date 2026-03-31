@@ -40,7 +40,6 @@ return new class extends Migration
         $table->integer('quantity');
         
         // IMPORTANTE: Guardamos el precio al que se vendió. 
-        // Si mañana subes el precio del juego, el historial antiguo no debe cambiar.
         $table->decimal('price_at_purchase', 10, 2);
         
         $table->timestamps();
