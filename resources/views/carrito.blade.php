@@ -3,7 +3,7 @@
 @section('title', 'Tu Carrito - Jediga')
 
 @section('content')
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-white">Tu <span class="text-sun">Carrito</span> de Compra</h1>
         <p class="lead text-white opacity-75">Gestiona tus juegos seleccionados antes de finalizar el pedido.</p>
@@ -132,7 +132,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="me-3 opacity-50" alt="PayPal">
                             <i class="bi bi-credit-card-fill h4 text-muted mx-1 opacity-50"></i>
                             <i class="bi bi-apple h4 text-muted mx-1 opacity-50"></i>
-                            <div class="small text-muted mt-2">Pago 100% Seguro y Encriptado</div>
+                            <div class="small text-white opacity-60 mt-2">Pago 100% Seguro y Encriptado</div>
                         </div>
                     </div>
                 </div>
@@ -143,10 +143,10 @@
                 <div class="card jg-card border-0 text-center py-5 px-4 shadow">
                     <div class="mb-4">
                         <div class="bg-dark d-inline-flex p-4 rounded-circle mb-3">
-                            <i class="bi bi-cart-x text-muted display-1"></i>
+                            <i class="bi bi-cart-x text-white opacity-25 display-1"></i>
                         </div>
                         <h2 class="text-white">Tu carrito está vacío</h2>
-                        <p class="text-muted">Parece que aún no has añadido nada. ¡Explora nuestro catálogo y descubre los mejores juegos!</p>
+                        <p class="text-white opacity-75">Parece que aún no has añadido nada. ¡Explora nuestro catálogo y descubre los mejores juegos!</p>
                     </div>
                     <div>
                         <a href="{{ url('/catalogo') }}" class="btn jg-btn-sun btn-lg px-5">

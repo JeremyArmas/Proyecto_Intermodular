@@ -3,10 +3,10 @@
 @section('title', 'Catálogo de Juegos - Jediga')
 
 @section('content')
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-white">Catálogo de <span class="text-sun">Juegos</span></h1>
-        <p class="lead text-muted">Explora nuestra selección de los mejores videojuegos.</p>
+        <h1 class="display-4 text-white">Catálogo de <span class="jg-sun">Juegos</span></h1>
+        <p class="lead">Explora nuestra selección de los mejores videojuegos.</p>
     </div>
 
     @if(session('success'))
@@ -32,15 +32,15 @@
                 <!-- Detalles del Juego -->
                 <div class="card-body d-flex flex-column p-4">
                     <h5 class="card-title text-white mb-1">{{ $game->title }}</h5>
-                    <p class="small text-muted mb-3">{{ $game->developer ?? 'Desarrollador N/A' }}</p>
+                    <p class="mb-3">{{ $game->developer ?? 'Desarrollador N/A' }}</p>
                     
                     <div class="mt-auto">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="h4 text-sun mb-0 fw-bold">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
                             @if($game->stock > 0)
-                                <span class="badge text-mint bg-dark border-mint small">Stock: {{ $game->stock }}</span>
+                                <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
                             @else
-                                <span class="badge text-danger bg-dark border-danger small">Agotado</span>
+                                <span class="badge text-danger border-danger small">Agotado</span>
                             @endif
                         </div>
 
@@ -66,9 +66,9 @@
         </div>
         @empty
         <div class="col-12 text-center py-5">
-            <i class="bi bi-search display-3 text-muted mb-3"></i>
+            <i class="bi bi-search display-3 mb-3"></i>
             <h3 class="text-white">No hemos encontrado juegos</h3>
-            <p class="text-muted">Prueba con otros filtros o vuelve más tarde.</p>
+            <p>Prueba con otros filtros o vuelve más tarde.</p>
         </div>
         @endforelse
     </div>

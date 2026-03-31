@@ -29,7 +29,7 @@
                         </button>
                     </h2>
                     <div id="collapse{{$i}}" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div class="accordion-body text-muted small">
+                        <div class="accordion-body text-white opacity-75 small">
                             {{ $item['a'] }}
                         </div>
                     </div>

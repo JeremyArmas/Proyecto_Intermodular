@@ -14,7 +14,7 @@
                 <div class="p-4">
                     <span class="badge badge-sun mb-2">Gamer News</span>
                     <h4>Lanzamiento oficial de Astra Runner</h4>
-                    <p class="text-muted small">El esperado roguelite desarrollado íntegramente en Las Palmas llega a la fase Beta abierta este mes...</p>
+                    <p class="text-white opacity-75 small">El esperado roguelite desarrollado íntegramente en Las Palmas llega a la fase Beta abierta este mes...</p>
                     <a href="#" class="btn btn-link link-sun p-0 text-decoration-none">Leer más <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>

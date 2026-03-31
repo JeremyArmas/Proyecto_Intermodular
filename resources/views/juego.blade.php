@@ -3,7 +3,7 @@
 @section('title', $game->title . ' - Jediga')
 
 @section('content')
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="row g-4">
         <!-- Izquierda: Media + Descripción -->
         <div class="col-lg-8">
@@ -23,7 +23,7 @@
             
             <div class="card jg-card p-4 rounded-4 text-white mb-4 border-0">
                 <h3 class="mb-4">Resumen y Detalles</h3>
-                <p class="text-muted fs-5 line-height-lg">{{ $game->description ?? 'No hay descripción disponible para este título.' }}</p>
+                <p class="text-white opacity-75 fs-5 line-height-lg">{{ $game->description ?? 'No hay descripción disponible para este título.' }}</p>
                 
                 <hr class="opacity-10 my-4">
                 
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Precio Habitual</span>
-                        <strong class="text-muted h5 text-decoration-line-through">{{ number_format($game->price * 1.2, 2) }}€</strong>
+                        <strong class="text-white opacity-50 h5 text-decoration-line-through">{{ number_format($game->price * 1.2, 2) }}€</strong>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
         <div class="col-lg-4">
             <div class="card jg-card p-4 rounded-4 text-white border-0 sticky-top" style="top: 100px;">
                 <div class="mb-4">
-                    <h4 class="text-muted small text-uppercase mb-2">Comprar Hoy</h4>
+                    <h4 class="jg-muted small text-uppercase mb-2">Comprar Hoy</h4>
                     <div class="display-4 fw-bold text-sun mb-1">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</div>
                     <div class="text-mint small"><i class="bi bi-lightning-charge-fill me-1"></i>Entrega Digital Inmediata</div>
                 </div>
@@ -73,7 +73,7 @@
                         <input type="hidden" name="game_id" value="{{ $game->id }}">
                         
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Seleccionar Cantidad</label>
+                            <label class="form-label small text-white opacity-75">Seleccionar Cantidad</label>
                             <select name="quantity" class="form-select bg-dark text-white border-secondary mb-3" {{ $game->stock <= 0 ? 'disabled' : '' }}>
                                 @for($i = 1; $i <= min(10, $game->stock); $i++)
                                     <option value="{{ $i }}">{{ $i }} {{ $i > 1 ? 'unidades' : 'unidad' }}</option>
@@ -100,7 +100,7 @@
                         <i class="bi bi-shield-check text-sun h3 mb-0"></i>
                         <div>
                             <div class="small fw-bold">Garantía Jediga</div>
-                            <div class="x-small text-muted">Protección total en cada transacción digital.</div>
+                            <div class="x-small text-white opacity-60">Protección total en cada transacción digital.</div>
                         </div>
                     </div>
                 </div>
