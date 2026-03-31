@@ -6,7 +6,7 @@
 <div class="container py-2 mt-5">
     <div class="row g-5">
         <div class="col-lg-5">
-            <h1 class="display-4 fw-bold mb-4">Hablemos <br><span class="jg-sun">con Jediga</span></h1>
+            <h1 class="display-4 mb-4">Hablemos <br><span class="jg-sun">con Jediga</span></h1>
             <p class="mb-5">Si tienes una propuesta, un problema o simplemente quieres saludarnos, escríbenos.</p>
             
             <div class="d-flex align-items-center gap-3 mb-4">

@@ -5,7 +5,7 @@
 @section('content')
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold">Preguntas <span class="jg-sun">Frecuentes</span></h1>
+        <h1 class="display-4">Preguntas <span class="jg-sun">Frecuentes</span></h1>
         <p class="text-white">Despeja tus dudas sobre compras, devoluciones y soporte.</p>
     </div>
 

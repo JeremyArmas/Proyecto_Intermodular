@@ -6,7 +6,7 @@
 <div class="container py-5">
     <div class="row align-items-center g-3 mt-4">
         <div class="col-lg-6">
-            <h1 class="display-4 fw-bold mb-4">La pasión por los <span class="jg-sun">Videojuegos</span> desde Canarias</h1>
+            <h1 class="display-4 mb-4">La pasión por los <span class="jg-sun">Videojuegos</span> desde Canarias</h1>
             <p class="lead mb-4">En Jediga, creemos que el talento no tiene fronteras. Nacimos en el corazón de las Islas Canarias con una misión clara: <span class="jg-sun">conectar a los desarrolladores locales con el mundo.</span></p>
             <p>Nuestra plataforma ofrece una selección curada de títulos indie y grandes producciones, con un enfoque especial en la comunidad Canaria y el soporte personalizado.</p>
             <div class="d-flex gap-3 ">

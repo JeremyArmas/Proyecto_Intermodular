@@ -6,7 +6,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
-            <h1 class="display-4 fw-bold mb-4">Centro de <span class="jg-sun">Soporte</span></h1>
+            <h1 class="display-4 mb-4">Centro de <span class="jg-sun">Soporte</span></h1>
             <p class="lead mb-5">¿Tienes problemas con algún juego o con tu cuenta? Estamos aquí para ayudarte.</p>
             
             <div class="row g-4 text-start">

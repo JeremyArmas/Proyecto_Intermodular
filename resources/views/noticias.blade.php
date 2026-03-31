@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container py-5">
-    <h1 class="display-4 fw-bold mb-4">Últimas <span class="jg-sun">Noticias</span></h1>
+    <h1 class="display-4 mb-4">Últimas <span class="jg-sun">Noticias</span></h1>
     
     <div class="row g-4">
         @for($i=1; $i<=3; $i++)
