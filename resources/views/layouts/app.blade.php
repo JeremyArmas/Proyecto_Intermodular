@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title', 'Jediga')</title>
 
   <!-- Bootstrap CSS -->
@@ -40,6 +41,17 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Fail-safe para el preloader: si en 3 segundos no se ha ido solo, lo forzamos
+    setTimeout(() => {
+      const loader = document.getElementById('preloader');
+      if (loader) {
+        loader.classList.add('is-leaving');
+        setTimeout(() => { if(loader.parentNode) loader.remove(); document.documentElement.style.overflow = ''; }, 1000);
+      }
+    }, 3000);
+  </script>
 
 
   <!-- Modal (ventana emergente) del login -->

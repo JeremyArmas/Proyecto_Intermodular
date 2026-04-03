@@ -35,4 +35,12 @@ class Game extends Model
         }
         return $this->price;
     }
+
+    /**
+     * Un juego puede estar en muchos carritos.
+     */
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }

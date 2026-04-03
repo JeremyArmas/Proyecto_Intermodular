@@ -57,6 +57,11 @@ body{
 h1,h2,h3,h4,h5,h6{ font-family: var(--jg-font-title); }
 .jg-muted{ color: var(--jg-muted); }
 
+/* Color específico para elementos relacionados con el color jg-sun (ej. botones, indicadores) */
+.jg-sun{
+  color: var(--jg-sun);
+}
+
 
 /* =========================================================
    3) FONDO / CAPAS (elementos pseudo del body)
@@ -108,7 +113,9 @@ body::after{
 
 /* Clase añadida para animar la salida del loader */
 .loader-wrap.is-leaving{
-  pointer-events: none;
+  pointer-events: none !important;
+  opacity: 0;
+  transition: opacity 0.5s ease;
   animation: jgLoaderLeave 950ms cubic-bezier(.7,0,.2,1) forwards;
 }
 
@@ -241,7 +248,7 @@ body::after{
    7) SECCIONES / HERO / TÍTULOS
    - Espaciados y decoraciones de títulos de sección.
    ========================================================= */
-.jg-hero{ padding: 110px 0 26px; }
+.jg-hero{ padding: 38px 0 26px; }
 
 .jg-hero-title,
 .jg-hero-desc{
@@ -499,4 +506,14 @@ select option,
 .form-select option{
   background-color: #0f0f1b !important;
   color: #fff !important;
+}
+
+
+/* =========================================================
+   12) LAYOUT PRINCIPAL
+   - Compensa la altura del navbar fixed-top para que el
+     contenido de todas las páginas no quede solapado.
+   ========================================================= */
+main {
+  padding-top: 72px;
 }

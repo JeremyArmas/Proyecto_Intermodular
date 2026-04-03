@@ -3,10 +3,10 @@
 @section('title', 'FAQ - Jediga')
 
 @section('content')
-<div class="container py-5 mt-5">
-    <div class="text-center mb-5 text-white">
-        <h1 class="display-4 fw-bold">Preguntas <span class="text-sun">Frecuentes</span></h1>
-        <p class="text-muted">Despeja tus dudas sobre compras, devoluciones y soporte.</p>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">Preguntas <span class="jg-sun">Frecuentes</span></h1>
+        <p class="text-white">Despeja tus dudas sobre compras, devoluciones y soporte.</p>
     </div>
 
     <div class="row justify-content-center">
@@ -24,12 +24,12 @@
                 @foreach($faqs as $i => $item)
                 <div class="accordion-item bg-dark border-secondary border-opacity-25 mb-3 rounded-4 overflow-hidden">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-dark text-white fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$i}}">
+                        <button class="accordion-button collapsed bg-dark text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$i}}">
                             {{ $item['q'] }}
                         </button>
                     </h2>
                     <div id="collapse{{$i}}" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div class="accordion-body text-muted small">
+                        <div class="accordion-body text-white opacity-75 small">
                             {{ $item['a'] }}
                         </div>
                     </div>

@@ -114,8 +114,32 @@
         <li class="nav-item"><a class="nav-link" href="{{ url('/contacto') }}">Contacto</a></li>
       </ul>
 
-      <!-- Idioma + Auth -->
+      <!-- Idioma + Carrito + Auth -->
       <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
+        
+        <!-- Carrito -->
+        @auth
+          <a href="{{ route('carrito.index') }}" class="btn jg-btn jg-btn-outline position-relative" title="Ver Carrito">
+        @else
+          <a href="#" class="btn jg-btn jg-btn-outline position-relative" data-bs-toggle="modal" data-bs-target="#loginModal" title="Inicia sesión para ver el carrito">
+        @endauth
+          <i class="bi bi-cart3"></i>
+          @php
+              $cartCount = 0;
+              if (auth()->check()) {
+                  $cart = auth()->user()->cart;
+                  if ($cart) {
+                      $cartCount = $cart->items()->sum('quantity');
+                  }
+              }
+          @endphp
+          @if($cartCount > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill shadow-sm" style="background-color: #ffcc00 !important; color: #000 !important; font-size: 0.75rem; font-weight: 900; border: 1px solid rgba(255,255,255,0.2);">
+              {{ $cartCount }}
+            </span>
+          @endif
+        </a>
+
         <div class="dropdown">
           <button class="btn jg-btn jg-btn-outline" data-bs-toggle="dropdown" aria-expanded="false" title="Idioma">
             <i class="bi bi-globe2"></i>
@@ -145,19 +169,49 @@
 
         <!-- Logueado -->
         @auth
-          @if($isAdmin)
-            <a class="btn jg-btn jg-btn-outline" href="{{ url('/admin') }}">
-              <i class="bi bi-speedometer2 me-1"></i> Volver al panel
-            </a>
-          @endif
-
-          <!-- Cerrar sesión -->
-          <form method="POST" action="{{ route('logout') }}" class="m-0">
-            @csrf
-            <button type="submit" class="btn jg-btn jg-btn-sun">
-              <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+          <div class="dropdown">
+            <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-2 p-1 pe-3 rounded-pill" 
+                    type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
+                   style="width: 32px; height: 32px; background-color: #ffcc00 !important; color: #000 !important; font-weight: 900; font-size: 1rem; font-family: var(--jg-font-title);">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+              </div>
+              <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', auth()->user()->name)[0] }}</span>
+              <i class="bi bi-chevron-down small opacity-50"></i>
             </button>
-          </form>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary mt-2 p-2 jg-panel" aria-labelledby="userDropdown" style="min-width: 200px;">
+              <li class="px-3 py-2 border-bottom border-secondary mb-2">
+                <div class="small text-muted">Sesión de:</div>
+                <div class="fw-bold text-white text-truncate">{{ auth()->user()->name }}</div>
+              </li>
+              @if($isAdmin)
+                <li>
+                  <a class="dropdown-item py-2 rounded-3" href="{{ url('/admin') }}">
+                    <i class="bi bi-speedometer2 me-2 text-sun"></i> Panel Admin
+                  </a>
+                </li>
+              @endif
+              <li>
+                <a class="dropdown-item py-2 rounded-3" href="{{ url('/perfil') }}">
+                  <i class="bi bi-person me-2 text-sun"></i> Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2 rounded-3" href="{{ url('/mis-pedidos') }}">
+                  <i class="bi bi-bag-check me-2 text-sun"></i> Mis Pedidos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+              <li>
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                  @csrf
+                  <button type="submit" class="dropdown-item py-2 rounded-3 text-danger">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
         @endauth
 
       </div>

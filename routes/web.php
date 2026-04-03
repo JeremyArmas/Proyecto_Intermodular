@@ -41,9 +41,20 @@ Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 //Ruta del captcha a la hora de refrescar
 Route::get('/reload-captcha', function () {return response()->json(['captcha' => captcha_img('flat'),]);})->name('captcha.reload');
 
-//Rutas de Juegos y Catálogo (Simuladas o con vistas básicas)
-Route::get('/catalogo', function() { return view('catalogo'); })->name('catalogo');
-Route::get('/juego/{slug}', function($slug) { return view('juego', ['slug' => $slug]); })->name('juego.show');
+// Rutas del Carrito (Página completa) - Requiere Autenticación
+use App\Http\Controllers\Web\CartController;
+Route::middleware('auth')->prefix('carrito')->name('carrito.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add', [CartController::class, 'add'])->name('add');
+    Route::put('/update/{id}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+});
+
+// Rutas de Juegos y Catálogo
+use App\Http\Controllers\Web\GameController as WebGameController;
+Route::get('/catalogo', [WebGameController::class, 'index'])->name('catalogo');
+Route::get('/juego/{slug}', [WebGameController::class, 'show'])->name('juego.show');
 
 //Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
