@@ -4,6 +4,28 @@
 
 @section('content')
 
+  <!-- Toast de éxito al resetear contraseña: aparece cuando el controlador redirige aquí con este flash -->
+  @if(session('password_reset_success'))
+    <div id="toastResetOk" class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:9999; margin-top:80px;">
+      <div class="toast show align-items-center text-white border-0" style="background: #198754; border-radius:.75rem; box-shadow:0 8px 30px rgba(0,0,0,.4);">
+        <div class="d-flex">
+          <div class="toast-body d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            {{ session('password_reset_success') }}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Auto-ocultar después de 5 segundos
+      setTimeout(() => {
+        const el = document.getElementById('toastResetOk');
+        if (el) el.style.display = 'none';
+      }, 5000);
+    </script>
+  @endif
+
   <!-- HERO PRINCIPAL --> 
   <header class="jg-hero">
     <div class="container">
@@ -106,7 +128,11 @@
         @foreach($upcoming as $g)
           <div class="col-12 col-md-6 col-lg-4">
             <div class="jg-card h-100">
-              <div class="jg-cover"></div>
+              <div class="jg-cover">
+                @if(!empty($g['cover_image']))
+                  <img src="{{ asset('storage/' . $g['cover_image']) }}" alt="{{ $g['title'] }}" style="width:100%; height:100%; object-fit:cover;">
+                @endif
+              </div>
               <div class="p-3">
 
                 <!-- Etiquetas del juego, como el género o el estado (nuevo, exclusivo, etc.) -->
@@ -150,7 +176,11 @@
         @foreach($popular as $g)
           <div class="col-12 col-md-6 col-lg-4">
             <div class="jg-card h-100">
-              <div class="jg-cover"></div>
+              <div class="jg-cover">
+                @if(!empty($g['cover_image']))
+                  <img src="{{ asset('storage/' . $g['cover_image']) }}" alt="{{ $g['title'] }}" style="width:100%; height:100%; object-fit:cover;">
+                @endif
+              </div>
               <div class="p-3">
                 
                 <!-- Etiquetas del juego, como el género o el estado (nuevo, exclusivo, etc.) -->
@@ -193,7 +223,11 @@
         @foreach($free as $g)
           <div class="col-12 col-md-6 col-lg-4">
             <div class="jg-card h-100">
-              <div class="jg-cover"></div>
+              <div class="jg-cover">
+                @if(!empty($g['cover_image']))
+                  <img src="{{ asset('storage/' . $g['cover_image']) }}" alt="{{ $g['title'] }}" style="width:100%; height:100%; object-fit:cover;">
+                @endif
+              </div>
               <div class="p-3">
                 
                 <!-- Etiquetas del juego, como el género o el estado (nuevo, exclusivo, etc.) -->

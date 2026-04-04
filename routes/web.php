@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 //Ruta del home principal
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -58,6 +59,7 @@ Route::get('/juego/{slug}', [WebGameController::class, 'show'])->name('juego.sho
 
 //Grupo de Rutas de Administración (Protegidas por Auth en un futuro)
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    
     // Vista del panel principal
     Route::get('/', [AdminController::class, 'index'])->name('panel');
     
@@ -68,3 +70,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
 });
+
+//Rutas de recuperación de contraseña
+Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->middleware('guest')->name('password.request');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
+Route::get('/reset-password/{token}', function ($token) { return view('auth.reset-password', ['token' => $token]); })->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');

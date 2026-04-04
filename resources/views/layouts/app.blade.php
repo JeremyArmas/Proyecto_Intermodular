@@ -126,7 +126,7 @@
                 <label class="form-check-label" for="remember">Recordarme</label>
               </div>
          
-              <a href="#" class="link-light small">¿Olvidaste la contraseña?</a>
+              <a href="{{ route('password.request') }}" class="link-light small">¿Olvidaste la contraseña?</a>
             </div>
 
 

@@ -197,6 +197,11 @@
                 </a>
               </li>
               <li>
+                <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}">
+                  <i class="bi bi-collection-play me-2 text-sun"></i>Mi Biblioteca
+                </a>
+              </li>
+              <li>
                 <a class="dropdown-item py-2 rounded-3" href="{{ url('/mis-pedidos') }}">
                   <i class="bi bi-bag-check me-2 text-sun"></i> Mis Pedidos
                 </a>
