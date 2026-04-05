@@ -16,12 +16,29 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. CREAR CATEGORÍAS
-        $categories = ['Acción', 'Aventura', 'RPG', 'Deportes', 'Estrategia', 'Shooter', 'Indie', 'Simulación', 'Carreras', 'Terror', 'Mundo Abierto', 'Multijugador',
-        'Cooperativo', 'Sandbox', 'Pixel Art', 'Puzzles', 'Plataformas']; 
-        
+        $categories = [
+            'Acción',
+            'Aventura',
+            'RPG',
+            'Deportes',
+            'Estrategia',
+            'Shooter',
+            'Indie',
+            'Simulación',
+            'Carreras',
+            'Terror',
+            'Mundo Abierto',
+            'Multijugador',
+            'Cooperativo',
+            'Sandbox',
+            'Pixel Art',
+            'Puzzles',
+            'Plataformas'
+        ];
+
         $catModels = [];
         foreach ($categories as $cat) {
-            $catModels[] = Category::updateOrCreate(['slug' => Str::slug($cat)],['name' => $cat]);
+            $catModels[] = Category::firstOrCreate(['slug' => Str::slug($cat)], ['name' => $cat]);
         }
 
         // 2. CREAR PLATAFORMAS
@@ -33,12 +50,12 @@ class DatabaseSeeder extends Seeder
         ];
         $platModels = [];
         foreach ($platforms as $plat) {
-            $platModels[$plat['slug']] = Platform::updateOrCreate(['slug' => $plat['slug']],['name' => $plat['name']]);
+            $platModels[$plat['slug']] = Platform::firstOrCreate(['slug' => $plat['slug']], ['name' => $plat['name']]);
         }
 
         // 3. CREAR USUARIOS
-        // Admin
-        User::updateOrCreate(
+        // Primer admin
+        User::firstOrCreate(
             ['email' => 'admin@gamezone.com'],
             [
                 'name' => 'Administrador',
@@ -47,8 +64,19 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::firstOrCreate(
+            [
+                'email' => 'jediga.s.a@gmail.com'
+            ],
+            [
+                'name' => 'Administrador Jediga',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
+
         // Cliente Normal
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'cliente@gmail.com'],
             [
                 'name' => 'Juan Cliente',
@@ -58,7 +86,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // Empresa (B2B)
-        $empresaUser = User::updateOrCreate(
+        $empresaUser = User::firstOrCreate(
             ['email' => 'compras@techsolutions.com'],
             [
                 'name' => 'Tech Solutions SL',
@@ -66,9 +94,9 @@ class DatabaseSeeder extends Seeder
                 'role' => 'company',
             ]
         );
-        
+
         // Perfil de la empresa
-        CompanyProfile::updateOrCreate(
+        CompanyProfile::firstOrCreate(
             ['user_id' => $empresaUser->id],
             [
                 'company_name' => 'Tech Solutions S.L.',
@@ -81,199 +109,246 @@ class DatabaseSeeder extends Seeder
         // 4. CREAR JUEGOS
         $games = [
             [
-                'title' => 'Shadow Realm Chronicles',
-                'slug' => 'shadow-realm-chronicles-ps5',
-                'description' => 'Embárcate en una aventura épica a través de reinos sombríos llenos de misterios y criaturas míticas.',
+                'title' => 'Magrunner: Dark Pulse',
+                'slug' => 'magrunner-dark-pulse-ps5',
+                'description' => 'Un juego de puzles en primera persona ambientado en un universo post-apocalíptico donde la tecnología y la religión chocan.',
                 'price' => 49.99,
                 'b2b_price' => 35.00,
                 'stock' => 75,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Shadow+Realm+Chronicles',
-                'developer' => 'Mystic Studios',
+                'cover_image' => null,
+                'developer' => 'Focus Home Interactive',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => ['Aventura', 'RPG', 'Pixel Art', 'Mundo Abierto'],
+                'categories' => ['Puzzles', 'Acción', 'Aventura'],
             ],
             [
-                'title' => 'Neon Blitz Arena',
-                'slug' => 'neon-blitz-arena-xbox',
-                'description' => 'Un shooter frenético en un mundo cyberpunk donde los reflejos son tu mejor arma.',
-                'price' => 39.99,
-                'b2b_price' => 28.00,
+                'title' => 'HYPERCHARGE: Unboxed',
+                'slug' => 'hypercharge-unboxed-xbox',
+                'description' => '¡HYPERCHARGE! Es un shooter en primera persona de acción trepidante con un toque único: ¡eres un juguete! Defiende tu base de oleadas de enemigos mientras construyes y mejoras tus defensas. Juega solo o con amigos en modo cooperativo y enfréntate a desafíos cada vez mayores. ¡Prepárate para la batalla más épica que jamás hayas visto!',
+                'price' => 0,
+                'b2b_price' => 0,
                 'stock' => 120,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Neon+Blitz+Arena',
-                'developer' => 'Pixel Fury Games',
+                'cover_image' => null,
+                'developer' => 'Digital Cybercherries',
                 'platform_id' => $platModels['xbox-series-x']->id,
                 'categories' => ['Acción', 'Shooter', 'Multijugador', 'Cooperativo'],
             ],
             [
-                'title' => 'Echoes of Eternity',
-                'slug' => 'echoes-of-eternity-pc',
-                'description' => 'Un RPG profundo donde tus elecciones moldean el destino de mundos paralelos.',
+                'title' => 'Oddworld: Soulstorm',
+                'slug' => 'oddworld-soulstorm-pc',
+                'description' => 'Sumérgete en una aventura de plataformas y acción en 2.5D con una narrativa apasionante y gráficos impresionantes. Abe, un paria Mudokon, se embarca en una misión desesperada para liberar a sus congéneres de la esclavitud en una aventura llena de peligros, acertijos y acción trepidante.',
                 'price' => 59.99,
                 'b2b_price' => 42.00,
                 'stock' => 60,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Echoes+of+Eternity',
-                'developer' => 'Infinite Realms',
+                'cover_image' => null,
+                'developer' => 'Oddworld Inhabitants',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => ['RPG', 'Plataformas', 'Puzzles', 'Cooperativo'],
+                'categories' => ['Aventura', 'Plataformas', 'Puzzles'],
             ],
             [
-                'title' => 'Jungle Dash Heroes',
-                'slug' => 'jungle-dash-heroes-switch',
-                'description' => 'Carreras locas a través de junglas exóticas con héroes únicos y power-ups salvajes.',
+                'title' => 'Knockout City',
+                'slug' => 'knockout-city-xbox',
+                'description' => 'Un juego de deportes multijugador donde los jugadores compiten en emocionantes partidas de dodgeball con power-ups y habilidades especiales.',
                 'price' => 29.99,
                 'b2b_price' => 20.00,
                 'stock' => 150,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Jungle+Dash+Heroes',
-                'developer' => 'Tropical Games',
-                'platform_id' => $platModels['switch']->id,
-                'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'], 
+                'cover_image' => null,
+                'developer' => 'Velan Studios',
+                'platform_id' => $platModels['xbox-series-x']->id,
+                'categories' => ['Deportes', 'Multijugador', 'Cooperativo'],
             ],
             [
-                'title' => 'Galactic Conquest',
-                'slug' => 'galactic-conquest-ps5',
-                'description' => 'Construye imperios galácticos en esta estrategia espacial de gran escala.',
-                'price' => 44.99,
-                'b2b_price' => 32.00,
+                'title' => 'Kena: Bridge of Spirits',
+                'slug' => 'kena-bridge-of-spirits-ps5',
+                'description' => 'Una aventura de acción y plataformas en tercera persona donde los jugadores controlan a Kena, una joven guía espiritual que viaja a un mundo abandonado para ayudar a los espíritus atrapados a encontrar la paz.',
+                'price' => 11.99,
+                'b2b_price' => 8.00,
                 'stock' => 80,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Galactic+Conquest',
-                'developer' => 'Star Forge Studios',
+                'cover_image' => null,
+                'developer' => 'Ember Lab',
                 'platform_id' => $platModels['ps5']->id,
-                'categories' => ['Estrategia', 'Mundo Abierto', 'Multijugador', 'Cooperativo'],
+                'categories' => ['Aventura', 'Acción', 'Plataformas'],
             ],
             [
-                'title' => 'Mystic Isles Adventure',
-                'slug' => 'mystic-isles-adventure-xbox',
-                'description' => 'Explora islas encantadas llenas de magia y peligros en esta aventura narrativa.',
+                'title' => 'CrossCode',
+                'slug' => 'crosscode-xbox',
+                'description' => 'Sumérgete en un cautivador RPG de acción con una jugabilidad trepidante y una historia que te atrapará desde el primer momento. CrossCode combina la acción frenética de los juegos de rol clásicos con mecánicas innovadoras y un mundo visualmente deslumbrante. ¡Prepárate para una aventura inolvidable!',
                 'price' => 34.99,
                 'b2b_price' => 25.00,
                 'stock' => 90,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Mystic+Isles+Adventure',
-                'developer' => 'Enchanted Worlds',
+                'cover_image' => null,
+                'developer' => 'Radical Fish Games',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => ['Aventura', 'RPG', 'Mundo Abierto', 'Pixel Art'],
+                'categories' => ['Aventura', 'RPG', 'Puzzles', 'Pixel Art'],
             ],
             [
-                'title' => 'Pixel Quest Legends',
-                'slug' => 'pixel-quest-legends-pc',
-                'description' => 'Un indie RPG pixelado con mecánicas únicas y un mundo procedural infinito.',
+                'title' => 'Terraria',
+                'slug' => 'terraria-pc',
+                'description' => 'Un juego de acción y aventura en 2D con mecánicas únicas y un mundo procedural. ¡Crea, construye y lucha para sobrevivir en un mundo lleno de peligros y aventuras!',
                 'price' => 19.99,
                 'b2b_price' => 14.00,
                 'stock' => 200,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Pixel+Quest+Legends',
-                'developer' => 'Retro Pixel Co.',
+                'cover_image' => null,
+                'developer' => 'Re-Logic',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => ['RPG', 'Indie', 'Mundo Abierto', 'Multijugador'], 
+                'categories' => ['Aventura', 'Indie', 'Mundo Abierto', 'Sandbox'],
             ],
             [
-                'title' => 'Aqua Racing Championship',
-                'slug' => 'aqua-racing-championship-switch',
-                'description' => 'Compite en carreras acuáticas con vehículos submarinos en pistas oceánicas.',
-                'price' => 24.99,
-                'b2b_price' => 18.00,
-                'stock' => 110,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Aqua+Racing+Championship',
-                'developer' => 'Oceanic Sports',
-                'platform_id' => $platModels['switch']->id,
-                'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'],
-            ],
-            [
-                'title' => 'Void Hunter Elite',
-                'slug' => 'void-hunter-elite-ps5',
-                'description' => 'Caza criaturas del vacío en este shooter de supervivencia en el espacio.',
+                'title' => 'GTFO',
+                'slug' => 'gtfo-pc',
+                'description' => 'Un shooter cooperativo de terror y sigilo donde tú y tu equipo deben infiltrarse en una instalación subterránea abandonada y enfrentarse a hordas de criaturas aterradoras.',
                 'price' => 54.99,
                 'b2b_price' => 39.00,
                 'stock' => 70,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Void+Hunter+Elite',
-                'developer' => 'Cosmic Hunters',
-                'platform_id' => $platModels['ps5']->id,
+                'cover_image' => null,
+                'developer' => '10 Chambers',
+                'platform_id' => $platModels['pc']->id,
                 'categories' => ['Acción', 'Shooter', 'Terror', 'Multijugador'],
             ],
             [
-                'title' => 'Kingdom Builder Saga',
-                'slug' => 'kingdom-builder-saga-xbox',
-                'description' => 'Construye y defiende tu reino en esta estrategia medieval épica.',
-                'price' => 41.99,
-                'b2b_price' => 30.00,
+                'title' => 'Skate',
+                'slug' => 'skate-xbox',
+                'description' => 'Un juego de skate en mundo abierto donde los jugadores pueden explorar una ciudad, realizar trucos y competir con otros jugadores.',
+                'price' => 0,
+                'b2b_price' => 0,
                 'stock' => 85,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Kingdom+Builder+Saga',
-                'developer' => 'Medieval Masters',
+                'cover_image' => null,
+                'developer' => 'Full Circle',
                 'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => ['Estrategia', 'Simulación', 'Mundo Abierto', 'Multijugador'],
+                'categories' => ['Deportes', 'Mundo Abierto', 'Multijugador'],
             ],
             [
-                'title' => 'Dream Weaver Chronicles',
-                'slug' => 'dream-weaver-chronicles-pc',
-                'description' => 'Teje sueños y pesadillas en este RPG surrealista con mecánicas innovadoras.',
+                'title' => 'Before Your Eyes',
+                'slug' => 'before-your-eyes-pc',
+                'description' => 'Un juego narrativo en primera persona que cuenta la historia de una vida a través de los ojos del protagonista. Un juego emotivo y conmovedor que te hará reflexionar sobre la vida y la muerte.',
                 'price' => 36.99,
                 'b2b_price' => 26.00,
                 'stock' => 95,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Dream+Weaver+Chronicles',
-                'developer' => 'Surreal Studios',
+                'cover_image' => null,
+                'developer' => 'GoodbyeWorld Games',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => ['RPG', 'Indie', 'Mundo Abierto', 'Sandbox'],
+                'categories' => ['Aventura', 'Indie'],
             ],
             [
-                'title' => 'Skybound Racers',
-                'slug' => 'skybound-racers-switch',
-                'description' => 'Carreras aéreas en cielos infinitos con aviones personalizables y turbulencias extremas.',
+                'title' => 'SkyDrift Infinity',
+                'slug' => 'skydrift-infinity-switch',
+                'description' => 'Un juego de carreras arcade con vehículos voladores personalizables y entornos espectaculares. Compite en carreras trepidantes alrededor del mundo, desbloquea nuevos vehículos y mejoras, y desafía a tus amigos en emocionantes modos multijugador.',
                 'price' => 27.99,
                 'b2b_price' => 20.00,
                 'stock' => 130,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Skybound+Racers',
-                'developer' => 'Aerial Adventures',
+                'cover_image' => null,
+                'developer' => 'Digital Reality',
                 'platform_id' => $platModels['switch']->id,
                 'categories' => ['Deportes', 'Carreras', 'Multijugador', 'Cooperativo'],
             ],
             [
-                'title' => 'Infernal Realms',
-                'slug' => 'infernal-realms-ps5',
-                'description' => 'Desciende a los reinos infernales en esta aventura de acción oscura y terrorífica.',
+                'title' => 'Remnant: From the Ashes',
+                'slug' => 'remnant-from-the-ashes-ps5',
+                'description' => 'Un shooter cooperativo de acción y aventura ambientado en un mundo postapocalíptico invadido por criaturas terroríficas. Los jugadores deben colaborar para sobrevivir, mejorar sus armas y habilidades, y enfrentarse a jefes desafiantes en una lucha desesperada por la humanidad.',
                 'price' => 47.99,
                 'b2b_price' => 34.00,
                 'stock' => 65,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Infernal+Realms',
-                'developer' => 'Dark Abyss Games',
+                'cover_image' => null,
+                'developer' => 'Gunfire Games',
                 'platform_id' => $platModels['ps5']->id,
                 'categories' => ['Acción', 'Terror', 'Mundo Abierto', 'Multijugador'],
             ],
             [
-                'title' => 'Quantum Chess Masters',
-                'slug' => 'quantum-chess-masters-xbox',
-                'description' => 'Un twist cuántico al ajedrez clásico con mecánicas de estrategia multidimensional.',
+                'title' => 'Megabonk',
+                'slug' => 'megabonk-pc',
+                'description' => 'Un juego de lucha en primera persona que cuenta la historia de una vida a través de los ojos del protagonista. Un juego emotivo y conmovedor que te hará reflexionar sobre la vida y la muerte.',
                 'price' => 22.99,
                 'b2b_price' => 16.00,
                 'stock' => 180,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Quantum+Chess+Masters',
-                'developer' => 'Quantum Minds',
-                'platform_id' => $platModels['xbox-series-x']->id,
-                'categories' => ['Estrategia', 'Simulación', 'Multijugador', 'Cooperativo'],
+                'cover_image' => null,
+                'developer' => 'Megabonk',
+                'platform_id' => $platModels['pc']->id,
+                'categories' => ['Acción', 'Indie'],
             ],
             [
-                'title' => 'Lunar Colony Simulator',
-                'slug' => 'lunar-colony-simulator-pc',
-                'description' => 'Simula y gestiona una colonia lunar en este indie de estrategia y supervivencia.',
-                'price' => 31.99,
-                'b2b_price' => 23.00,
+                'title' => 'Honkai: Star Rail',
+                'slug' => 'honkai-star-rail-pc',
+                'description' => 'Un juego de rol táctico gratuito ambientado en el universo de Honkai. Explora un mundo vibrante, domina el sistema de combate basado en turnos y forja tu destino en una aventura que evoluciona con la comunidad.',
+                'price' => 0,
+                'b2b_price' => 0,
                 'stock' => 100,
-                'cover_image' => 'https://via.placeholder.com/300x400?text=Lunar+Colony+Simulator',
-                'developer' => 'Space Pioneers',
+                'cover_image' => null,
+                'developer' => 'miHoYo',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => ['Estrategia', 'Simulación', 'Indie', 'Multijugador'],
+                'categories' => ['RPG', 'Aventura'],
             ],
+            [
+                'title' => 'Rain World',
+                'slug' => 'rain-world-pc',
+                'description' => 'Rain World es un juego de plataformas y supervivencia enfocado en la exploración, ambientado en un mundo abandonado hace mucho tiempo e invadido por criaturas tanto fascinantes como aterradoras. Una lluvia intensa y devastadora golpea regularmente la superficie, haciendo que la vida, tal y como la conocemos, sea casi imposible. Las criaturas de este mundo hibernan gran parte del tiempo, pero deben pasar los períodos secos entre lluvias buscando comida para sobrevivir un día más.',
+                'price' => 0,
+                'b2b_price' => 0,
+                'stock' => 100,
+                'cover_image' => null,
+                'developer' => 'Videocult',
+                'platform_id' => $platModels['pc']->id,
+                'categories' => ['Acción', 'Aventura', 'Indie'],
+            ],
+            [
+                'title' => 'Firewatch',
+                'slug' => 'firewatch-xbox',
+                'description' => 'Firewatch es un juego de misterio y aventura en primera persona ambientado en el bosque nacional de Shoshone, Wyoming, en 1989. El jugador asume el papel de Henry, un hombre que acepta un trabajo como vigilante de incendios para escapar de los problemas de su vida personal. A medida que se adentra en la naturaleza salvaje, Henry establece una relación por radio con Delilah, su supervisora, y juntos descubren un misterio que amenaza con desentrañar sus vidas.',
+                'price' => 19.99,
+                'b2b_price' => 14.00,
+                'stock' => 100,
+                'cover_image' => null,
+                'developer' => 'Campo Santo',
+                'platform_id' => $platModels['xbox-series-x']->id,
+                'categories' => ['Aventura', 'Indie'],
+            ],
+            [
+                'title' => 'PowerWash Simulator',
+                'slug' => 'powerwash-simulator-switch',
+                'description' => '¡Enciende la hidrolimpiadora y deja todo reluciente en este simulador de limpieza! PowerWash Simulator te permite limpiar desde pequeños objetos hasta enormes edificios con una variedad de herramientas y accesorios. Disfruta de una experiencia relajante y satisfactoria mientras transformas la suciedad en brillo.',
+                'price' => 19.99,
+                'b2b_price' => 14.00,
+                'stock' => 100,
+                'cover_image' => null,
+                'developer' => 'FuturLab',
+                'platform_id' => $platModels['switch']->id,
+                'categories' => ['Simulación'],
+            ],
+            [
+                'title' => 'Where Winds Meet',
+                'slug' => 'where-winds-meet-ps5',
+                'description' => 'Where Winds Meet es un juego de rol de acción ambientado en la China de finales de la dinastía Qing. El jugador asume el papel de un joven artista marcial que debe elegir entre unirse a una secta secreta de asesinos o a un grupo de rebeldes que luchan por la libertad. El juego cuenta con un sistema de combate basado en artes marciales, un mundo abierto para explorar y una historia ramificada con múltiples finales.',
+                'price' => 0,
+                'b2b_price' => 0,
+                'stock' => 100,
+                'cover_image' => null,
+                'developer' => 'Everstone Studio',
+                'platform_id' => $platModels['ps5']->id,
+                'categories' => ['Acción', 'Aventura', 'RPG'],
+            ]
         ];
 
+        // Elimina juegos cuyo slug ya no aparece en el seeder.
+        // Así el catálogo queda sincronizado con el array de arriba.
+        $seederSlugs = array_column($games, 'slug');
+        Game::whereNotIn('slug', $seederSlugs)->each(function (Game $game) {
+            $game->categories()->detach();
+            $game->delete();
+        });
+
         foreach ($games as $gameData) {
-            $game = Game::updateOrCreate(
+
+            // firstOrCreate: crea el juego solo si no existe aún.
+            // Si ya existe (aunque el admin haya cambiado datos), lo deja intacto.
+            $game = Game::firstOrCreate(
                 ['slug' => $gameData['slug']],
                 [
-                'title' => $gameData['title'],
-                'description' => $gameData['description'],
-                'price' => $gameData['price'],
-                'b2b_price' => $gameData['b2b_price'],
-                'stock' => $gameData['stock'],
-                'cover_image' => $gameData['cover_image'],
-                'developer' => $gameData['developer'],
-                'platform_id' => $gameData['platform_id'],
+                    'title' => $gameData['title'],
+                    'description' => $gameData['description'],
+                    'price' => $gameData['price'],
+                    'b2b_price' => $gameData['b2b_price'],
+                    'stock' => $gameData['stock'],
+                    'cover_image' => $gameData['cover_image'],
+                    'developer' => $gameData['developer'],
+                    'platform_id' => $gameData['platform_id'],
                 ]
             );
 

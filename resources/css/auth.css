@@ -13,6 +13,7 @@
   width: min(980px, 92vw);
   max-width: 980px;
 }
+
 @media (max-width: 768px){
   .login-modal .modal-dialog{ width: 94vw; }
 }
@@ -92,6 +93,7 @@
   position: relative;
   text-align: center;
 }
+
 .login-modal__right .modal-head .btn-close{
   position: absolute;
   right: 0;

@@ -3,31 +3,48 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Game;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Datos “mock” para los juegos destacados en el home. En un futuro, esto vendría de la base de datos.
-        $upcoming = [
-            ['title'=>'Astra Runner','desc'=>'Acción / Roguelite','tag'=>'PS','slug'=>'astra-runner'],
-            ['title'=>'Neon Rift: Season 1','desc'=>'Competitivo 4v4','tag'=>'PC','slug'=>'neon-rift-season-1'],
-            ['title'=>'Skyforge Lite','desc'=>'Aventura ligera','tag'=>'Switch','slug'=>'skyforge-lite'],
+        // Carga todos los juegos activos con sus relaciones
+        $allGames = Game::with(['platform', 'categories'])
+            ->where('is_active', true)
+            ->get();
+
+        // Convierte un modelo Game al formato de array que usa la vista
+        $mapGame = fn($game) => [
+            'title' => $game->title,
+            'desc' => Str::limit($game->description, 70),
+            'tag' => $game->platform->name ?? 'Multi',
+            'slug' => $game->slug,
+            'cover_image' => $game->cover_image,
         ];
 
-        $popular = [
-            ['title'=>'Neon Rift','desc'=>'Shooter táctico','tag'=>'PC','slug'=>'neon-rift'],
-            ['title'=>'Pulse Arena','desc'=>'Arena rápido','tag'=>'PC','slug'=>'pulse-arena'],
-            ['title'=>'Echoes DLC','desc'=>'Contenido extra','tag'=>'PC','slug'=>'echoes-dlc'],
-        ];
+        // Secciones del home: repartimos los juegos de la BD en tres grupos
+        // En el futuro se pueden filtrar por campos reales (status, price, featured…)
+        $upcoming = $allGames->take(3)->map($mapGame)->values()->toArray();
+        $popular  = $allGames->slice(3, 3)->map($mapGame)->values()->toArray();
 
-        $free = [
-            ['title'=>'Zero Byte','desc'=>'Indie corto','tag'=>'Xbox','slug'=>'zero-byte'],
-            ['title'=>'Starter Pack','desc'=>'Pack de bienvenida','tag'=>'PC','slug'=>'starter-pack'],
-            ['title'=>'Trial Access','desc'=>'Acceso limitado','tag'=>'PS','slug'=>'trial-access'],
-        ];
+        // Gratis: juegos con precio 0 (el admin los pone a 0 desde el panel)
+        $free = Game::with(['platform'])
+            ->where('is_active', true)
+            ->where('price', 0)
+            ->take(3)
+            ->get()
+            ->map($mapGame)
+            ->values()
+            ->toArray();
 
-        // Slides del hero del home, con datos “mock” para mostrar la estructura. En un futuro, esto también vendría de la base de datos o de una configuración.
+        // Fallback: si alguna sección quedara vacía, usa la primera disponible
+        if (empty($upcoming)) $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#']];
+        if (empty($popular))  $popular  = $upcoming;
+        if (empty($free))     $free     = []; // Sección oculta si no hay juegos gratis aún
+
+        // Slides del hero — apuntan al primer juego de cada sección
         $heroSlides = [
             [
                 'pill' => 'Próximamente',
@@ -37,9 +54,9 @@ class HomeController extends Controller
                 'game' => $upcoming[0],
                 'mediaType' => 'video',
                 'mediaSrc' => 'videos/hero.mp4',
-                'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$upcoming[0]['slug']), 'class'=>'jg-btn-sun'],
-                'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?status=upcoming'), 'class'=>'jg-btn-primary'],
-                'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $upcoming[0]['slug']), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Más populares',
@@ -49,21 +66,21 @@ class HomeController extends Controller
                 'game' => $popular[0],
                 'mediaType' => 'video',
                 'mediaSrc' => 'videos/hero3.mp4',
-                'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$popular[0]['slug']), 'class'=>'jg-btn-sun'],
-                'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?sort=popular'), 'class'=>'jg-btn-primary'],
-                'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $popular[0]['slug']), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Gratis',
                 'desc2' => 'Entra sin pagar: juegos y packs para empezar rápido.',
                 'badgeClass' => 'badge-mint',
                 'badgeText' => 'Free',
-                'game' => $free[0],
+                'game' => $free[0] ?? $upcoming[0],
                 'mediaType' => 'video',
                 'mediaSrc' => 'videos/hero2.mp4',
-                'primary' => ['text'=>'Ver ficha', 'href'=> url('/juego/'.$free[0]['slug']), 'class'=>'jg-btn-sun'],
-                'secondary' => ['text'=>'Ver todos', 'href'=> url('/catalogo?price=free'), 'class'=>'jg-btn-primary'],
-                'tertiary' => ['text'=>'Catálogo', 'href'=> url('/catalogo'), 'class'=>'jg-btn-outline'],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?price=free'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
         ];
 

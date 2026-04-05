@@ -19,7 +19,8 @@
         @forelse($games as $game)
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="card jg-card h-100 overflow-hidden shadow-sm border-0">
-                <!-- Imagen de Portada -->
+                
+            <!-- Imagen de Portada -->
                 <div class="position-relative overflow-hidden" style="height: 240px; background: linear-gradient(45deg, #121212, #2a2a2a);">
                     @if($game->cover_image)
                         <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="w-100 h-100 object-fit-cover jg-card-hover-img">
@@ -32,11 +33,11 @@
                 <!-- Detalles del Juego -->
                 <div class="card-body d-flex flex-column p-4">
                     <h5 class="card-title text-white mb-1">{{ $game->title }}</h5>
-                    <p class="mb-3">{{ $game->developer ?? 'Desarrollador N/A' }}</p>
+                    <p class="mb-3 text-white">{{ $game->developer ?? 'Desarrollador N/A' }}</p>
                     
                     <div class="mt-auto">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h4 text-sun mb-0 fw-bold">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
+                            <span class="h4 text-sun mb-0 fw-bold text-white">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
                             @if($game->stock > 0)
                                 <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
                             @else

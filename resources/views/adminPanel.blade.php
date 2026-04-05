@@ -682,12 +682,19 @@
           return;
         }
 
-        // Obtiene todas las filas del cuerpo de la tabla para su manipulación
-        const tbody = tabla.querySelector('tbody');
-        const filas = Array.from(tbody.querySelectorAll('tr'));
-
-        // Función principal para aplicar el filtro y ordenación según los inputs del usuario
+        // Función de filtro que se ejecuta sin depender de variables "caducadas"
         function aplicar() {
+          // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
+          const tablaDin = document.getElementById('tablaProductos');
+          
+          // Si no se encuentra la tabla, no se aplica el filtro
+          if (!tablaDin){
+            return;
+          }
+
+          // Obtiene el cuerpo de la tabla y las filas
+          const tbody = tablaDin.querySelector('tbody');
+          const filas = Array.from(tbody.querySelectorAll('tr'));
 
           // obtiene y normaliza el texto de búsqueda y el estado seleccionado para comparaciones insensibles a mayúsculas y espacios
           const inputBusqueda = (input.value || '').trim().toLowerCase();
@@ -713,13 +720,13 @@
             // obtiene los datos relevantes de cada fila para la comparación según el criterio de ordenamiento
             const A = a.dataset, B = b.dataset;
 
-            // función de comparación para texto, usando localeCompare para los caracteres y acentos
-            const compararTexto = (x, y) => x.localeCompare(y, 'es', { sensitivity: 'base' });
+            // función de comparación para texto, usando localeCompare
+            const compararTexto = (x, y) => (x || '').localeCompare((y || ''), 'es', { sensitivity: 'base' });
 
-            // función de comparación para números, manejando casos donde el valor no sea un número válido
+            // función de comparación para números
             const compararNumber = (x, y) => (parseFloat(x) || 0) - (parseFloat(y) || 0);
 
-            // lógica de ordenamiento según el valor seleccionado en el selector de ordenación
+            // lógica de ordenamiento
             if (ordenar === 'nombre_asc') return compararTexto(A.nombre, B.nombre);
             if (ordenar === 'nombre_desc') return compararTexto(B.nombre, A.nombre);
             if (ordenar === 'precio_asc') return compararNumber(A.precio, B.precio);
@@ -731,9 +738,14 @@
             return 0;
           });
 
-          // pinta las filas visibles
-          tbody.innerHTML = '';
-          visibles.forEach(r => tbody.appendChild(r));
+          // 1. Oculta primero todas las filas
+          filas.forEach(r => r.style.display = 'none');
+          
+          // 2. Muestra y re-ubica (ordenando) solo las filas que pasaron el filtro, en su nuevo orden
+          visibles.forEach(r => {
+            r.style.display = '';
+            tbody.appendChild(r); // appendChild mueve el elemento al final de su padre, aplicando el nuevo orden visual
+          });
         }
 
         // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
