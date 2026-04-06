@@ -16,9 +16,26 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. CREAR CATEGORÍAS
-        $categories = ['Acción', 'Aventura', 'RPG', 'Deportes', 'Estrategia', 'Shooter', 'Indie', 'Simulación', 'Carreras', 'Terror', 'Mundo Abierto', 'Multijugador',
-        'Cooperativo', 'Sandbox', 'Pixel Art', 'Puzzles', 'Plataformas']; 
-        
+        $categories = [
+            'Acción',
+            'Aventura',
+            'RPG',
+            'Deportes',
+            'Estrategia',
+            'Shooter',
+            'Indie',
+            'Simulación',
+            'Carreras',
+            'Terror',
+            'Mundo Abierto',
+            'Multijugador',
+            'Cooperativo',
+            'Sandbox',
+            'Pixel Art',
+            'Puzzles',
+            'Plataformas'
+        ];
+
         $catModels = [];
         foreach ($categories as $cat) {
             $catModels[] = Category::firstOrCreate(['slug' => Str::slug($cat)], ['name' => $cat]);
@@ -37,11 +54,23 @@ class DatabaseSeeder extends Seeder
         }
 
         // 3. CREAR USUARIOS
-        // Admin
+
+        // Primer admin
         User::firstOrCreate(
             ['email' => 'admin@gamezone.com'],
             [
                 'name' => 'Administrador',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
+
+        User::firstOrCreate(
+            [
+                'email' => 'jediga.s.a@gmail.com'
+            ],
+            [
+                'name' => 'Administrador Jediga',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
             ]
@@ -66,7 +95,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'company',
             ]
         );
-        
+
         // Perfil de la empresa
         CompanyProfile::firstOrCreate(
             ['user_id' => $empresaUser->id],
@@ -284,7 +313,8 @@ class DatabaseSeeder extends Seeder
                 'platform_id' => $platModels['switch']->id,
                 'categories' => ['Simulación'],
             ],
-            [   'title' => 'Where Winds Meet',
+            [
+                'title' => 'Where Winds Meet',
                 'slug' => 'where-winds-meet-ps5',
                 'description' => 'Where Winds Meet es un juego de rol de acción ambientado en la China de finales de la dinastía Qing. El jugador asume el papel de un joven artista marcial que debe elegir entre unirse a una secta secreta de asesinos o a un grupo de rebeldes que luchan por la libertad. El juego cuenta con un sistema de combate basado en artes marciales, un mundo abierto para explorar y una historia ramificada con múltiples finales.',
                 'price' => 0,
@@ -312,14 +342,14 @@ class DatabaseSeeder extends Seeder
             $game = Game::firstOrCreate(
                 ['slug' => $gameData['slug']],
                 [
-                'title' => $gameData['title'],
-                'description' => $gameData['description'],
-                'price' => $gameData['price'],
-                'b2b_price' => $gameData['b2b_price'],
-                'stock' => $gameData['stock'],
-                'cover_image' => $gameData['cover_image'],
-                'developer' => $gameData['developer'],
-                'platform_id' => $gameData['platform_id'],
+                    'title' => $gameData['title'],
+                    'description' => $gameData['description'],
+                    'price' => $gameData['price'],
+                    'b2b_price' => $gameData['b2b_price'],
+                    'stock' => $gameData['stock'],
+                    'cover_image' => $gameData['cover_image'],
+                    'developer' => $gameData['developer'],
+                    'platform_id' => $gameData['platform_id'],
                 ]
             );
 

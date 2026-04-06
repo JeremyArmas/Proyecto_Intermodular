@@ -684,6 +684,17 @@
 
         // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
         function aplicar() {
+          // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
+          const tablaDin = document.getElementById('tablaProductos');
+          
+          // Si no se encuentra la tabla, no se aplica el filtro
+          if (!tablaDin){
+            return;
+          }
+
+          // Obtiene el cuerpo de la tabla y las filas
+          const tbody = tablaDin.querySelector('tbody');
+          const filas = Array.from(tbody.querySelectorAll('tr'));
 
           // Evita que se ejecute el filtro más de una vez
           clearTimeout(window.adminFiltroTimeout);
