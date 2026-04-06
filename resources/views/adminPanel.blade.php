@@ -682,70 +682,97 @@
           return;
         }
 
-        // Función de filtro que se ejecuta sin depender de variables "caducadas"
+        // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
         function aplicar() {
-          // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
-          const tablaDin = document.getElementById('tablaProductos');
-          
-          // Si no se encuentra la tabla, no se aplica el filtro
-          if (!tablaDin){
-            return;
-          }
 
-          // Obtiene el cuerpo de la tabla y las filas
-          const tbody = tablaDin.querySelector('tbody');
-          const filas = Array.from(tbody.querySelectorAll('tr'));
+          // Evita que se ejecute el filtro más de una vez
+          clearTimeout(window.adminFiltroTimeout);
+          window.adminFiltroTimeout = setTimeout(async () => {
+            const inputBusqueda = (input.value || '').trim();
+            const estadoSeleccionado = (estado.value || '').trim();
+            const ordenar = orden.value || 'fecha_desc';
+            
+            // Obtiene los parámetros de la URL
+            const params = new URLSearchParams(window.location.search);
+            
+            // Filtra según la busqueda
+            if(inputBusqueda){
+              params.set('search', inputBusqueda);
+            } else {
+              params.delete('search');
+            }
 
-          // obtiene y normaliza el texto de búsqueda y el estado seleccionado para comparaciones insensibles a mayúsculas y espacios
-          const inputBusqueda = (input.value || '').trim().toLowerCase();
-          const estadoSeleccionado = (estado.value || '').trim().toLowerCase();
+            // Filtra según el estado
+            if(estadoSeleccionado){
+              params.set('estado', estadoSeleccionado);
+            } else {
+              params.delete('estado');
+            }
 
-          // filtra las filas según el texto de búsqueda y el estado seleccionado
-          let visibles = filas.filter(fil => {
-            const nombre = fil.dataset.nombre || '';
-            const categoria = fil.dataset.categoria || '';
-            const plataforma = fil.dataset.plataforma || '';
-            const estado = fil.dataset.estado || '';
-            const matchInput = !inputBusqueda || (nombre.includes(inputBusqueda) || categoria.includes(inputBusqueda) || plataforma.includes(inputBusqueda));
-            const matchEstado = !estadoSeleccionado || estado === estadoSeleccionado;
-            return matchInput && matchEstado;
-          });
+            // Filtra según el orden
+            if(ordenar && ordenar !== 'fecha_desc'){
+              params.set('orden', ordenar);
+            } else {
+              params.delete('orden');
+            }
+            
+            // Reinicia a la primera página al buscar
+            params.delete('productos_page');
 
-          // ordena las filas visibles según el criterio seleccionado en el ordenamiento
-          const ordenar = orden.value;
+            // Construye la URL con los parámetros del filtro
+            const url = window.location.pathname + '?' + params.toString();
+            
+            // Actualiza la URL en el historial del navegador
+            window.history.pushState({}, '', url);
 
-          // funciones de comparación para texto y números, con manejo de casos especiales
-          visibles.sort((a, b) => {
+            // Obtiene el contenedor de productos
+            const contenedor = document.getElementById('contenedorProductos');
+            
+            // Si no se encuentra el contenedor, no se aplica el filtro
+            if (!contenedor){
+              return;
+            }
 
-            // obtiene los datos relevantes de cada fila para la comparación según el criterio de ordenamiento
-            const A = a.dataset, B = b.dataset;
+            // Aplica un estilo de carga al contenedor
+            contenedor.style.opacity = '0.6';
+            contenedor.style.pointerEvents = 'none';
 
-            // función de comparación para texto, usando localeCompare
-            const compararTexto = (x, y) => (x || '').localeCompare((y || ''), 'es', { sensitivity: 'base' });
+            // Realiza la petición AJAX para obtener los resultados del filtro
+            try {
+              const res = await fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+              });
+              const html = await res.text();
+              const doc = new DOMParser().parseFromString(html, 'text/html');
+              const nuevoC = doc.getElementById('contenedorProductos');
+              if (nuevoC) {
+                contenedor.innerHTML = nuevoC.innerHTML;
+              }
+            } catch (e) {
+              console.error('No se pudo cargar el filtro', e);
+            } finally {
+              contenedor.style.opacity = '1';
+              contenedor.style.pointerEvents = 'all';
+            }
+          }, 300); // 300ms de debounce para no saturar al tipear
+        }
 
-            // función de comparación para números
-            const compararNumber = (x, y) => (parseFloat(x) || 0) - (parseFloat(y) || 0);
+        // Recuperar valores iniciales de la URL
+        const queryParams = new URLSearchParams(window.location.search);
+        
+        // Si se encuentra el parámetro 'search', se establece el valor del input
+        if (queryParams.has('search')){
+          input.value = queryParams.get('search');
+        }
 
-            // lógica de ordenamiento
-            if (ordenar === 'nombre_asc') return compararTexto(A.nombre, B.nombre);
-            if (ordenar === 'nombre_desc') return compararTexto(B.nombre, A.nombre);
-            if (ordenar === 'precio_asc') return compararNumber(A.precio, B.precio);
-            if (ordenar === 'precio_desc') return compararNumber(B.precio, A.precio);
-            if (ordenar === 'stock_asc') return compararNumber(A.stock, B.stock);
-            if (ordenar === 'stock_desc') return compararNumber(B.stock, A.stock);
-            if (ordenar === 'fecha_asc') return compararTexto(A.fecha, B.fecha);
-            if (ordenar === 'fecha_desc') return compararTexto(B.fecha, A.fecha);
-            return 0;
-          });
+        // Si se encuentra el parámetro 'estado', se establece el valor del select
+        if (queryParams.has('estado')){
+          estado.value = queryParams.get('estado').charAt(0).toUpperCase() + queryParams.get('estado').slice(1).toLowerCase();
+        }
 
-          // 1. Oculta primero todas las filas
-          filas.forEach(r => r.style.display = 'none');
-          
-          // 2. Muestra y re-ubica (ordenando) solo las filas que pasaron el filtro, en su nuevo orden
-          visibles.forEach(r => {
-            r.style.display = '';
-            tbody.appendChild(r); // appendChild mueve el elemento al final de su padre, aplicando el nuevo orden visual
-          });
+        // Si se encuentra el parámetro 'orden', se establece el valor del select
+        if (queryParams.has('orden')){
+          orden.value = queryParams.get('orden');
         }
 
         // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs

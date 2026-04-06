@@ -39,14 +39,21 @@
           @foreach($heroSlides as $s)
             <div class="hero-video swiper-slide">
 
-              <!-- Si el tipo de media es video, mostramos un video. Si no, una imagen. -->
-              @if($s['mediaType'] === 'video')
-                <video class="jg-hero-media" muted loop playsinline preload="metadata">
+              <!-- Contenedor para el efecto Fundido (Fade) de Imagen a Vídeo -->
+              <div class="hero-media-wrapper">
+                <!-- El vídeo (reproduciéndose por detrás) -->
+                <video class="jg-hero-vid" muted loop playsinline preload="metadata">
                   <source src="{{ asset($s['mediaSrc']) }}" type="video/mp4">
                 </video>
-              @else
-                <img class="jg-hero-media" src="{{ asset($s['mediaSrc']) }}" alt="">
-              @endif
+                
+                <!-- La imagen de cubierta (encima, que luego desaparece) -->
+                @if(!empty($s['game']['cover_image']))
+                  <img class="jg-hero-img" src="{{ asset('storage/' . $s['game']['cover_image']) }}" alt="{{ $s['game']['title'] }}">
+                @else
+                  <div class="jg-hero-img" style="background: var(--jg-bg2);"></div>
+                @endif
+              </div>
+
 
               <!-- Contenido encima del video/imagen -->
               <div class="hero-video-content">
