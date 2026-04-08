@@ -379,17 +379,8 @@ body::after{
   background: rgba(255,255,255,.04);
 }
 
-/* =========================================================
-   EFECTO FUNDIDO (FADE): Imagen sin recortes -> Vídeo
-   ========================================================= */
-.hero-media-wrapper {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.jg-hero-vid {
+.hero-video video,
+.hero-video img{
   position: absolute;
   inset: 0;
   width: 100%;
@@ -397,40 +388,6 @@ body::after{
   object-fit: cover;
   transform: scale(1.03);
   filter: saturate(1.05) contrast(1.05);
-  z-index: 0;
-}
-
-.jg-hero-img { 
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-  object-position: center 25%; 
-  z-index: 1; 
-
-  /* Fondo oscuro detrás por si el cover falla en pantallas extremas */
-  background-color: var(--jg-bg2); 
-  pointer-events: none;
-}
-
-/* Animación: dura 5.5s. La imagen tapa el vídeo durante 4.5s y se desvanece suavemente en el último segundo */
-.swiper-slide-active .jg-hero-img,
-.swiper-slide-prev .jg-hero-img,
-.swiper-slide-duplicate-active .jg-hero-img,
-.swiper-slide-duplicate-prev .jg-hero-img {
-  animation: fadeImageToVideo 5.5s ease-in-out forwards;
-}
-
-@keyframes fadeImageToVideo {
-  0%   { opacity: 1; }
-  81.8%  { opacity: 1; } /* 4.5 segundos firmes (81.8% de 5.5s) */
-  100% { opacity: 0; } /* En 1 segundo desaparece y se queda oculta */
-}
-
-/* Pausar animación de fundido si pasas el ratón (para coincidir con Swiper) */
-.jg-hero-swiper:hover .swiper-slide-active .jg-hero-img {
-  animation-play-state: paused;
 }
 
 .hero-video::before,
