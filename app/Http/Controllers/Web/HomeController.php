@@ -41,8 +41,8 @@ class HomeController extends Controller
 
         // Fallback: si alguna sección quedara vacía, usa la primera disponible
         if (empty($upcoming)) $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#']];
-        if (empty($popular))  $popular  = $upcoming;
-        if (empty($free))     $free     = []; // Sección oculta si no hay juegos gratis aún
+        if (empty($popular)) $popular = $upcoming;
+        if (empty($free)) $free = []; // Sección oculta si no hay juegos gratis aún
 
         // Slides del hero — apuntan al primer juego de cada sección
         $heroSlides = [
@@ -53,7 +53,7 @@ class HomeController extends Controller
                 'badgeText' => 'Soon',
                 'game' => $upcoming[0],
                 'mediaType' => 'video',
-                'mediaSrc' => 'videos/hero.mp4',
+                'mediaSrc' => 'videos/Magrunner-Dark-Pulse-trailer.mp4',
                 'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $upcoming[0]['slug']), 'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
@@ -65,7 +65,7 @@ class HomeController extends Controller
                 'badgeText' => 'Top',
                 'game' => $popular[0],
                 'mediaType' => 'video',
-                'mediaSrc' => 'videos/hero3.mp4',
+                'mediaSrc' => 'videos/Oddworld-Soulstorm-trailer.mp4',
                 'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $popular[0]['slug']), 'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
@@ -77,7 +77,7 @@ class HomeController extends Controller
                 'badgeText' => 'Free',
                 'game' => $free[0] ?? $upcoming[0],
                 'mediaType' => 'video',
-                'mediaSrc' => 'videos/hero2.mp4',
+                'mediaSrc' => 'videos/Hypercharge-Unboxed-trailer.mp4',
                 'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?price=free'), 'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],

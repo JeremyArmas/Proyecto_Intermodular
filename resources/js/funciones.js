@@ -342,14 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Busca el contenedor principal del slider para asignar correctamente los botones de navegación, ya sea un elemento padre directo o un contenedor específico
   const contenedor = swiperJG.closest('.jg-hero-container') || swiperJG.parentElement;
 
-  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto fade, autoplay cada 5.4s con pausa al interactuar o al pasar el mouse, paginación clicable y navegación con flechas
+  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto slide, separacion entre slides
   const swiper = new Swiper(swiperJG, {
     loop: true,
-    speed: 600,
-    effect: 'fade',
-    fadeEffect: { crossFade: true },
+    speed: 1300, 
+    effect: 'slide',
+    spaceBetween: 40, 
     autoplay: {
-      delay: 5400,
+      delay: 19500, 
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
@@ -363,43 +363,55 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  // Sincroniza vídeos: pausa todos y reproduce solo el del slide activo
-  const syncVideos = () => {
-    
-    // Pausa y reinicia todos los vídeos para evitar que sigan sonando al cambiar de slide
-    swiperJG.querySelectorAll('video').forEach(vid => {
-      vid.pause();
-      vid.currentTime = 0;
-    });
-    
-    // Reproduce el vídeo del slide activo, si existe (algunos slides pueden no tener vídeo)
+  // Reproduce el video del slide activo al iniciar su transición
+  const syncVideosStart = () => {
+   
+    // Busca el video del slide activo
     const activeVideo = swiperJG.querySelector('.swiper-slide-active video');
     
     // El método play() devuelve una promesa que puede ser rechazada si el navegador bloquea la reproducción automática, por eso se maneja con catch para evitar errores no controlados en la consola
     if (activeVideo) {
+
+      // Intenta reproducir el video
       const play = activeVideo.play();
       
-      // Si la promesa es rechazada (por ejemplo, por bloqueo de autoplay), se captura el error para evitar que se muestre en la consola, pero no es necesario hacer nada más en ese caso
+      // Si play() devuelve una promesa, maneja el error para evitar que se muestren errores no controlados en la consola del navegador
       if (play && typeof play.catch === 'function'){
         play.catch(() => {});
-      } 
+      }
     }
   };
 
-  syncVideos();
-  swiper.on('slideChangeTransitionStart', syncVideos);
+  // Detiene y reinicia los videos ocultos sólo al terminar el fundido cruzado
+  const syncVideosEnd = () => {
+    swiperJG.querySelectorAll('.swiper-slide:not(.swiper-slide-active) video').forEach(vid => {
+      vid.pause();
+      vid.currentTime = 0;
+    });
+  };
+
+  // Sincroniza los videos al iniciar el slider
+  syncVideosStart();
+  
+  // Sincroniza los videos al cambiar de slide
+  swiper.on('slideChangeTransitionStart', syncVideosStart);
+  swiper.on('slideChangeTransitionEnd', syncVideosEnd);
 });
 
 
 /* LÓGICAS NAVEGACIÓN Y UI */
 function configurarUI() {
+  
   // Manejo de Logout: asegura que el formulario se envíe por POST
   const btnLogout = document.querySelector('form[action$="/logout"] button[type="submit"]');
+  
+  // Si se encuentra el botón de logout, agrega un event listener para manejar el click
   if (btnLogout) {
     btnLogout.addEventListener('click', (e) => {
       e.preventDefault();
       console.log('Iniciando cierre de sesión...');
-      // alert('Cerrando sesión...'); // Uncomment if needed for manual verification
+      
+      // alert('Cerrando sesión...'); 
       btnLogout.closest('form').submit();
     });
   }

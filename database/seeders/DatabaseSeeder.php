@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // 3. CREAR USUARIOS
+
         // Primer admin
         User::firstOrCreate(
             ['email' => 'admin@gamezone.com'],
@@ -190,7 +191,7 @@ class DatabaseSeeder extends Seeder
                 'cover_image' => null,
                 'developer' => 'Re-Logic',
                 'platform_id' => $platModels['pc']->id,
-                'categories' => ['Aventura', 'Indie', 'Mundo Abierto', 'Sandbox'],
+                'categories' => ['Aventura', 'Indie', 'Mundo Abierto', 'Sandbox'], 
             ],
             [
                 'title' => 'GTFO',
@@ -277,7 +278,7 @@ class DatabaseSeeder extends Seeder
                 'categories' => ['RPG', 'Aventura'],
             ],
             [
-                'title' => 'Rain World',
+                'title'=> 'Rain World',
                 'slug' => 'rain-world-pc',
                 'description' => 'Rain World es un juego de plataformas y supervivencia enfocado en la exploración, ambientado en un mundo abandonado hace mucho tiempo e invadido por criaturas tanto fascinantes como aterradoras. Una lluvia intensa y devastadora golpea regularmente la superficie, haciendo que la vida, tal y como la conocemos, sea casi imposible. Las criaturas de este mundo hibernan gran parte del tiempo, pero deben pasar los períodos secos entre lluvias buscando comida para sobrevivir un día más.',
                 'price' => 0,
@@ -289,7 +290,7 @@ class DatabaseSeeder extends Seeder
                 'categories' => ['Acción', 'Aventura', 'Indie'],
             ],
             [
-                'title' => 'Firewatch',
+                'title'=> 'Firewatch',
                 'slug' => 'firewatch-xbox',
                 'description' => 'Firewatch es un juego de misterio y aventura en primera persona ambientado en el bosque nacional de Shoshone, Wyoming, en 1989. El jugador asume el papel de Henry, un hombre que acepta un trabajo como vigilante de incendios para escapar de los problemas de su vida personal. A medida que se adentra en la naturaleza salvaje, Henry establece una relación por radio con Delilah, su supervisora, y juntos descubren un misterio que amenaza con desentrañar sus vidas.',
                 'price' => 19.99,
