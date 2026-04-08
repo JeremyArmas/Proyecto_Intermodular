@@ -136,6 +136,14 @@
   box-shadow: none !important;
 }
 
+.login-modal .input-group .btn {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.login-modal .input-group .btn:hover {
+  color: #fff;
+}
+
 /* Focus dentro del input-group: mismo halo que inputs individuales */
 .login-modal .input-group:focus-within{
   border-color: rgba(124,58,237,.55);

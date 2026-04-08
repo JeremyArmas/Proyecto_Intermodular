@@ -65,12 +65,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Segundo admin
         User::firstOrCreate(
             [
                 'email' => 'jediga.s.a@gmail.com'
             ],
             [
-                'name' => 'Administrador Jediga',
+                'name' => 'Administrador',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
             ]

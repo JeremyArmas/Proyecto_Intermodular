@@ -7,6 +7,7 @@ use App\Models\Game;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\ContactMessage;
 
 class AdminController extends Controller
 {
@@ -77,6 +78,8 @@ class AdminController extends Controller
         $usuarios = User::orderBy('created_at', 'desc')->paginate(10, ['*'], 'usuarios_page')->withQueryString();
         $pedidos = Order::with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'pedidos_page')->withQueryString();
         
+        $tickets = ContactMessage::orderBy('created_at', 'desc')->paginate(10, ['*'], 'tickets_page')->withQueryString();
+        
         // Estadísticas generales para mostrar en el panel
         $totalProductos = Game::count();
         $bajoStock = Game::where('stock', '>', 0)->where('stock', '<=', 10)->count();
@@ -89,6 +92,7 @@ class AdminController extends Controller
             'categorias',
             'usuarios',
             'pedidos',
+            'tickets',
             'totalProductos',
             'bajoStock',
             'sinStock',

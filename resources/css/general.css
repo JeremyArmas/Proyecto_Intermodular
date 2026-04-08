@@ -274,7 +274,7 @@ body::after{
 
 .jg-section-title{
   font-family: var(--jg-font-title);
-  font-weight: 750;
+  font-weight: 650;
   letter-spacing: .10em;
   margin: 0;
   position: relative;

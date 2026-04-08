@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 //Web Controllers
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\ContactController;
 use App\Http\Controllers\Web\AuthController as WebAuthController;
 
 //Admin Controllers
@@ -13,7 +14,9 @@ use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Auth\PasswordResetController;
+
 
 //Ruta del home principal
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,7 +34,8 @@ Route::get('/soporte', function() {return view('soporte'); });
 Route::get('/faq', function() {return view('faq'); });
 
 //Ruta a contacto
-Route::get('/contacto', function() {return view('contacto'); });
+Route::get('/contacto', [ContactController::class, 'index'])->name('contacto');
+Route::post('/contacto', [ContactController::class, 'store'])->name('contacto.store');
 
 //Rutas del login y logout
 Route::get('/login', function () {return redirect()->route('home');})->name('login');
@@ -69,6 +73,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::resource('platforms', PlatformController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
+    Route::resource('tickets', AdminContactController::class)->only(['index', 'show', 'update']);
 });
 
 //Rutas de recuperación de contraseña

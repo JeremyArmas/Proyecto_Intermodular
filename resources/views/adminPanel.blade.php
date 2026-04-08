@@ -156,7 +156,17 @@
             <i class="bi bi-receipt me-1"></i> Pedidos
           </button>
         </li>
+
+        <!-- Pestaña de tickets -->
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets" type="button"
+            role="tab">
+            <i class="bi bi-ticket me-1"></i> Tickets
+          </button>
+        </li>
       </ul>
+
+
 
       <!-- Contenido de cada pestaña -->
       <div class="tab-content">
@@ -428,7 +438,8 @@
 
               <!-- Conteo de productos mostrados y total -->
               <div class="jg-muted small">Mostrando {{ $categorias->firstItem() ?? 0 }} –
-                {{ $categorias->lastItem() ?? 0 }} de {{ $categorias->total() }}</div>
+                {{ $categorias->lastItem() ?? 0 }} de {{ $categorias->total() }}
+              </div>
 
               <!-- Paginación cada 10 -->
               <div class="ms-auto">
@@ -651,18 +662,74 @@
 
               <!-- Conteo de productos mostrados y total -->
               <div class="jg-muted small">Mostrando {{ $pedidos->firstItem() ?? 0 }} – {{ $pedidos->lastItem() ?? 0 }} de
-                {{ $pedidos->total() }}</div>
+                {{ $pedidos->total() }}
+              </div>
 
               <!-- Paginación cada 10 -->
               <div class="ms-auto">
                 {{ $pedidos->links() }}
               </div>
             </div>
+          </div>
+        </div>
 
+        <!-- Pestaña de tickets -->
+        <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tab-tickets">
+        <div class="jg-card p-3 mb-3">
+        <div id="contenedorTickets" class="js-paginacion-admin">
+        <div class="jg-table-wrap">
+          <div class="table-responsive">
+            <table class="table jg-table align-middle">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Asunto</th>
+                  <th>Estado</th>
+                  <th>Recibido</th>
+                  <th class="text-end">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse($tickets as $t)
+                  <tr>
+                    <td>
+                      <span class="fw-bold">{{ $t->name }}</span><br>
+                      <small class="jg-muted">{{ $t->email }}</small>
+                    </td>
+                    <td class="fw-bold">{{ $t->subject }}</td>
+                    <td>
+                      @if($t->status === 'pendiente')
+                        <span class="badge badge-sun">Pendiente</span>
+                      @else
+                        <span class="badge badge-mint">Respondido</span>
+                      @endif
+                    </td>
+                    <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
+                    <td class="text-end">
+                      <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
+                        <i class="bi bi-envelope-open"></i> Responder
+                      </a>
+                    </td>
+                  </tr>
+                @empty
+                  <tr>
+                    <td colspan="5" class="text-center py-4 jg-muted">No hay tickets de soporte.</td>
+                  </tr>
+                @endforelse
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
+        <!-- Paginación de tickets -->
+        <div class="d-flex justify-content-end mt-2">
+          {{ $tickets->links() }}
+        </div>
+
+        </div>
+        </div>
+      </div>
     </div>
   </div>
 
