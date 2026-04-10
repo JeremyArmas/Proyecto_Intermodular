@@ -42,11 +42,6 @@
             </a>
           </div>
 
-          <!-- Nota aclaratoria (solo UI) -->
-          <div class="jg-admin-note mt-3 small">
-            Nota: esto es <strong>solo UI</strong>. Los botones están como “placeholder” para cuando conectéis BD +
-            controladores.
-          </div>
         </div>
       </div>
 

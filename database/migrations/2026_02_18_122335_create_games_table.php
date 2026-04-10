@@ -24,6 +24,9 @@ return new class extends Migration
         $table->integer('stock')->default(0);
         $table->string('cover_image')->nullable(); // Foto portada
         $table->string('developer')->nullable(); 
+        $table->date('release_date')->nullable(); // Para el sistema de reservas / Próximamente
+        
+        $table->string('trailer_url')->nullable(); // URL del trailer de YouTube
         
         // Un juego pertenece a UNA plataforma (Físico o Digital)
         $table->foreignId('platform_id')->constrained(); 

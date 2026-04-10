@@ -10,11 +10,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Carga todos los juegos activos con sus relaciones
-        $allGames = Game::with(['platform', 'categories'])
-            ->where('is_active', true)
-            ->get();
-
         // Convierte un modelo Game al formato de array que usa la vista
         $mapGame = fn($game) => [
             'title' => $game->title,
@@ -22,16 +17,40 @@ class HomeController extends Controller
             'tag' => $game->platform->name ?? 'Multi',
             'slug' => $game->slug,
             'cover_image' => $game->cover_image,
+            'youtube_id' => $game->youtube_id, // null si no tiene trailer
         ];
 
-        // Secciones del home: repartimos los juegos de la BD en tres grupos
-        // En el futuro se pueden filtrar por campos reales (status, price, featured…)
-        $upcoming = $allGames->take(3)->map($mapGame)->values()->toArray();
-        $popular  = $allGames->slice(3, 3)->map($mapGame)->values()->toArray();
+        // Próximamente: juegos que NO han salido todavía
+        $upcoming = Game::with(['platform'])
+            ->where('is_active', true)
+            ->whereNotNull('release_date')
+            ->whereDate('release_date', '>', now())
+            ->orderBy('release_date', 'asc')
+            ->take(3)
+            ->get()
+            ->map($mapGame)
+            ->values()
+            ->toArray();
+
+        // Populares (Ejemplo: ordenados por stock o id decendente)
+        $popular = Game::with(['platform'])
+            ->where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('release_date')->orWhereDate('release_date', '<=', now());
+            })
+            ->orderBy('id', 'desc')
+            ->take(3)
+            ->get()
+            ->map($mapGame)
+            ->values()
+            ->toArray();
 
         // Gratis: juegos con precio 0 (el admin los pone a 0 desde el panel)
         $free = Game::with(['platform'])
             ->where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('release_date')->orWhereDate('release_date', '<=', now());
+            })
             ->where('price', 0)
             ->take(3)
             ->get()
@@ -40,7 +59,9 @@ class HomeController extends Controller
             ->toArray();
 
         // Fallback: si alguna sección quedara vacía, usa la primera disponible
-        if (empty($upcoming)) $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#']];
+        if (empty($upcoming)) {
+            $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#','cover_image'=>null,'youtube_id'=>null]];
+        }
         if (empty($popular)) $popular = $upcoming;
         if (empty($free)) $free = []; // Sección oculta si no hay juegos gratis aún
 
@@ -52,11 +73,10 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-soft',
                 'badgeText' => 'Soon',
                 'game' => $upcoming[0],
-                'mediaType' => 'video',
-                'mediaSrc' => 'videos/Magrunner-Dark-Pulse-trailer.mp4',
-                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $upcoming[0]['slug']), 'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+                'youtube_id' => $upcoming[0]['youtube_id'] ?? null,
+                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $upcoming[0]['slug']),     'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?status=upcoming'),           'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Más populares',
@@ -64,11 +84,10 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-sun',
                 'badgeText' => 'Top',
                 'game' => $popular[0],
-                'mediaType' => 'video',
-                'mediaSrc' => 'videos/Oddworld-Soulstorm-trailer.mp4',
-                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $popular[0]['slug']), 'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+                'youtube_id' => $popular[0]['youtube_id'] ?? null,
+                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $popular[0]['slug']),       'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?sort=popular'),               'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Gratis',
@@ -76,11 +95,10 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-mint',
                 'badgeText' => 'Free',
                 'game' => $free[0] ?? $upcoming[0],
-                'mediaType' => 'video',
-                'mediaSrc' => 'videos/Hypercharge-Unboxed-trailer.mp4',
-                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?price=free'), 'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+                'youtube_id' => ($free[0]['youtube_id'] ?? $upcoming[0]['youtube_id']) ?? null,
+                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?price_max=0'),               'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
             ],
         ];
 

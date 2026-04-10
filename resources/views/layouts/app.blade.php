@@ -29,6 +29,7 @@
 <body>
 
   <!-- Animación del preloader -->
+  @if(empty(request()->query()))
   <div class="loader-wrap" id="preloader" aria-hidden="true">
     <div class="loader-wrap-heading">
       <div class="load-load-text">
@@ -52,6 +53,7 @@
       }
     }, 3000);
   </script>
+  @endif
 
 
   <!-- Modal (ventana emergente) del login -->
