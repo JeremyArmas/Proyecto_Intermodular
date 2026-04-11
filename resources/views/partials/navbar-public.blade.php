@@ -79,7 +79,7 @@
                   </a>
                   
                   <!-- Juegos gratuitos -->
-                  <a class="mm-item" href="{{ url('/catalogo?price=free') }}">
+                  <a class="mm-item" href="{{ url('/catalogo?price_max=0') }}">
                     <span><i class="bi bi-gift me-2"></i> Juegos gratuitos</span>
                     <span class="badge badge-mint">Gratis</span>
                   </a>

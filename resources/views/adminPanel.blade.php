@@ -42,11 +42,6 @@
             </a>
           </div>
 
-          <!-- Nota aclaratoria (solo UI) -->
-          <div class="jg-admin-note mt-3 small">
-            Nota: esto es <strong>solo UI</strong>. Los botones están como “placeholder” para cuando conectéis BD +
-            controladores.
-          </div>
         </div>
       </div>
 
@@ -720,6 +715,7 @@
             </table>
           </div>
         </div>
+      </div>
 
         <!-- Paginación de tickets -->
         <div class="d-flex justify-content-end mt-2">
@@ -731,167 +727,204 @@
       </div>
     </div>
   </div>
-</div>
 
-        <!-- Script para el filtro básico de productos en la pestaña de productos -->
-        @push('scripts')
-          <script>
+  <!-- Script para el filtro básico de productos en la pestaña de productos -->
+  @push('scripts')
+    <script>
 
-            // Filtro básico front
-            document.addEventListener('DOMContentLoaded', () => {
-              const input = document.getElementById('adminSearchProductos');
-              const estado = document.getElementById('adminEstadoProductos');
-              const orden = document.getElementById('adminOrdenProductos');
-              const tabla = document.getElementById('tablaProductos');
+      // Filtro básico front
+      document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('adminSearchProductos');
+        const estado = document.getElementById('adminEstadoProductos');
+        const orden = document.getElementById('adminOrdenProductos');
+        const tabla = document.getElementById('tablaProductos');
 
-              // Si no se encuentran los elementos necesarios, no se aplica el filtro
-              if (!input || !estado || !orden || !tabla) {
-                return;
+        // Si no se encuentran los elementos necesarios, no se aplica el filtro
+        if (!input || !estado || !orden || !tabla) {
+          return;
+        }
+
+        // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
+        function aplicar() {
+          // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
+          const tablaDin = document.getElementById('tablaProductos');
+          
+          // Si no se encuentra la tabla, no se aplica el filtro
+          if (!tablaDin){
+            return;
+          }
+
+          // Obtiene el cuerpo de la tabla y las filas
+          const tbody = tablaDin.querySelector('tbody');
+          const filas = Array.from(tbody.querySelectorAll('tr'));
+
+          // Evita que se ejecute el filtro más de una vez
+          clearTimeout(window.adminFiltroTimeout);
+          window.adminFiltroTimeout = setTimeout(async () => {
+            const inputBusqueda = (input.value || '').trim();
+            const estadoSeleccionado = (estado.value || '').trim();
+            const ordenar = orden.value || 'fecha_desc';
+            
+            // Obtiene los parámetros de la URL
+            const params = new URLSearchParams(window.location.search);
+            
+            // Filtra según la busqueda
+            if(inputBusqueda){
+              params.set('search', inputBusqueda);
+            } else {
+              params.delete('search');
+            }
+
+            // Filtra según el estado
+            if(estadoSeleccionado){
+              params.set('estado', estadoSeleccionado);
+            } else {
+              params.delete('estado');
+            }
+
+            // Filtra según el orden
+            if(ordenar && ordenar !== 'fecha_desc'){
+              params.set('orden', ordenar);
+            } else {
+              params.delete('orden');
+            }
+            
+            // Reinicia a la primera página al buscar
+            params.delete('productos_page');
+
+            // Construye la URL con los parámetros del filtro
+            const url = window.location.pathname + '?' + params.toString();
+            
+            // Actualiza la URL en el historial del navegador
+            window.history.pushState({}, '', url);
+
+            // Obtiene el contenedor de productos
+            const contenedor = document.getElementById('contenedorProductos');
+            
+            // Si no se encuentra el contenedor, no se aplica el filtro
+            if (!contenedor){
+              return;
+            }
+
+            // Aplica un estilo de carga al contenedor
+            contenedor.style.opacity = '0.6';
+            contenedor.style.pointerEvents = 'none';
+
+            // Realiza la petición AJAX para obtener los resultados del filtro
+            try {
+              const res = await fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+              });
+              const html = await res.text();
+              const doc = new DOMParser().parseFromString(html, 'text/html');
+              const nuevoC = doc.getElementById('contenedorProductos');
+              if (nuevoC) {
+                contenedor.innerHTML = nuevoC.innerHTML;
               }
+            } catch (e) {
+              console.error('No se pudo cargar el filtro', e);
+            } finally {
+              contenedor.style.opacity = '1';
+              contenedor.style.pointerEvents = 'all';
+            }
+          }, 300); // 300ms de debounce para no saturar al tipear
+        }
 
-              // Función de filtro que se ejecuta sin depender de variables "caducadas"
-              function aplicar() {
-                // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
-                const tablaDin = document.getElementById('tablaProductos');
+        // Recuperar valores iniciales de la URL
+        const queryParams = new URLSearchParams(window.location.search);
+        
+        // Si se encuentra el parámetro 'search', se establece el valor del input
+        if (queryParams.has('search')){
+          input.value = queryParams.get('search');
+        }
 
-                // Si no se encuentra la tabla, no se aplica el filtro
-                if (!tablaDin) {
-                  return;
-                }
+        // Si se encuentra el parámetro 'estado', se establece el valor del select
+        if (queryParams.has('estado')){
+          estado.value = queryParams.get('estado').charAt(0).toUpperCase() + queryParams.get('estado').slice(1).toLowerCase();
+        }
 
-                // Obtiene el cuerpo de la tabla y las filas
-                const tbody = tablaDin.querySelector('tbody');
-                const filas = Array.from(tbody.querySelectorAll('tr'));
+        // Si se encuentra el parámetro 'orden', se establece el valor del select
+        if (queryParams.has('orden')){
+          orden.value = queryParams.get('orden');
+        }
 
-                // obtiene y normaliza el texto de búsqueda y el estado seleccionado para comparaciones insensibles a mayúsculas y espacios
-                const inputBusqueda = (input.value || '').trim().toLowerCase();
-                const estadoSeleccionado = (estado.value || '').trim().toLowerCase();
-
-                // filtra las filas según el texto de búsqueda y el estado seleccionado
-                let visibles = filas.filter(fil => {
-                  const nombre = fil.dataset.nombre || '';
-                  const categoria = fil.dataset.categoria || '';
-                  const plataforma = fil.dataset.plataforma || '';
-                  const estado = fil.dataset.estado || '';
-                  const matchInput = !inputBusqueda || (nombre.includes(inputBusqueda) || categoria.includes(inputBusqueda) || plataforma.includes(inputBusqueda));
-                  const matchEstado = !estadoSeleccionado || estado === estadoSeleccionado;
-                  return matchInput && matchEstado;
-                });
-
-                // ordena las filas visibles según el criterio seleccionado en el ordenamiento
-                const ordenar = orden.value;
-
-                // funciones de comparación para texto y números, con manejo de casos especiales
-                visibles.sort((a, b) => {
-
-                  // obtiene los datos relevantes de cada fila para la comparación según el criterio de ordenamiento
-                  const A = a.dataset, B = b.dataset;
-
-                  // función de comparación para texto, usando localeCompare
-                  const compararTexto = (x, y) => (x || '').localeCompare((y || ''), 'es', { sensitivity: 'base' });
-
-                  // función de comparación para números
-                  const compararNumber = (x, y) => (parseFloat(x) || 0) - (parseFloat(y) || 0);
-
-                  // lógica de ordenamiento
-                  if (ordenar === 'nombre_asc') return compararTexto(A.nombre, B.nombre);
-                  if (ordenar === 'nombre_desc') return compararTexto(B.nombre, A.nombre);
-                  if (ordenar === 'precio_asc') return compararNumber(A.precio, B.precio);
-                  if (ordenar === 'precio_desc') return compararNumber(B.precio, A.precio);
-                  if (ordenar === 'stock_asc') return compararNumber(A.stock, B.stock);
-                  if (ordenar === 'stock_desc') return compararNumber(B.stock, A.stock);
-                  if (ordenar === 'fecha_asc') return compararTexto(A.fecha, B.fecha);
-                  if (ordenar === 'fecha_desc') return compararTexto(B.fecha, A.fecha);
-                  return 0;
-                });
-
-                // 1. Oculta primero todas las filas
-                filas.forEach(r => r.style.display = 'none');
-
-                // 2. Muestra y re-ubica (ordenando) solo las filas que pasaron el filtro, en su nuevo orden
-                visibles.forEach(r => {
-                  r.style.display = '';
-                  tbody.appendChild(r); // appendChild mueve el elemento al final de su padre, aplicando el nuevo orden visual
-                });
-              }
-
-              // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
-              input.addEventListener('input', aplicar);
-              estado.addEventListener('change', aplicar);
-              orden.addEventListener('change', aplicar);
-            });
+        // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
+        input.addEventListener('input', aplicar);
+        estado.addEventListener('change', aplicar);
+        orden.addEventListener('change', aplicar);
+      });
 
 
-            // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
-            document.addEventListener('click', async (e) => {
+      // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
+      document.addEventListener('click', async (e) => {
 
-              // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
-              const link = e.target.closest('.js-paginacion-admin .pagination a');
+        // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
+        const link = e.target.closest('.js-paginacion-admin .pagination a');
 
-              // si no se encuentra un enlace válido, no se hace nada
-              if (!link) {
-                return;
-              }
+        // si no se encuentra un enlace válido, no se hace nada
+        if (!link){
+          return;
+        } 
 
-              e.preventDefault();
+        e.preventDefault();
 
-              // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
-              const contenedor = link.closest('.js-paginacion-admin');
+        // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
+        const contenedor = link.closest('.js-paginacion-admin');
 
-              // si no se encuentra el contenedor, no se hace nada
-              if (!contenedor) {
-                return;
-              }
+        // si no se encuentra el contenedor, no se hace nada
+        if (!contenedor){
+          return;
+        } 
 
-              // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
-              contenedor.style.opacity = '0.6';
-              contenedor.style.pointerEvents = 'none';
+        // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
+        contenedor.style.opacity = '0.6';
+        contenedor.style.pointerEvents = 'none';
 
-              // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
-              try {
-                const res = await fetch(link.href, {
-                  headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                });
+        // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
+        try {
+          const res = await fetch(link.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          });
 
-                // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
-                const html = await res.text();
+          // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
+          const html = await res.text();
 
-                // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
-                const doc = new DOMParser().parseFromString(html, 'text/html');
+          // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
+          const doc = new DOMParser().parseFromString(html, 'text/html');
 
-                // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
-                const id = contenedor.id;
+          // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
+          const id = contenedor.id;
 
-                // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
-                const nuevoContenedor = doc.querySelector(`#${id}`);
+          // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
+          const nuevoContenedor = doc.querySelector(`#${id}`);
 
-                // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
-                if (nuevoContenedor) {
+          // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
+          if (nuevoContenedor) {
 
-                  // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
-                  contenedor.replaceWith(nuevoContenedor);
+            // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
+            contenedor.replaceWith(nuevoContenedor);
 
-                  // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
-                  history.pushState({}, '', link.href);
-                }
+            // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
+            history.pushState({}, '', link.href);
+          }
 
-                // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
-              } catch (err) {
-                window.location.href = link.href;
-              } finally {
+          // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
+        } catch (err) {
+          window.location.href = link.href;
+        } finally {
 
-                // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
-                const actual = document.getElementById(contenedor.id);
+          // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
+          const actual = document.getElementById(contenedor.id);
+          
+          // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
+          if (actual) {
+            actual.style.opacity = '';
+            actual.style.pointerEvents = '';
+          }
+        }
+      });
 
-                // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
-                if (actual) {
-                  actual.style.opacity = '';
-                  actual.style.pointerEvents = '';
-                }
-              }
-            });
-
-          </script>
-        @endpush
+    </script>
+  @endpush
 
 @endsection

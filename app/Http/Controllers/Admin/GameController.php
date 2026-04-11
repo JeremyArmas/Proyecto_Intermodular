@@ -40,8 +40,10 @@ class GameController extends Controller
             'b2b_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'developer' => 'nullable|string|max:255',
+            'release_date' => 'nullable|date',
             'platform_id' => 'required|exists:platforms,id',
             'cover_image' => 'nullable|image|max:2048',
+            'trailer_url' => 'nullable|url|max:255',
             'categories' => 'array',
             'categories.*' => 'exists:categories,id',
         ]);
@@ -93,8 +95,10 @@ class GameController extends Controller
             'b2b_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'developer' => 'nullable|string|max:255',
+            'release_date' => 'nullable|date',
             'platform_id' => 'required|exists:platforms,id',
             'cover_image' => 'nullable|image|max:2048',
+            'trailer_url' => 'nullable|url|max:255',
             'categories' => 'array',
             'categories.*' => 'exists:categories,id',
         ]);

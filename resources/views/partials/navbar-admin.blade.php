@@ -2,7 +2,7 @@
   <div class="container py-1">
 
     <!-- Logo + nombre -->
-    <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url('/admin') }}">
+    <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url('/') }}">
       <img src="{{ asset('images/logo_jediga_provisional.png') }}" alt="Logo">
       <div class="lh-sm">
         <div class="logoNombre">Jediga</div>

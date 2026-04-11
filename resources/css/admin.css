@@ -175,37 +175,6 @@
   padding: 12px 14px;
 }
 
-/* Paginación
-   - Espaciado y estilos para links de paginación. */
-.jg-admin .pagination{ 
-  gap: 10px; 
-}
-
-.jg-admin .page-item .page-link{
-  border: 0 !important;
-  background: rgba(255,255,255,.05);
-  color: #fff;
-  border-radius: 14px;
-  padding: .55rem .9rem;
-  box-shadow: none !important;
-}
-
-.jg-admin .page-item .page-link:hover{
-  background: rgba(246,196,83,.10);
-  color: #fff;
-}
-
-/* Página activa con degradado violeta/amarillo */
-.jg-admin .page-item.active .page-link{
-  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
-  color: #0b0b12;
-}
-
-/* Página deshabilitada con menor opacidad */
-.jg-admin .page-item.disabled .page-link{
-  opacity: .45;
-  background: rgba(255,255,255,.03);
-}
 
 /* Inputs admin
    - Estilos para form-control y form-select dentro del admin:

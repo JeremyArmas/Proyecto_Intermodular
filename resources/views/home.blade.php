@@ -39,14 +39,31 @@
           @foreach($heroSlides as $s)
             <div class="hero-video swiper-slide">
 
-              <!-- Si el tipo de media es video, mostramos un video. Si no, una imagen. -->
-              @if($s['mediaType'] === 'video')
-                <video class="jg-hero-media" muted loop playsinline preload="metadata">
-                  <source src="{{ asset($s['mediaSrc']) }}" type="video/mp4">
-                </video>
-              @else
-                <img class="jg-hero-media" src="{{ asset($s['mediaSrc']) }}" alt="">
-              @endif
+              <!-- Contenedor para el efecto Fundido (Fade) de Imagen a Vídeo -->
+              <div class="hero-media-wrapper">
+                <!-- Vídeo de fondo: iframe de YouTube en modo silenciado y sin controles -->
+                @if(!empty($s['youtube_id']))
+                  <iframe
+                    class="jg-hero-vid"
+                    data-src="https://www.youtube.com/embed/{{ $s['youtube_id'] }}?autoplay=1&mute=1&controls=0&rel=0&showinfo=0&modestbranding=1&playsinline=1"
+                    src=""
+                    allow="autoplay; encrypted-media"
+                    style="pointer-events: none; border: none;"
+                    title="Trailer {{ $s['game']['title'] }}"
+                  ></iframe>
+                @else
+                  {{-- Sin trailer: fondo sólido coloreado --}}
+                  <div class="jg-hero-vid" style="background: linear-gradient(135deg, var(--jg-bg2), var(--jg-bg));"></div>
+                @endif
+                
+                <!-- La imagen de cubierta (encima, que luego desaparece con fadeImageToVideo) -->
+                @if(!empty($s['game']['cover_image']))
+                  <img class="jg-hero-img" src="{{ asset('storage/' . $s['game']['cover_image']) }}" alt="{{ $s['game']['title'] }}">
+                @else
+                  <div class="jg-hero-img" style="background: var(--jg-bg2);"></div>
+                @endif
+              </div>
+
 
               <!-- Contenido encima del video/imagen -->
               <div class="hero-video-content">
@@ -215,7 +232,7 @@
         </div>
 
         <!-- Enlace a ver todos los juegos de esta sección, con un icono de flecha a la derecha. -->
-        <a class="jg-link-muted" href="{{ url('/catalogo?price=free') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
+        <a class="jg-link-muted" href="{{ url('/catalogo?price_max=0') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
       </div>
 
       <!-- Lista de juegos destacados en esta sección -->

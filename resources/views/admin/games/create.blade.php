@@ -68,6 +68,12 @@
           <textarea class="form-control" id="description" name="description" rows="4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">{{ old('description') }}</textarea>
         </div>
 
+        <!-- Campo de la URL del Trailer -->
+        <div class="mb-3">
+          <label for="trailer_url" class="form-label text-white">URL del Trailer de YouTube <small class="jg-muted">(Ej: https://www.youtube.com/watch?v=...)</small></label>
+          <input type="url" class="form-control" id="trailer_url" name="trailer_url" value="{{ old('trailer_url') }}" placeholder="Enlace de YouTube" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
+        </div>
+
         <!-- Campo de precio -->
         <div class="row g-3 mb-3">
           <div class="col-md-6">
@@ -82,15 +88,21 @@
         </div>
         </div>
 
-        <!-- Campos de desarrollador -->
-         <div class="row g-3 mb-3">
+        <!-- Campo de Developer y Release Date -->
+        <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label for="developer" class="form-label text-white">Desarrollador</label>
             <input type="text" class="form-control" id="developer" name="developer" value="{{ old('developer') }}" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
           </div>
           
-          <!-- Campo de plataforma -->
           <div class="col-md-6">
+            <label for="release_date" class="form-label text-white d-flex justify-content-between">Fecha de Lanzamiento (Próximamente) <small class="jg-muted">Opcional</small></label>
+            <input type="date" class="form-control" id="release_date" name="release_date" value="{{ old('release_date') }}" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; color-scheme: dark;">
+          </div>
+        </div>
+
+        <!-- Campo de Plataforma -->
+        <div class="mb-3">
             <label for="platform_id" class="form-label text-white">Plataforma</label>
             <select class="form-select" id="platform_id" name="platform_id" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
               <option value="">Selecciona...</option>
@@ -98,25 +110,6 @@
                 <option value="{{ $p->id }}" {{ old('platform_id') == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
               @endforeach
             </select>
-          </div> 
-        
-          <!-- Campo de categorías -->
-          <div class="row g-3 mb-3">
-          <div class="col-md-6">
-            <label for="developer" class="form-label text-white">Desarrollador</label>
-            <input type="text" class="form-control" id="developer" name="developer" value="{{ old('developer') }}" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
-          </div>
-          
-          <!-- Campo de plataforma -->
-          <div class="col-md-6">
-            <label for="platform_id" class="form-label text-white">Plataforma</label>
-            <select class="form-select" id="platform_id" name="platform_id" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
-              <option value="">Selecciona...</option>
-              @foreach($platforms as $p)
-                <option value="{{ $p->id }}" {{ old('platform_id') == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
-              @endforeach
-            </select>
-          </div>
         </div>
 
         <!-- Campo de categorías -->

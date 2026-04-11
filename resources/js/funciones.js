@@ -342,14 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Busca el contenedor principal del slider para asignar correctamente los botones de navegación, ya sea un elemento padre directo o un contenedor específico
   const contenedor = swiperJG.closest('.jg-hero-container') || swiperJG.parentElement;
 
-  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto fade, autoplay cada 5.4s con pausa al interactuar o al pasar el mouse, paginación clicable y navegación con flechas
+  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto slide, separacion entre slides
   const swiper = new Swiper(swiperJG, {
     loop: true,
-    speed: 600,
-    effect: 'fade',
-    fadeEffect: { crossFade: true },
+    speed: 1300, 
+    effect: 'slide',
+    spaceBetween: 40, 
     autoplay: {
-      delay: 5400,
+      delay: 19500, 
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
@@ -363,43 +363,52 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  // Sincroniza vídeos: pausa todos y reproduce solo el del slide activo
-  const syncVideos = () => {
-    
-    // Pausa y reinicia todos los vídeos para evitar que sigan sonando al cambiar de slide
-    swiperJG.querySelectorAll('video').forEach(vid => {
-      vid.pause();
-      vid.currentTime = 0;
-    });
-    
-    // Reproduce el vídeo del slide activo, si existe (algunos slides pueden no tener vídeo)
-    const activeVideo = swiperJG.querySelector('.swiper-slide-active video');
-    
-    // El método play() devuelve una promesa que puede ser rechazada si el navegador bloquea la reproducción automática, por eso se maneja con catch para evitar errores no controlados en la consola
-    if (activeVideo) {
-      const play = activeVideo.play();
-      
-      // Si la promesa es rechazada (por ejemplo, por bloqueo de autoplay), se captura el error para evitar que se muestre en la consola, pero no es necesario hacer nada más en ese caso
-      if (play && typeof play.catch === 'function'){
-        play.catch(() => {});
-      } 
-    }
-  };
+  // Control de iframes de YouTube en el Swiper del hero:
+  // - Al salir de un slide: vaciar su iframe para que se detenga y no consuma recursos
+  // - Al entrar en un slide: recargar el iframe desde el principio
+  function getSlideIframe(slideEl) {
+    return slideEl ? slideEl.querySelector('iframe.jg-hero-vid') : null;
+  }
 
-  syncVideos();
-  swiper.on('slideChangeTransitionStart', syncVideos);
+  swiper.on('slideChangeTransitionStart', function () {
+    // Detiene el iframe del slide que acaba de dejar de ser activo
+    const prevSlide = swiper.slides[swiper.previousIndex];
+    const prevIframe = getSlideIframe(prevSlide);
+    if (prevIframe && prevIframe.dataset.src) {
+      prevIframe.src = '';
+    }
+  });
+
+  swiper.on('slideChangeTransitionEnd', function () {
+    // Reinicia el iframe del nuevo slide activo desde el principio
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    const activeIframe = getSlideIframe(activeSlide);
+    if (activeIframe && activeIframe.dataset.src) {
+      activeIframe.src = activeIframe.dataset.src;
+    }
+  });
+
+  // Carga inicial: activa el video del primer slide nada más cargar
+  const initialIframe = getSlideIframe(swiper.slides[swiper.activeIndex]);
+  if (initialIframe && initialIframe.dataset.src) {
+    initialIframe.src = initialIframe.dataset.src;
+  }
 });
 
 
 /* LÓGICAS NAVEGACIÓN Y UI */
 function configurarUI() {
+  
   // Manejo de Logout: asegura que el formulario se envíe por POST
   const btnLogout = document.querySelector('form[action$="/logout"] button[type="submit"]');
+  
+  // Si se encuentra el botón de logout, agrega un event listener para manejar el click
   if (btnLogout) {
     btnLogout.addEventListener('click', (e) => {
       e.preventDefault();
       console.log('Iniciando cierre de sesión...');
-      // alert('Cerrando sesión...'); // Uncomment if needed for manual verification
+      
+      // alert('Cerrando ssión...'); 
       btnLogout.closest('form').submit();
     });
   }
@@ -453,25 +462,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function register(form, contenedorErrores) {
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+  
   try {
     const res = await fetch(form.action, {
       method: 'POST',
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
       body: new FormData(form),
     });
-    if (res.status === 419) { window.location.reload(); return; }
+    
+    if(res.status === 419) { 
+      window.location.reload(); return; 
+    }
+    
     const data = await res.json().catch(() => ({}));
-    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
+    
+    if(res.ok && data.success) {
+      window.location.href = data.redirect || '/'; return; 
+    }
+    
     let msg = 'Error al crear la cuenta';
-    if (data && data.message) msg = data.message;
-    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
-    if (contenedorErrores) {
+    
+    if(data && data.message){
+      msg = data.message;
+    }else if (data && data.errors){
+      msg = Object.values(data.errors)[0][0];
+    }
+    
+    if(contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
     } else alert(msg);
     document.getElementById('reloadCaptchaRegistro')?.click();
   } catch {
     const msg = 'Error de red. Inténtalo de nuevo.';
+    
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
@@ -493,7 +517,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('reloadCaptchaRegistro');
   const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
   const input = document.querySelector('#registerModal input[name="captcha"]');
-  if (!btn || !frame) return;
+  
+  if (!btn || !frame){
+    return;
+  } 
+
   const recargarCaptcha = async () => {
     btn.disabled = true;
     try {
