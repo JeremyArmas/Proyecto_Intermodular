@@ -81,3 +81,15 @@ Route::get('/forgot-password', function () { return view('auth.forgot-password')
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
 Route::get('/reset-password/{token}', function ($token) { return view('auth.reset-password', ['token' => $token]); })->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');
+
+//Ruta a Aviso Legal
+
+Route::get('/aviso-legal', function () { return view('aviso-legal'); })->name('aviso-legal');
+
+//Ruta a terminos y condiciones
+
+Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
+
+//Ruta a cookies
+
+Route::get('/cookies', function () { return view('cookies'); })->name('cookies');

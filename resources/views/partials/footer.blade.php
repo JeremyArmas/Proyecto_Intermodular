@@ -30,7 +30,6 @@
         <!-- Enlaces legales -->
         <div class="mt-3 d-flex flex-wrap gap-3 small">
           <a class="jg-link-muted" href="{{ url('/aviso-legal') }}">Aviso legal</a>
-          <a class="jg-link-muted" href="{{ url('/privacidad') }}">Privacidad</a>
           <a class="jg-link-muted" href="{{ url('/terminos') }}">Términos</a>
           <a class="jg-link-muted" href="{{ url('/cookies') }}">Cookies</a>
         </div>
@@ -41,10 +40,15 @@
         <div class="ft-title">Redes sociales</div>
         <div class="small jg-muted mb-3">Síguenos para lanzamientos, novedades y comunidad.</div>
         <div class="d-flex gap-2">
-          <a class="social-btn" href="https://www.instagram.com/jedigasa/" target="_blank" title="Siguenos en Instagram :D" rel="noreferrer noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-          <a class="social-btn" href="https://www.youtube.com/@JedigaSA" target="_blank" title="Siguenos en Youtube :D" rel="noreferrer noopener" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-          <a class="social-btn" href="https://x.com/JedigaSA" target="_blank" title="Siguenos en Twitter (X) :D" rel="noreferrer noopener" aria-label="x (Twitter)"><i class="bi bi-twitter-x"></i></a>
-          <a class="social-btn" href="https://discord.gg/dEMNmmPQ5T" target="_blank" title="Siguenos en Discord :D" rel="noreferrer noopener" aria-label="Discord"><i class="bi bi-discord"></i></a>
+          <a class="social-btn" href="https://www.instagram.com/jedigasa/" target="_blank"
+            title="Siguenos en Instagram :D" rel="noreferrer noopener" aria-label="Instagram"><i
+              class="bi bi-instagram"></i></a>
+          <a class="social-btn" href="https://www.youtube.com/@JedigaSA" target="_blank" title="Siguenos en Youtube :D"
+            rel="noreferrer noopener" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a class="social-btn" href="https://x.com/JedigaSA" target="_blank" title="Siguenos en Twitter (X) :D"
+            rel="noreferrer noopener" aria-label="x (Twitter)"><i class="bi bi-twitter-x"></i></a>
+          <a class="social-btn" href="https://discord.gg/dEMNmmPQ5T" target="_blank" title="Siguenos en Discord :D"
+            rel="noreferrer noopener" aria-label="Discord"><i class="bi bi-discord"></i></a>
         </div>
 
         <!-- Aunque con los símbolos en las redes sociales ya deja claro de que trata , por si acaso voy a dejar un título por temas de accesibilidad. 
