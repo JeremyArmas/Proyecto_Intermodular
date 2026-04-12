@@ -38,7 +38,7 @@ class HomeController extends Controller
             ->where(function($q) {
                 $q->whereNull('release_date')->orWhereDate('release_date', '<=', now());
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('stock', 'asc')
             ->take(3)
             ->get()
             ->map($mapGame)

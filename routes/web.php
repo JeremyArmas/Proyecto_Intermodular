@@ -56,6 +56,20 @@ Route::middleware('auth')->prefix('carrito')->name('carrito.')->group(function (
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
 });
 
+// Rutas de Checkout (Stripe)
+use App\Http\Controllers\Web\CheckoutController;
+Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function () {
+    Route::post('/session', [CheckoutController::class, 'createSession'])->name('session');
+    Route::get('/success', [CheckoutController::class, 'success'])->name('success');
+    Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('cancel');
+});
+
+// Rutas del Perfil de Usuario
+use App\Http\Controllers\Web\ProfileController;
+Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
+    Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
+});
+
 // Rutas de Juegos y Catálogo
 use App\Http\Controllers\Web\GameController as WebGameController;
 Route::get('/catalogo', [WebGameController::class, 'index'])->name('catalogo');

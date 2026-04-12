@@ -181,8 +181,8 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary mt-2 p-2 jg-panel" aria-labelledby="userDropdown" style="min-width: 200px;">
               <li class="px-3 py-2 border-bottom border-secondary mb-2">
-                <div class="small text-muted">Sesión de:</div>
-                <div class="fw-bold text-white text-truncate">{{ auth()->user()->name }}</div>
+                <div class="small text-white">Sesión de:</div>
+                <div class="text-white text-truncate">{{ auth()->user()->name }}</div>
               </li>
               @if($isAdmin)
                 <li>
@@ -198,11 +198,11 @@
               </li>
               <li>
                 <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}">
-                  <i class="bi bi-collection-play me-2 text-sun"></i>Mi Biblioteca
+                  <i class="bi bi-collection-play me-2 text-sun"></i> Mi Biblioteca
                 </a>
               </li>
               <li>
-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/mis-pedidos') }}">
+                <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.orders') }}">
                   <i class="bi bi-bag-check me-2 text-sun"></i> Mis Pedidos
                 </a>
               </li>
