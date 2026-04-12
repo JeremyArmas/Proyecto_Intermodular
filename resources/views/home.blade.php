@@ -35,44 +35,47 @@
         <div class="swiper jg-hero-swiper">
         <div class="swiper-wrapper">
 
-          <!-- Slide 1 -->  
+          <!-- SLIDES DEL HERO: Cada slide contiene un trailer de YouTube y una imagen de cobertura que se desvanece suavemente -->
           @foreach($heroSlides as $s)
             <div class="hero-video swiper-slide">
+              
+              <!-- Contenedor de media: Iframe para YouTube + Imagen de portada (Fade Effect) -->
+              <div class="jg-hero-media-wrapper">
+                @if(!empty($s['game']['youtube_id']))
+                  <iframe class="jg-hero-vid" 
+                    data-src="https://www.youtube.com/embed/{{ $s['game']['youtube_id'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['game']['youtube_id'] }}&rel=0&modestbranding=1" 
+                    frameborder="0" allow="autoplay; encrypted-media" 
+                    allowfullscreen></iframe>
+                @endif
 
-              <!-- Si el tipo de media es video, mostramos un video. Si no, una imagen. -->
-              @if($s['mediaType'] === 'video')
-                <video class="jg-hero-media" muted loop playsinline preload="metadata">
-                  <source src="{{ asset($s['mediaSrc']) }}" type="video/mp4">
-                </video>
-              @else
-                <img class="jg-hero-media" src="{{ asset($s['mediaSrc']) }}" alt="">
-              @endif
+                @if(!empty($s['game']['cover_image']))
+                   <img class="jg-hero-img" 
+                     src="{{ asset('storage/' . $s['game']['cover_image']) }}" 
+                     alt="{{ $s['game']['title'] }}">
+                @endif
+              </div>
 
-              <!-- Contenido encima del video/imagen -->
+              <!-- Contenido informativo del slide -->
               <div class="hero-video-content">
                 <div class="jg-pill mb-3">
                   <span class="jg-dot"></span>
                   <span>{{ $s['pill'] }}</span>
                 </div>
 
-                <!-- Badges (etiquetas) del juego, como el género o el estado (nuevo, exclusivo, etc.) -->
                 <div class="d-flex flex-wrap gap-2 mb-3">
                   <span class="badge badge-soft">{{ $s['game']['tag'] }}</span>
                   <span class="badge {{ $s['badgeClass'] }}">{{ $s['badgeText'] }}</span>
                 </div>
 
-                <!-- Título del juego destacado -->
                 <h1 class="jg-hero-title display-6 mb-2">
                   {{ $s['game']['title'] }}
                 </h1>
 
-                <!-- Descripción del juego destacado, con un texto secundario más pequeño debajo -->
                 <p class="jg-hero-desc mb-4" style="max-width: 62ch;">
                   {{ $s['game']['desc'] }}
                   <span class="jg-hero-desc2 d-block mt-1">{{ $s['desc2'] }}</span>
                 </p>
 
-                <!-- Botones de acción para el juego destacado, como "Ver ficha", "Comprar ahora", etc. -->
                 <div class="d-flex flex-wrap gap-2">
                   <a class="btn jg-btn {{ $s['primary']['class'] }}" href="{{ $s['primary']['href'] }}">
                     {{ $s['primary']['text'] }}

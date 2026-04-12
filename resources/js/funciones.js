@@ -329,27 +329,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /* HERO SLIDER (Swiper)
-   - inicializa el slider si existe y sincroniza la reproducción de vídeos
+   - inicializa el slider si existe y sincroniza la reproducción de trailers de YouTube
    - autoplay con pausa en interacción del usuario */
 document.addEventListener('DOMContentLoaded', () => {
   const swiperJG = document.querySelector('.jg-hero-swiper');
   
-  // Si no hay slider o Swiper no está cargado, no hacer nada
   if (!swiperJG || typeof window.Swiper === 'undefined'){
     return;
   } 
 
-  // Busca el contenedor principal del slider para asignar correctamente los botones de navegación, ya sea un elemento padre directo o un contenedor específico
   const contenedor = swiperJG.closest('.jg-hero-container') || swiperJG.parentElement;
 
-  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto fade, autoplay cada 5.4s con pausa al interactuar o al pasar el mouse, paginación clicable y navegación con flechas
   const swiper = new Swiper(swiperJG, {
     loop: true,
-    speed: 600,
-    effect: 'fade',
-    fadeEffect: { crossFade: true },
+    speed: 1300, 
+    effect: 'slide',
+    spaceBetween: 40, 
     autoplay: {
-      delay: 5400,
+      delay: 19500, 
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
@@ -363,31 +360,34 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  // Sincroniza vídeos: pausa todos y reproduce solo el del slide activo
-  const syncVideos = () => {
-    
-    // Pausa y reinicia todos los vídeos para evitar que sigan sonando al cambiar de slide
-    swiperJG.querySelectorAll('video').forEach(vid => {
-      vid.pause();
-      vid.currentTime = 0;
-    });
-    
-    // Reproduce el vídeo del slide activo, si existe (algunos slides pueden no tener vídeo)
-    const activeVideo = swiperJG.querySelector('.swiper-slide-active video');
-    
-    // El método play() devuelve una promesa que puede ser rechazada si el navegador bloquea la reproducción automática, por eso se maneja con catch para evitar errores no controlados en la consola
-    if (activeVideo) {
-      const play = activeVideo.play();
-      
-      // Si la promesa es rechazada (por ejemplo, por bloqueo de autoplay), se captura el error para evitar que se muestre en la consola, pero no es necesario hacer nada más en ese caso
-      if (play && typeof play.catch === 'function'){
-        play.catch(() => {});
-      } 
-    }
-  };
+  // Control de iframes de YouTube:
+  // - Al salir de un slide: vaciar su iframe para detener el video
+  // - Al entrar en un slide: recargar el iframe (desde data-src) para reiniciar el video
+  function getSlideIframe(slideEl) {
+    return slideEl ? slideEl.querySelector('iframe.jg-hero-vid') : null;
+  }
 
-  syncVideos();
-  swiper.on('slideChangeTransitionStart', syncVideos);
+  swiper.on('slideChangeTransitionStart', function () {
+    const prevSlide = swiper.slides[swiper.previousIndex];
+    const prevIframe = getSlideIframe(prevSlide);
+    if (prevIframe && prevIframe.dataset.src) {
+      prevIframe.src = '';
+    }
+  });
+
+  swiper.on('slideChangeTransitionEnd', function () {
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    const activeIframe = getSlideIframe(activeSlide);
+    if (activeIframe && activeIframe.dataset.src) {
+      activeIframe.src = activeIframe.dataset.src;
+    }
+  });
+
+  // Carga inicial para el primer slide
+  const initialIframe = getSlideIframe(swiper.slides[swiper.activeIndex]);
+  if (initialIframe && initialIframe.dataset.src) {
+    initialIframe.src = initialIframe.dataset.src;
+  }
 });
 
 

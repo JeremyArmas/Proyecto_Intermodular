@@ -369,7 +369,7 @@ body::after{
    10) HERO VIDEO + SWIPER
    - Contenedor de vídeo/slider con efectos y controles.
    ========================================================= */
-.hero-video{
+.hero-video {
   position: relative;
   border-radius: calc(var(--jg-radius) + 10px);
   border: 1px solid rgba(246,196,83,.38);
@@ -379,34 +379,68 @@ body::after{
   background: rgba(255,255,255,.04);
 }
 
-.hero-video video,
-.hero-video img{
+/* Wrapper para manejar iframe e imagen superpuestos */
+.jg-hero-media-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.jg-hero-vid {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.03);
-  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.05); /* Un poco de zoom para ocultar bordes negros */
+  pointer-events: none;
 }
 
-.hero-video::before,
-.hero-video::after{ border-radius: inherit; }
+.jg-hero-img { 
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  object-position: center 25%; 
+  z-index: 1; 
+  background-color: var(--jg-bg2); 
+  pointer-events: none;
+}
 
-/* Capa oscura y luces encima del vídeo */
-.hero-video::before{
+/* Animación: la imagen tapa el vídeo unos segundos y luego se desvanece */
+.swiper-slide-active .jg-hero-img,
+.swiper-slide-prev .jg-hero-img,
+.swiper-slide-duplicate-active .jg-hero-img,
+.swiper-slide-duplicate-prev .jg-hero-img {
+  animation: fadeImageToVideo 5.5s ease-in-out forwards;
+}
+
+@keyframes fadeImageToVideo {
+  0%   { opacity: 1; }
+  81.8%  { opacity: 1; } /* 4.5 segundos fija */
+  100% { opacity: 0; } /* Desvanece en 1 segundo */
+}
+
+/* Pausar animación si el ratón está encima */
+.jg-hero-swiper:hover .swiper-slide-active .jg-hero-img {
+  animation-play-state: paused;
+}
+
+/* Capas de luz y textura sobre el media */
+.hero-video::before {
   content:"";
   position:absolute;
   inset:0;
   background:
-    radial-gradient(900px 500px at 15% 20%, rgba(124,58,237,.28), transparent 60%),
-    radial-gradient(900px 520px at 85% 30%, rgba(255,210,74,.18), transparent 62%),
-    linear-gradient(180deg, rgba(8,8,14,.40), rgba(8,8,14,.78));
+    radial-gradient(900px 500px at 15% 20%, rgba(124,58,237,.22), transparent 60%),
+    radial-gradient(900px 520px at 85% 30%, rgba(255,210,74,.14), transparent 62%),
+    linear-gradient(180deg, transparent 40%, rgba(8,8,14,.60));
   z-index: 1;
 }
 
-/* Textura y líneas sobre el vídeo */
-.hero-video::after{
+.hero-video::after {
   content:"";
   position:absolute;
   inset:-20%;
@@ -419,23 +453,50 @@ body::after{
   pointer-events:none;
 }
 
-/* Contenido real del hero por encima de las capas */
-.hero-video-content{
-  position: relative;
+.hero-video-content {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 2;
-  padding: 34px;
+  padding: 0;
+  width: auto;
+  max-width: 700px;
+}
+
+.jg-hero-title {
+  display: inline-block;
+  padding: 1px 12px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.jg-hero-desc {
+  display: block;
+  width: fit-content;
+  padding: 4px 12px;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(255,255,255,0.02);
+  border-radius: 10px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
 /* Contenedor para las flechas del slider */
-.jg-hero-container{
+.jg-hero-container {
   position: relative;
   overflow: visible;
 }
-.jg-hero-swiper{ overflow: hidden; }
+.jg-hero-swiper { overflow: hidden; }
 
 /* Estilo de botones flecha del swiper */
 .jg-hero-container .swiper-button-prev,
-.jg-hero-container .swiper-button-next{
+.jg-hero-container .swiper-button-next {
   top: 50%;
   transform: translateY(-50%);
   width: 47px;
@@ -450,31 +511,31 @@ body::after{
   padding: 12px;
 }
 
-.jg-hero-container .swiper-button-prev{ left: -70px; }
-.jg-hero-container .swiper-button-next{ right: -70px; }
+.jg-hero-container .swiper-button-prev { left: -70px; }
+.jg-hero-container .swiper-button-next { right: -70px; }
 
 .jg-hero-container .swiper-button-prev:hover,
-.jg-hero-container .swiper-button-next:hover{
+.jg-hero-container .swiper-button-next:hover {
   transform: translateY(-50%) scale(1.06);
   background: rgba(246,196,83,.10);
   border-color: rgba(246,196,83,.40);
 }
 
 .jg-hero-container .swiper-button-prev::after,
-.jg-hero-container .swiper-button-next::after{
+.jg-hero-container .swiper-button-next::after {
   font-size: 18px;
   font-weight: 900;
 }
 
 /* Paginación (bullets) del swiper */
-.jg-hero-swiper .swiper-pagination{ bottom: 14px !important; }
-.jg-hero-swiper .swiper-pagination-bullet{
+.jg-hero-swiper .swiper-pagination { bottom: 14px !important; }
+.jg-hero-swiper .swiper-pagination-bullet {
   width: 9px;
   height: 9px;
   opacity: 1;
   background: rgba(255,255,255,.26);
 }
-.jg-hero-swiper .swiper-pagination-bullet-active{
+.jg-hero-swiper .swiper-pagination-bullet-active {
   background: var(--jg-sun);
   box-shadow: 0 0 0 6px rgba(246,196,83,.14);
 }
@@ -485,9 +546,10 @@ body::after{
   .jg-hero-container .swiper-button-next{ display:none !important; }
 }
 
-/* Accesibilidad: ocultar vídeo si se prefiere menos movimiento */
+/* Accesibilidad */
 @media (prefers-reduced-motion: reduce){
-  .hero-video video{ display:none; }
+  .jg-hero-vid { display:none; }
+  .jg-hero-img { animation: none !important; opacity: 1 !important; }
 }
 
 
