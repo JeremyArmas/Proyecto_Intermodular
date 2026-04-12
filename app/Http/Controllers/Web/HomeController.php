@@ -59,11 +59,17 @@ class HomeController extends Controller
             ->toArray();
 
         // Fallback: si alguna sección quedara vacía, usa la primera disponible
+<<<<<<< HEAD
         if (empty($upcoming)) {
             $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#','cover_image'=>null,'youtube_id'=>null]];
         }
         if (empty($popular)) $popular = $upcoming;
         if (empty($free)) $free = []; // Sección oculta si no hay juegos gratis aún
+=======
+        if (empty($upcoming)) $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#']];
+        if (empty($popular))  $popular  = $upcoming;
+        if (empty($free))     $free     = []; // Sección oculta si no hay juegos gratis aún
+>>>>>>> remotes/origin/rama-gabri-dev
 
         // Slides del hero — apuntan al primer juego de cada sección
         $heroSlides = [
@@ -73,10 +79,18 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-soft',
                 'badgeText' => 'Soon',
                 'game' => $upcoming[0],
+<<<<<<< HEAD
                 'youtube_id' => $upcoming[0]['youtube_id'] ?? null,
                 'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $upcoming[0]['slug']),     'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?status=upcoming'),           'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+=======
+                'mediaType' => 'video',
+                'mediaSrc' => 'videos/hero.mp4',
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $upcoming[0]['slug']), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+>>>>>>> remotes/origin/rama-gabri-dev
             ],
             [
                 'pill' => 'Más populares',
@@ -84,10 +98,18 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-sun',
                 'badgeText' => 'Top',
                 'game' => $popular[0],
+<<<<<<< HEAD
                 'youtube_id' => $popular[0]['youtube_id'] ?? null,
                 'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $popular[0]['slug']),       'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?sort=popular'),               'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+=======
+                'mediaType' => 'video',
+                'mediaSrc' => 'videos/hero3.mp4',
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . $popular[0]['slug']), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+>>>>>>> remotes/origin/rama-gabri-dev
             ],
             [
                 'pill' => 'Gratis',
@@ -95,10 +117,18 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-mint',
                 'badgeText' => 'Free',
                 'game' => $free[0] ?? $upcoming[0],
+<<<<<<< HEAD
                 'youtube_id' => ($free[0]['youtube_id'] ?? $upcoming[0]['youtube_id']) ?? null,
                 'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
                 'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?price_max=0'),               'class' => 'jg-btn-primary'],
                 'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+=======
+                'mediaType' => 'video',
+                'mediaSrc' => 'videos/hero2.mp4',
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?price=free'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
+>>>>>>> remotes/origin/rama-gabri-dev
             ],
         ];
 
