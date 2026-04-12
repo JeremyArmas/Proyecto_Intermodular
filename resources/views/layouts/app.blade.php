@@ -24,6 +24,28 @@
 
 
   @stack('styles')
+
+  <style>
+    /* Ocultar el select de idioma de Google Translate */
+    iframe.skiptranslate{
+      display: none !important;
+    }
+
+    body { /* Ya que google baja el body al poner la barra , pues cancelamos el top */
+      top: 0 !important;
+    }
+
+    #goof-gt-tt, .goog-te-banner-frame{ /* Ocultamos la barra de google translate */
+      display: none !important;
+    }
+
+    .goog-text-highlight{ /* Quitamos el fondo amarillo que pone google al traducir */
+      background-color: transparent !important;
+      border: none !important;
+    }
+
+  </style>
+
 </head>
 
 <body>
@@ -286,4 +308,31 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 @stack('scripts')
 </body>
+
+<!-- Script para el traductor de google -->
+
+<div id="google_translate_element" style="display: none;"></div> <!-- Div oculto para el traductor de google -->
+<script type="text/javascript"> /*Son las instrucciones que le da google para que funcione el traductor*/
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({pageLanguage: 'es', 
+    includedLanguages: 'es,en,fr,de,it,pt',
+    autoDisplay: false
+  }, 'google_translate_element');
+  }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> <!-- Script que carga el traductor de google -->
+
+
+<script type="text/javascript"> /*Esta función es la que cambia el idioma*/
+  function cambiarIdioma(codigoIdioma) {
+    const select = document.querySelector('.goog-te-combo'); /*Busca el elemento con la clase goog-te-combo*/
+
+    if(select){ /*Si encuentra el elemento*/
+      select.value = codigoIdioma; /*Le asigna el valor del idioma que queremos*/
+      select.dispatchEvent(new Event('change')); /*Dispara el evento change para que el traductor se actualice*/
+    }
+  }
+</script>
+
+
 </html>

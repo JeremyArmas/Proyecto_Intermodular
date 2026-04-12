@@ -144,9 +144,12 @@
           <button class="btn jg-btn jg-btn-outline" data-bs-toggle="dropdown" aria-expanded="false" title="Idioma">
             <i class="bi bi-globe2"></i>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end jg-dd">
-            <li><a class="dropdown-item" href="{{ url('/lang/es') }}">Español</a></li>
-            <li><a class="dropdown-item" href="{{ url('/lang/en') }}">English</a></li>
+          <ul class="dropdown-menu dropdown-menu-end jg-dd"> <!-- Opciones de idioma -->
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('es')">Español</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('en')">English</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('de')">Alemán</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('it')">Italiano</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('pt')">Portugués</a></li>
           </ul>
         </div>
 
