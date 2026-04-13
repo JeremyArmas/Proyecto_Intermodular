@@ -48,7 +48,7 @@
             <div class="mb-3">
                 <label class="form-label text-white">Correo electrónico</label>
                 <input type="email" class="form-control" value="{{ auth()->user()->email }}" disabled>
-                <div class="form-text text-muted">El correo no se puede cambiar.</div>
+                <div class="form-text text-white">El correo no se puede cambiar.</div>
             </div>
 
             {{-- PAÍS --}}
