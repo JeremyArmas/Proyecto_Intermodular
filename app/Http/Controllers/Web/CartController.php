@@ -76,12 +76,12 @@ class CartController extends Controller
 
         // Validar Stock
         if ($game->stock < $request->quantity) {
-            return back()->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
+            return redirect()->route('carrito.index')->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
         }
 
         $cartItem->update(['quantity' => $request->quantity]);
 
-        return back()->with('success', "Cantidad actualizada correctamente.");
+        return redirect()->route('carrito.index')->with('success', "Cantidad actualizada correctamente.");
     }
 
     /**
@@ -92,7 +92,7 @@ class CartController extends Controller
         $cartItem = CartItem::findOrFail($id);
         $cartItem->delete();
 
-        return back()->with('success', "Producto eliminado del carrito.");
+        return redirect()->route('carrito.index')->with('success', "Producto eliminado del carrito.");
     }
 
     /**
@@ -105,7 +105,7 @@ class CartController extends Controller
             $cart->items()->delete();
         }
 
-        return back()->with('success', "El carrito se ha vaciado.");
+        return redirect()->route('carrito.index')->with('success', "El carrito se ha vaciado.");
     }
 
     /**

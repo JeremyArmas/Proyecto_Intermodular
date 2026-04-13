@@ -58,11 +58,11 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <form action="{{ route('carrito.update', $item->id) }}" method="POST" class="d-flex align-items-center justify-content-center gap-2">
+                                                <form action="{{ route('carrito.update', $item->id) }}" method="POST" class="d-flex align-items-center justify-content-center">
                                                     @csrf
                                                     @method('PUT')
-                                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->game->stock }}" class="form-control form-control-sm bg-dark text-white border-secondary text-center" style="width: 60px;">
-                                                    <button type="submit" class="btn btn-sm btn-outline-sun" title="Actualizar">
+                                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->game->stock }}" class="form-control form-control-sm bg-dark text-white border-secondary text-center" style="width: 70px;" onchange="this.form.submit()">
+                                                    <button type="submit" class="btn btn-sm btn-outline-sun d-none" title="Actualizar">
                                                         <i class="bi bi-arrow-repeat"></i>
                                                     </button>
                                                 </form>
@@ -124,15 +124,19 @@
                             <span class="h3 mb-0" style="color: #ffcc00 !important; font-weight: 900;">{{ number_format($cart->total_price, 2) }}€</span>
                         </div>
 
-                        <a href="{{ url('/checkout') }}" class="btn jg-btn jg-btn-sun w-100 btn-lg shadow">
-                            Tramitar Pedido <i class="bi bi-credit-card-2-back ms-2"></i>
-                        </a>
+                        <form action="{{ route('checkout.session') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg shadow">
+                                Tramitar Pedido <i class="bi bi-credit-card-2-back ms-2"></i>
+                            </button>
+                        </form>
                         
-                        <div class="mt-4 text-center">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="me-3 opacity-50" alt="PayPal">
-                            <i class="bi bi-credit-card-fill h4 text-muted mx-1 opacity-50"></i>
-                            <i class="bi bi-apple h4 text-muted mx-1 opacity-50"></i>
-                            <div class="small text-white opacity-60 mt-2">Pago 100% Seguro y Encriptado</div>
+                        <div class="text-center mt-4 pt-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                <span class="text-white opacity-50 fw-medium text-nowrap" style="font-size: 0.85rem;">Pago seguro con</span>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style="height: 22px !important; width: auto !important; filter: brightness(0) invert(1); opacity: 0.9;">
+                            </div>
+                            <div class="small text-white opacity-25">Transacción 100% encriptada</div>
                         </div>
                     </div>
                 </div>
@@ -159,26 +163,4 @@
     </div>
 </div>
 
-<style>
-    .jg-table thead {
-        border-bottom: 2px solid var(--jg-border);
-    }
-    .jg-table tr {
-        border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-    .jg-table tr:last-child {
-        border-bottom: none;
-    }
-    .bg-darker {
-        background: rgba(0,0,0,0.2) !important;
-    }
-    .btn-outline-sun {
-        color: var(--jg-sun);
-        border-color: var(--jg-sun);
-    }
-    .btn-outline-sun:hover {
-        background-color: var(--jg-sun);
-        color: #000;
-    }
-</style>
 @endsection

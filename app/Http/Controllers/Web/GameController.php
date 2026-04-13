@@ -85,7 +85,7 @@ class GameController extends Controller
                     $query->orderBy('created_at', 'desc');
                     break;
                 case 'popular':
-                    $query->orderBy('id', 'desc');
+                    $query->orderBy('stock', 'asc');
                     break;
                 default:
                     $query->orderBy('created_at', 'desc');
