@@ -17,6 +17,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Importante para poder registrar admins/empresas
+        'avatar',
+        'country',
+        'birth_date',
     ];
 
     protected $hidden = [

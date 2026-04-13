@@ -1,0 +1,1806 @@
+﻿diff --git a/.env.example b/.env.example
+index 138ae63..1ef142e 100644
+--- a/.env.example
++++ b/.env.example
+@@ -66,4 +66,7 @@ AWS_USE_PATH_STYLE_ENDPOINT=false
+ VITE_APP_NAME="${APP_NAME}"
+ 
+ CAPTCHA_DISABLE = false
+-MATH_ENABLE = 1
+\ No newline at end of file
++MATH_ENABLE = 1
++
++STRIPE_KEY=pk_test_51TLLRTANVsEZAPkhDYqFuDjq2fIgiu1NbWiq7P0hxSjFJuPtTStyYfBZuVsWs46q41XaBKW0I8Y2wSrj1x6GplIt00YAnDvP0l
++STRIPE_SECRET=sk_test_51TLLRTANVsEZAPkhhDz0yB9Pn953PcN0ZopnIU37JnsZSyix95b4OcSD61Li7oYC7JHR4hxp84F5Reth2IkMnube007Z9c23BB
+\ No newline at end of file
+diff --git a/app/Http/Controllers/Web/CartController.php b/app/Http/Controllers/Web/CartController.php
+index aa2627d..0b5dcc4 100644
+--- a/app/Http/Controllers/Web/CartController.php
++++ b/app/Http/Controllers/Web/CartController.php
+@@ -76,12 +76,12 @@ public function update(Request $request, $id)
+ 
+         // Validar Stock
+         if ($game->stock < $request->quantity) {
+-            return back()->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
++            return redirect()->route('carrito.index')->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
+         }
+ 
+         $cartItem->update(['quantity' => $request->quantity]);
+ 
+-        return back()->with('success', "Cantidad actualizada correctamente.");
++        return redirect()->route('carrito.index')->with('success', "Cantidad actualizada correctamente.");
+     }
+ 
+     /**
+@@ -92,7 +92,7 @@ public function remove($id)
+         $cartItem = CartItem::findOrFail($id);
+         $cartItem->delete();
+ 
+-        return back()->with('success', "Producto eliminado del carrito.");
++        return redirect()->route('carrito.index')->with('success', "Producto eliminado del carrito.");
+     }
+ 
+     /**
+@@ -105,7 +105,7 @@ public function clear()
+             $cart->items()->delete();
+         }
+ 
+-        return back()->with('success', "El carrito se ha vaciado.");
++        return redirect()->route('carrito.index')->with('success', "El carrito se ha vaciado.");
+     }
+ 
+     /**
+diff --git a/app/Http/Controllers/Web/CheckoutController.php b/app/Http/Controllers/Web/CheckoutController.php
+index a5d88bb..9ae5682 100644
+--- a/app/Http/Controllers/Web/CheckoutController.php
++++ b/app/Http/Controllers/Web/CheckoutController.php
+@@ -5,7 +5,205 @@
+ use App\Http\Controllers\Controller;
+ use Illuminate\Http\Request;
+ 
++use App\Models\Cart;
++use App\Models\Order;
++use App\Models\OrderItem;
++use Illuminate\Support\Facades\Log;
++use Stripe\Stripe;
++use Stripe\Checkout\Session as StripeSession;
++use Illuminate\Support\Facades\Mail;
++use App\Mail\OrderConfirmedMail;
++
+ class CheckoutController extends Controller
+ {
+-    //
++    /**
++     * Crea la sesi├│n de Stripe Checkout y redirige al usuario al pago.
++     */
++    public function createSession(Request $request)
++    {
++        $user = auth()->user();
++        $cart = Cart::where('user_id', $user->id)->first();
++
++        // Verifica que el carrito no est├® vac├¡o
++        if (!$cart || $cart->items->isEmpty()) {
++            return redirect()->route('carrito.index')->with('error', 'Tu carrito est├í vac├¡o.');
++        }
++
++        // Configura la clave secreta de Stripe
++        Stripe::setApiKey(env('STRIPE_SECRET'));
++
++        // Construye los line_items para Stripe
++        $lineItems = [];
++        foreach ($cart->items as $item) {
++            $game = $item->game;
++            
++            // Stripe espera el precio en c├®ntimos
++            $priceInCents = (int) ($game->getPriceForUser($user) * 100);
++
++            // Prepara la imagen absoluta si existe
++            $images = [];
++            
++            if ($game->cover_image) {
++                // En local con .test probablemente no cargue la imagen en la p├ígina de Stripe real,
++                // pero si la URL es p├║bica s├¡ que la cargar├¡a. Para el proyecto est├í bien.
++                $images[] = url('storage/' . $game->cover_image); 
++            }
++
++            $lineItems[] = [
++                'price_data' => [
++                    'currency' => 'eur',
++                    'product_data' => [
++                        'name' => $game->title,
++                        'images' => $images,
++                    ],
++                    'unit_amount' => $priceInCents,
++                ],
++                'quantity' => $item->quantity,
++            ];
++        }
++
++        try {
++            // Crea la Checkout Session de Stripe
++            $checkoutSession = StripeSession::create([
++                'payment_method_types' => ['card'],
++                'line_items' => $lineItems,
++                'mode' => 'payment',
++                'shipping_address_collection' => [
++                    'allowed_countries' => ['ES', 'US', 'GB', 'FR', 'DE', 'IT', 'PT'],
++                ],
++                'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
++                'cancel_url' => route('checkout.cancel'),
++                'customer_email' => $user->email, // Rellena el email autom├íticamente en Stripe
++            ]);
++
++            // Redirige al usuario a la p├ígina de pago de Stripe
++            return redirect()->away($checkoutSession->url);
++
++        } catch (\Exception $e) {
++            Log::error('Error creando Stripe Session: ' . $e->getMessage());
++            return redirect()->route('carrito.index')->with('error', 'Ocurri├│ un error al procesar el pago. Int├®ntalo m├ís tarde.');
++        }
++    }
++
++    /**
++     * P├ígina de ├®xito a la que vuelve el usuario desde Stripe.
++     */
++    public function success(Request $request)
++    {
++        $sessionId = $request->query('session_id');
++
++        if (!$sessionId) {
++            return redirect()->route('home');
++        }
++
++        Stripe::setApiKey(env('STRIPE_SECRET'));
++
++        try {
++            // Recuperamos la sesi├│n de Stripe
++            $session = StripeSession::retrieve($sessionId);
++
++            // Verificamos si realmente est├í pagado
++            if ($session->payment_status !== 'paid') {
++                return redirect()->route('carrito.index')->with('error', 'El pago no se ha completado.');
++            }
++
++            // Verificamos que este order no exista ya (para evitar duplicados si recargan la p├ígina)
++            $existingOrder = Order::where('stripe_session_id', $sessionId)->first();
++            if ($existingOrder) {
++                // Si la orden ya se proces├│, simplemente mostramos la vista de ├®xito
++                return view('checkout.success', ['order' => $existingOrder]);
++            }
++
++            // Si llegamos aqu├¡: El pago se complet├│ y no existe el order. Procedemos a crearlo.
++            $user = auth()->user();
++            $cart = Cart::where('user_id', $user->id)->first();
++
++            // Si por alguna raz├│n el carrito ya est├í vac├¡o, buscamos la orden por sesi├│n
++            if (!$cart || $cart->items->isEmpty()) {
++                return redirect()->route('home');
++            }
++
++            // Calculamos total
++            $totalAmount = 0;
++            foreach ($cart->items as $item) {
++                $totalAmount += $item->game->getPriceForUser($user) * $item->quantity;
++            }
++
++            // Extrae la direcci├│n de env├¡o de la sesi├│n de Stripe
++            $shippingAddress = 'Direcci├│n no proporcionada';
++            
++            // Stripe puede guardarla en shipping_details o en customer_details
++            $addr = null;
++            if (!empty($session->shipping_details->address)) {
++                $addr = $session->shipping_details->address;
++            } elseif (!empty($session->customer_details->address)) {
++                $addr = $session->customer_details->address;
++            }
++
++            if ($addr) {
++                $parts = array_filter([
++                    $addr->line1 ?? null,
++                    $addr->line2 ?? null,
++                    trim(($addr->postal_code ?? '') . ' ' . ($addr->city ?? '')),
++                    $addr->state ?? null,
++                    $addr->country ?? null
++                ]);
++                $shippingAddress = implode(', ', array_filter($parts));
++            } elseif (isset($user->address) && !empty($user->address)) {
++                $shippingAddress = $user->address;
++            }
++
++            // 1. Crear el Order
++            $order = Order::create([
++                'user_id' => $user->id,
++                'status' => 'paid', // Ya verificado
++                'total_amount' => $totalAmount,
++                'shipping_address' => $shippingAddress, 
++                'order_type' => $user->isCompany() ? 'b2b' : 'b2c',
++                'stripe_session_id' => $sessionId,
++            ]);
++
++            // 2. Crear los OrderItems y actualizar Stock
++            foreach ($cart->items as $item) {
++                $game = $item->game;
++                
++                OrderItem::create([
++                    'order_id' => $order->id,
++                    'game_id' => $game->id,
++                    'quantity' => $item->quantity,
++                    'price_at_purchase' => $game->getPriceForUser($user),
++                ]);
++
++                // Descontar stock
++                $game->decrement('stock', $item->quantity);
++            }
++
++            // 3. Vaciar el Carrito
++            $cart->items()->delete();
++
++            // 4. Enviar correo de confirmaci├│n
++            try {
++                Mail::to($user->email)->send(new OrderConfirmedMail($order));
++            } catch (\Exception $e) {
++                Log::error('Error enviando correo de confirmaci├│n de pedido: ' . $e->getMessage());
++                // El error de correo no debe evitar que se muestre el ├®xito de la compra
++            }
++
++            // Retornamos la vista de ├®xito con la orden que acabamos de crear
++            return view('checkout.success', ['order' => $order]);
++
++        } catch (\Exception $e) {
++            Log::error('Error verificando pago en Stripe: ' . $e->getMessage());
++            return redirect()->route('carrito.index')->with('error', 'No se pudo verificar el pago.');
++        }
++    }
++
++    /**
++     * P├ígina de cancelaci├│n si el usuario se echa atr├ís en la pasarela de pago.
++     */
++    public function cancel()
++    {
++        // Simple redirecci├│n al carrito con un mensaje
++        return view('checkout.cancel');
++    }
+ }
+diff --git a/app/Http/Controllers/Web/GameController.php b/app/Http/Controllers/Web/GameController.php
+index 33d9508..c53ec7d 100644
+--- a/app/Http/Controllers/Web/GameController.php
++++ b/app/Http/Controllers/Web/GameController.php
+@@ -85,7 +85,7 @@ public function index(Request $request)
+                     $query->orderBy('created_at', 'desc');
+                     break;
+                 case 'popular':
+-                    $query->orderBy('id', 'desc');
++                    $query->orderBy('stock', 'asc');
+                     break;
+                 default:
+                     $query->orderBy('created_at', 'desc');
+diff --git a/app/Http/Controllers/Web/HomeController.php b/app/Http/Controllers/Web/HomeController.php
+index e46c9ba..23e167c 100644
+--- a/app/Http/Controllers/Web/HomeController.php
++++ b/app/Http/Controllers/Web/HomeController.php
+@@ -38,7 +38,7 @@ public function index()
+             ->where(function($q) {
+                 $q->whereNull('release_date')->orWhereDate('release_date', '<=', now());
+             })
+-            ->orderBy('id', 'desc')
++            ->orderBy('stock', 'asc')
+             ->take(3)
+             ->get()
+             ->map($mapGame)
+diff --git a/app/Http/Controllers/Web/ProfileController.php b/app/Http/Controllers/Web/ProfileController.php
+index 0681d1f..6ce0a99 100644
+--- a/app/Http/Controllers/Web/ProfileController.php
++++ b/app/Http/Controllers/Web/ProfileController.php
+@@ -7,5 +7,15 @@
+ 
+ class ProfileController extends Controller
+ {
+-    //
++    /**
++     * Muestra el historial de pedidos del usuario.
++     */
++    public function orders()
++    {
++        // Obtenemos los pedidos del usuario logueado, ordenados por fecha descendente
++        // y cargamos las relaciones necesarias (items y juegos)
++        $orders = auth()->user()->orders()->with('items.game')->latest()->get();
++
++        return view('profile.orders', compact('orders'));
++    }
+ }
+diff --git a/app/Mail/OrderConfirmedMail.php b/app/Mail/OrderConfirmedMail.php
+new file mode 100644
+index 0000000..7840ed5
+--- /dev/null
++++ b/app/Mail/OrderConfirmedMail.php
+@@ -0,0 +1,40 @@
++<?php
++
++namespace App\Mail;
++
++use App\Models\Order;
++use Illuminate\Bus\Queueable;
++use Illuminate\Mail\Mailable;
++use Illuminate\Mail\Mailables\Content;
++use Illuminate\Mail\Mailables\Envelope;
++use Illuminate\Queue\SerializesModels;
++
++class OrderConfirmedMail extends Mailable
++{
++    use Queueable, SerializesModels;
++
++    public function __construct(public Order $order)
++    {
++    }
++
++    public function envelope(): Envelope
++    {
++        return new Envelope(
++            subject: '┬íPago Completado! Confirmaci├│n de Pedido #' . str_pad($this->order->id, 5, '0', STR_PAD_LEFT) . ' - Jediga',
++            from: 'jedigasupport@gmail.com',
++        );
++    }
++
++    public function content(): Content
++    {
++        return new Content(
++            markdown: 'emails.order-confirmed',
++            with: ['order' => $this->order],
++        );
++    }
++
++    public function attachments(): array
++    {
++        return [];
++    }
++}
+diff --git a/app/Models/Order.php b/app/Models/Order.php
+index 103c9ea..d1f594a 100644
+--- a/app/Models/Order.php
++++ b/app/Models/Order.php
+@@ -6,5 +6,22 @@
+ 
+ class Order extends Model
+ {
+-    //
++    protected $fillable = [
++        'user_id', 
++        'status', 
++        'total_amount', 
++        'shipping_address', 
++        'order_type',
++        'stripe_session_id'
++    ];
++
++    public function user()
++    {
++        return $this->belongsTo(User::class);
++    }
++
++    public function items()
++    {
++        return $this->hasMany(OrderItem::class);
++    }
+ }
+diff --git a/app/Models/OrderItem.php b/app/Models/OrderItem.php
+new file mode 100644
+index 0000000..bda8d2b
+--- /dev/null
++++ b/app/Models/OrderItem.php
+@@ -0,0 +1,25 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class OrderItem extends Model
++{
++    protected $fillable = [
++        'order_id',
++        'game_id',
++        'quantity',
++        'price_at_purchase'
++    ];
++
++    public function order()
++    {
++        return $this->belongsTo(Order::class);
++    }
++
++    public function game()
++    {
++        return $this->belongsTo(Game::class);
++    }
++}
+diff --git a/composer.json b/composer.json
+index 217fb0a..a8fb8af 100644
+--- a/composer.json
++++ b/composer.json
+@@ -10,7 +10,8 @@
+         "laravel/framework": "^12.0",
+         "laravel/sanctum": "^4.0",
+         "laravel/tinker": "^2.10.1",
+-        "mews/captcha": "^3.4"
++        "mews/captcha": "^3.4",
++        "stripe/stripe-php": "^20.0"
+     },
+     "require-dev": {
+         "fakerphp/faker": "^1.23",
+diff --git a/composer.lock b/composer.lock
+index c15b099..f4582e4 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -4,7 +4,7 @@
+         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+         "This file is @generated automatically"
+     ],
+-    "content-hash": "a2f235a27064299e3c1376407b00cb28",
++    "content-hash": "f49eb84f1f9d5dd3d0d4ba4b7bdd5e75",
+     "packages": [
+         {
+             "name": "brick/math",
+@@ -3570,6 +3570,68 @@
+             },
+             "time": "2025-12-14T04:43:48+00:00"
+         },
++        {
++            "name": "stripe/stripe-php",
++            "version": "v20.0.0",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/stripe/stripe-php.git",
++                "reference": "7338bd140e641b1f9c7cb602e2de971e14db6b3b"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/7338bd140e641b1f9c7cb602e2de971e14db6b3b",
++                "reference": "7338bd140e641b1f9c7cb602e2de971e14db6b3b",
++                "shasum": ""
++            },
++            "require": {
++                "ext-curl": "*",
++                "ext-json": "*",
++                "ext-mbstring": "*",
++                "php": ">=7.2.0"
++            },
++            "require-dev": {
++                "friendsofphp/php-cs-fixer": "3.94.0",
++                "phpstan/phpstan": "^1.2",
++                "phpunit/phpunit": "^5.7 || ^9.0"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.0-dev"
++                }
++            },
++            "autoload": {
++                "files": [
++                    "lib/version_check.php"
++                ],
++                "psr-4": {
++                    "Stripe\\": "lib/"
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "MIT"
++            ],
++            "authors": [
++                {
++                    "name": "Stripe and contributors",
++                    "homepage": "https://github.com/stripe/stripe-php/contributors"
++                }
++            ],
++            "description": "Stripe PHP Library",
++            "homepage": "https://stripe.com/",
++            "keywords": [
++                "api",
++                "payment processing",
++                "stripe"
++            ],
++            "support": {
++                "issues": "https://github.com/stripe/stripe-php/issues",
++                "source": "https://github.com/stripe/stripe-php/tree/v20.0.0"
++            },
++            "time": "2026-03-26T01:57:48+00:00"
++        },
+         {
+             "name": "symfony/clock",
+             "version": "v7.4.0",
+diff --git a/database/migrations/2026_04_12_125233_add_stripe_session_id_to_orders_table.php b/database/migrations/2026_04_12_125233_add_stripe_session_id_to_orders_table.php
+new file mode 100644
+index 0000000..d73543d
+--- /dev/null
++++ b/database/migrations/2026_04_12_125233_add_stripe_session_id_to_orders_table.php
+@@ -0,0 +1,28 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    /**
++     * Run the migrations.
++     */
++    public function up(): void
++    {
++        Schema::table('orders', function (Blueprint $table) {
++            $table->string('stripe_session_id')->nullable()->after('status');
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     */
++    public function down(): void
++    {
++        Schema::table('orders', function (Blueprint $table) {
++            $table->dropColumn('stripe_session_id');
++        });
++    }
++};
+diff --git a/resources/css/admin.css b/resources/css/admin.css
+index c2ff469..5d40573 100644
+--- a/resources/css/admin.css
++++ b/resources/css/admin.css
+@@ -1,21 +1,17 @@
+ /* =========================================================
+    JEDIGA ÔÇö ADMIN
+    (Solo panel /admin)
+-   Archivo de estilos para el panel de administraci├│n:
+-   contiene wrappers, header, tarjetas KPI, tabs, tablas,
+-   filtros, paginaci├│n e inputs con tem├ítica oscura y acentos
+-   c├ílidos (violeta/amarillo).
+    ========================================================= */
+ 
+-/* Wrapper general del admin (para que las reglas no afecten al resto)
+-   - A├▒ade espacio superior para navbar fixed-top y padding inferior. */
++/* =========================================================
++   1) WRAPPER & HEADER
++   - Contenedores principales del panel.
++   ========================================================= */
+ .jg-admin-wrap{
+   padding-top: 38px; 
+   padding-bottom: 40px;
+ }
+ 
+-/* Header del admin (panel superior)
+-   - Estilo visual con bordes redondeados, gradientes y sombra. */
+ .jg-admin-header{
+   border-radius: calc(var(--jg-radius) + 10px);
+   border: 1px solid var(--jg-border);
+@@ -27,8 +23,10 @@ .jg-admin-header{
+   overflow: hidden;
+ }
+ 
+-/* KPI cards
+-   - Tarjetas de m├®tricas con borde, fondo degradado y sombra. */
++/* =========================================================
++   2) KPI CARDS
++   - Tarjetas de m├®tricas superiores.
++   ========================================================= */
+ .jg-admin .jg-kpi{
+   border: 1px solid var(--jg-border);
+   background: linear-gradient(180deg, var(--jg-card2), var(--jg-card));
+@@ -36,8 +34,10 @@ .jg-admin .jg-kpi{
+   box-shadow: 0 14px 50px rgba(0,0,0,.25);
+ }
+ 
+-/* Tabs
+-   - Contenedor de tabs con gap y fondo transl├║cido. */
++/* =========================================================
++   3) TABS
++   - Navegaci├│n interna (tabs).
++   ========================================================= */
+ .jg-admin-tabs{
+   display:flex;
+   flex-wrap:wrap;
+@@ -48,8 +48,6 @@ .jg-admin-tabs{
+   background: rgba(255,255,255,.03);
+   backdrop-filter: blur(10px);
+ }
+-
+-/* Estilo general de los links de las tabs */
+ .jg-admin-tabs .nav-link{
+   border: 0 !important;
+   background: transparent;
+@@ -59,8 +57,6 @@ .jg-admin-tabs .nav-link{
+   position: relative;
+   overflow: hidden;
+ }
+-
+-/* Borde interior de las tabs (pseudo-elemento) */
+ .jg-admin-tabs .nav-link::after{
+   content:"";
+   position:absolute;
+@@ -69,39 +65,31 @@ .jg-admin-tabs .nav-link::after{
+   border:1px solid rgba(255,255,255,.14);
+   pointer-events:none;
+ }
+-
+-/* Hover de las tabs */
+ .jg-admin-tabs .nav-link:hover{ 
+   color:#fff; 
+ }
+-
+ .jg-admin-tabs .nav-link:hover::after{ 
+   border-color: rgba(246,196,83,.28); 
+ }
+-
+-/* Tab activa: colores y sombra */
+ .jg-admin-tabs .nav-link.active{
+   color:#0b0b12;
+   background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+   box-shadow: 0 16px 45px rgba(124,58,237,.18);
+ }
+-
+-/* Quitar borde del pseudo-elemento en tab activa */
+ .jg-admin-tabs .nav-link.active::after{ 
+   border-color: transparent; 
+ }
+ 
+-/* Tabla (wrap)
+-   - Contenedor de tabla con borde y fondo sutil. */
++/* =========================================================
++   4) TABLAS Y LISTADOS
++   - Estilos para tablas de datos y componentes internos.
++   ========================================================= */
+ .jg-admin .jg-table-wrap{
+   border: 1px solid var(--jg-border);
+   border-radius: var(--jg-radius);
+   background: rgba(255,255,255,.04);
+   overflow: hidden;
+ }
+-
+-/* Tabla (variables bootstrap)
+-   - Sobrescribe variables CSS de Bootstrap para adaptar colores. */
+ .jg-table{
+   --bs-table-color: var(--jg-text);
+   --bs-table-bg: transparent;
+@@ -111,9 +99,6 @@ .jg-table{
+   margin: 0;
+   color: var(--jg-text);
+ }
+-
+-/* Header tabla
+-   - Tipograf├¡a de t├¡tulo, espaciado de letras y fondo oscuro. */
+ .jg-table thead th{
+   font-family: var(--jg-font-title);
+   letter-spacing: .08em;
+@@ -122,39 +107,31 @@ .jg-table thead th{
+   border-bottom: 1px solid rgba(255,255,255,.10);
+   white-space: nowrap;
+ }
+-
+-/* Cuerpo tabla transparente para ver el fondo del contenedor */
+ .jg-admin .jg-table tbody td,
+ .jg-admin .jg-table tbody th{
+   background: transparent !important;
+ }
+-
+-/* Celdas: borde tenue y alineaci├│n vertical centrada */
+ .jg-table tbody td{
+   border-color: rgba(255,255,255,.08);
+   vertical-align: middle;
+ }
+-
+-/* Hover de filas */
+ .jg-table tbody tr:hover{ 
+   background: rgba(246,196,83,.06); 
+ }
+-
+-/* Acciones (botones) con radios m├ís suaves */
+ .jg-actions .btn{ 
+   border-radius: 12px; 
+ }
+ 
+-/* Filterbar
+-   - Barra de filtros con padding y fondo transl├║cido. */
++/* =========================================================
++   5) FILTROS Y ETIQUETAS
++   - Barras de filtrado y chips de estado/categor├¡a.
++   ========================================================= */
+ .jg-admin .jg-filterbar{
+   border: 1px solid var(--jg-border);
+   border-radius: var(--jg-radius);
+   background: rgba(255,255,255,.03);
+   padding: 14px;
+ }
+-
+-/* Chip peque├▒o reutilizable para etiquetas/filtros */
+ .jg-chip{
+   display:inline-flex;
+   align-items:center;
+@@ -166,8 +143,6 @@ .jg-chip{
+   color: rgba(255,255,255,.80);
+   font-size: .85rem;
+ }
+-
+-/* Nota destacada en admin (estilo alerta informativa) */
+ .jg-admin-note{
+   border-left: 4px solid rgba(246,196,83,.55);
+   background: rgba(246,196,83,.08);
+@@ -175,36 +150,28 @@ .jg-admin-note{
+   padding: 12px 14px;
+ }
+ 
+-
+-/* Inputs admin
+-   - Estilos para form-control y form-select dentro del admin:
+-     fondo, borde y colores adaptados al tema oscuro. */
++/* =========================================================
++   6) FORMATOS DE INPUTS
++   - Estilos para selectores e inputs en el panel.
++   ========================================================= */
+ .jg-admin .form-control,
+ .jg-admin .form-select{
+   background: rgba(255,255,255,.06) !important;
+   border: 1px solid rgba(255,255,255,.12) !important;
+   color: #fff !important;
+ }
+-
+-/* Focus: color de borde y halo violeta suave */
+ .jg-admin .form-control:focus,
+ .jg-admin .form-select:focus{
+   border-color: rgba(124,58,237,.55) !important;
+   box-shadow: 0 0 0 .25rem rgba(124,58,237,.18) !important;
+ }
+-
+-/* Placeholder con menor intensidad */
+ .jg-admin .form-control::placeholder{
+   color: rgba(255,255,255,.55) !important;
+   opacity: 1;
+ }
+-
+-/* Input group text (prefijos/sufijos) */
+ .jg-admin .input-group-text{
+   background: rgba(255,255,255,.06) !important;
+   border: 1px solid rgba(255,255,255,.12) !important;
+   color: rgba(255,255,255,.85) !important;
+ }
+-
+-/* Ajuste visual para inputs dentro de input-group */
+ .jg-admin .input-group .form-control{ border-left: 0 !important; }
+\ No newline at end of file
+diff --git a/resources/css/app.css b/resources/css/app.css
+index c21b62e..fa345ea 100644
+--- a/resources/css/app.css
++++ b/resources/css/app.css
+@@ -1,3 +1,6 @@
++/* =========================================================
++   1) DEPENDENCIAS Y ORIGENES
++   ========================================================= */
+ @import "bootstrap/dist/css/bootstrap.min.css";
+ @import 'tailwindcss';
+ @import "./general.css";
+@@ -11,6 +14,9 @@
+ @source '../**/*.blade.php';
+ @source '../**/*.js';
+ 
++/* =========================================================
++   2) VARIABLES Y THEME GLOBAL (Tailwind)
++   ========================================================= */
+ @theme {
+     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+         'Segoe UI Symbol', 'Noto Color Emoji';
+diff --git a/resources/css/auth.css b/resources/css/auth.css
+index 27b4b09..913e2b0 100644
+--- a/resources/css/auth.css
++++ b/resources/css/auth.css
+@@ -1,14 +1,14 @@
+ /* =========================================================
+    AUTH / LOGIN MODAL
+-   Comentrios: estilos para el modal de login,
+-   su panel izquierdo (branding), panel derecho (formulario),
+-   captcha y botones.
++   Estilos para el modal de login y registro.
+    ========================================================= */
+ 
+-/* Backdrop: oscurece ligeramente el fondo cuando se abre el modal */
++/* =========================================================
++   1) MODAL GENERAL
++   - Configuraci├│n global del tama├▒o y la capa de fondo.
++   ========================================================= */
+ .modal-backdrop.show{ opacity: .70; }
+ 
+-/* Tama├▒o del modal: ancho m├íximo y adaptaci├│n a pantallas peque├▒as */
+ .login-modal .modal-dialog{
+   width: min(980px, 92vw);
+   max-width: 980px;
+@@ -18,9 +18,8 @@ @media (max-width: 768px){
+   .login-modal .modal-dialog{ width: 94vw; }
+ }
+ 
+-/* Caja principal: efecto "glass", radio y sombreado */
+ .login-modal .modal-content{
+-  max-height: 80vh; /* limitar alto para evitar overflow total */
++  max-height: 80vh;
+   border-radius: 26px;
+   background: rgba(14, 12, 24, .78);
+   backdrop-filter: blur(14px);
+@@ -30,9 +29,9 @@ .login-modal .modal-content{
+ }
+ 
+ /* =========================================================
+-   Panel izquierdo (branding): degradados y capas visuales
++   2) PANEL IZQUIERDO (BRANDING)
++   - Lado decorativo del modal de inicio de sesi├│n.
+    ========================================================= */
+-/* Contenedor izquierdo: fondos radiales y lineal para marca */
+ .login-modal__left{
+   position: relative;
+   overflow: hidden;
+@@ -41,8 +40,6 @@ .login-modal__left{
+     radial-gradient(900px 600px at 90% 80%, rgba(251,191,36,.22), transparent 60%),
+     linear-gradient(135deg, rgba(18,16,30,.95), rgba(10,8,20,.95));
+ }
+-
+-/* Capa encima para sombreado horizontal (no interactiva) */
+ .login-modal__left::after{
+   content:"";
+   position:absolute;
+@@ -50,8 +47,6 @@ .login-modal__left::after{
+   background: linear-gradient(90deg, transparent, rgba(0,0,0,.20));
+   pointer-events:none;
+ }
+-
+-/* Inner izquierdo: padding y posicionamiento del contenido interno */
+ .login-modal__left-inner{
+   position: relative;
+   z-index: 1;
+@@ -59,16 +54,12 @@ .login-modal__left-inner{
+   height: 100%;
+   display:flex;
+ }
+-
+-/* Zona de marca/logo centrada */
+ .login-modal__mark{
+   width: 100%;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+ }
+-
+-/* Imagen del logo: escala y ajuste dentro del contenedor */
+ .login-modal__mark-img{
+   width: 100%;
+   max-height: 260px;
+@@ -78,84 +69,68 @@ .login-modal__mark-img{
+ }
+ 
+ /* =========================================================
+-   Panel derecho (formulario): inputs, cabecera y scroll
++   3) PANEL DERECHO Y FORMULARIO
++   - ├üreas de inputs, botones y captcha.
+    ========================================================= */
+-/* Contenido derecho: padding y scroll vertical si hace falta */
+ .login-modal__right{
+   padding: 26px;
+   color: #fff;
+   max-height: 80vh;
+   overflow-y: auto;
+ }
+-
+-/* Cabecera y bot├│n de cerrar posicionado en la esquina */
+ .login-modal__right .modal-head{
+   position: relative;
+   text-align: center;
+ }
+-
+ .login-modal__right .modal-head .btn-close{
+   position: absolute;
+   right: 0;
+   top: 0;
+ }
+-
+-/* Labels e inputs: opacidad en labels para menor peso visual */
+ .login-modal .form-label{ opacity: .85; }
+ 
+-/* Inputs: fondo semi-transparente, borde suave y radio */
++/* Inputs y focus */
+ .login-modal .form-control{
+   background: rgba(255,255,255,.06);
+   border: 1px solid rgba(255,255,255,.12);
+   color: #fff;
+   border-radius: 14px;
+ }
+-
+-/* Placeholder con color atenuado para legibilidad */
+ .login-modal .form-control::placeholder{ color: rgba(255,255,255,.45); }
+-
+-/* Focus en inputs: borde violeta y halo suave para indicar foco */
+ .login-modal .form-control:focus{
+   border-color: rgba(124,58,237,.55);
+   box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
+ }
+-
+-/* Grupo de input (ej. password + bot├│n): aspecto de bloque ├║nico */
+ .login-modal .input-group{
+   background: rgba(255,255,255,.06);
+   border: 1px solid rgba(255,255,255,.12);
+   border-radius: 14px;
+   overflow: hidden;
+ }
+-
+-/* Dentro del input-group quitar bordes individuales para unificar */
+ .login-modal .input-group .form-control,
+ .login-modal .input-group .btn{
+   border: 0 !important;
+   background: transparent;
+   box-shadow: none !important;
+ }
+-
+ .login-modal .input-group .btn {
+   color: rgba(255, 255, 255, 0.65);
+ }
+-
+ .login-modal .input-group .btn:hover {
+   color: #fff;
+ }
+-
+-/* Focus dentro del input-group: mismo halo que inputs individuales */
+ .login-modal .input-group:focus-within{
+   border-color: rgba(124,58,237,.55);
+   box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
+ }
+ 
+ /* =========================================================
+-   Bot├│n principal (Entrar): degradado y sombra
++   4) BOT├ôN PRINCIPAL
++   - Bot├│n de Entrar o Registrarse.
+    ========================================================= */
+ .btn-jediga{
+   border: 0;
+-  color: #0b0814; /* texto oscuro sobre el degradado claro */
++  color: #0b0814;
+   font-weight: 700;
+   border-radius: 14px;
+   background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+@@ -164,9 +139,9 @@ .btn-jediga{
+ .btn-jediga:hover{ filter: brightness(1.04); }
+ 
+ /* =========================================================
+-   Captcha: marco, bot├│n recarga y estados hover
++   5) CAPTCHA
++   - Recuadros de seguridad visuales.
+    ========================================================= */
+-/* Marco del captcha: tama├▒o m├¡nimo y centrado del contenido */
+ .jg-captcha-frame{
+   border-radius: 14px;
+   border: 1px solid rgba(255,255,255,.12);
+@@ -176,18 +151,14 @@ .jg-captcha-frame{
+   align-items:center;
+   justify-content:center;
+   overflow:hidden;
+-  min-height: 52px; /* asegurarse de altura si la imagen es peque├▒a */
++  min-height: 52px;
+ }
+-
+-/* Bot├│n de recarga: coherente con inputs y botones del modal */
+ .jg-captcha-reload{
+   border-radius: 14px;
+   border: 1px solid rgba(255,255,255,.12);
+   background: rgba(255,255,255,.06);
+   color: #fff;
+ }
+-
+-/* Hover del bot├│n recarga: acento amarillo y borde m├ís visible */
+ .jg-captcha-reload:hover{
+   background: rgba(246,196,83,.10);
+   border-color: rgba(246,196,83,.35);
+diff --git a/resources/css/footer.css b/resources/css/footer.css
+index 98b1c94..9df383b 100644
+--- a/resources/css/footer.css
++++ b/resources/css/footer.css
+@@ -1,13 +1,11 @@
+ /* =========================================================
+    FOOTER
+-   Contiene estilos del pie de p├ígina: separaci├│n, bordes,
+-   fondo glass, estilos de enlaces y botones sociales.
++   Contiene estilos del pie de p├ígina.
+    ========================================================= */
+ 
+-/* Estilos generales del footer:
+-   - Margen superior para separaci├│n del contenido.
+-   - Borde superior con color acento (amarillo suave).
+-   - Fondo semitransparente oscuro con efecto blur. */
++/* =========================================================
++   1) CONTENEDOR PRINCIPAL
++   ========================================================= */
+ footer{
+   margin-top: 46px;
+   border-top: 1px solid rgba(246,196,83,.40);
+@@ -15,27 +13,22 @@ footer{
+   backdrop-filter: blur(14px);
+ }
+ 
+-/* T├¡tulo dentro del footer:
+-   - Peso tipogr├ífico alto y separaci├│n inferior. */
++/* =========================================================
++   2) TIPOGRAF├ìA Y ENLACES
++   ========================================================= */
+ .ft-title{
+   font-weight: 900;
+   margin-bottom: 10px;
+ }
+-
+-/* Enlaces atenuados del footer:
+-   - Color suave, sin subrayado por defecto.
+-   - Al pasar el rat├│n, aumentar contraste hacia el texto principal. */
+ .jg-link-muted{
+   color: rgba(255,255,255,.75);
+   text-decoration:none;
+ }
+ .jg-link-muted:hover{ color: var(--jg-text); }
+ 
+-/* Botones sociales (iconos):
+-   - Tama├▒o cuadrado con centrado de contenido.
+-   - Bordes redondeados y borde semitransparente.
+-   - Fondo sutil y color del icono tomado de la variable de texto.
+-   - Transiciones para transform, borde y fondo. */
++/* =========================================================
++   3) BOTONES SOCIALES
++   ========================================================= */
+ .social-btn{
+   width: 42px;
+   height: 42px;
+@@ -47,10 +40,6 @@ .social-btn{
+   color: var(--jg-text);
+   transition: transform .18s ease, border-color .18s ease, background .18s ease;
+ }
+-
+-/* Hover de los botones sociales:
+-   - Levantar ligeramente el bot├│n.
+-   - Usar fondo y borde con acento amarillo para destacar. */
+ .social-btn:hover{
+   transform: translateY(-2px);
+   background: rgba(246,196,83,.10);
+diff --git a/resources/css/general.css b/resources/css/general.css
+index 199e9e2..6cb8033 100644
+--- a/resources/css/general.css
++++ b/resources/css/general.css
+@@ -708,4 +708,30 @@ .pagination .page-item.disabled .page-link {
+   opacity: .45;
+   background: rgba(255,255,255,.03);
+   color: rgba(255,255,255,.5);
++}
++
++/* =========================================================
++   16) TABLAS Y UTILIDADES GLOBALES (EXTRA├ìDAS)
++   ========================================================= */
++.jg-table thead {
++  border-bottom: 2px solid var(--jg-border);
++}
++.jg-table tr {
++  border-bottom: 1px solid rgba(255,255,255,.05);
++}
++.jg-table tr:last-child {
++  border-bottom: none;
++}
++
++.bg-darker {
++  background: rgba(0,0,0,0.2) !important;
++}
++
++.btn-outline-sun {
++  color: var(--jg-sun);
++  border-color: var(--jg-sun);
++}
++.btn-outline-sun:hover {
++  background-color: var(--jg-sun);
++  color: #000;
+ }
+\ No newline at end of file
+diff --git a/resources/css/navbar.css b/resources/css/navbar.css
+index f827c8f..cd77cf0 100644
+--- a/resources/css/navbar.css
++++ b/resources/css/navbar.css
+@@ -1,29 +1,25 @@
+ /* =========================================================
+    NAVBAR + DROPDOWNS
+-   Controles de la barra de navegaci├│n: fondo glass, logo,
+-   estilos de dropdowns, megamenu y comportamiento responsive.
++   Controles de la barra de navegaci├│n principal.
+    ========================================================= */
+ 
+-/* Barra principal: efecto glass, blur y borde superior con acento */
++/* =========================================================
++   1) BARRA PRINCIPAL Y BRANDING
++   ========================================================= */
+ .jg-nav{
+   backdrop-filter: blur(14px);
+   background: rgba(14,14,26,.62) !important;
+   border-bottom: 1px solid rgba(246,196,83,.40);
+   z-index: 1030;
+ }
+-
+-/* Imagen del brand: tama├▒o fijo para mantener la altura de la navbar */
+ .jg-nav .navbar-brand img{
+   height: 56px;
+   width: auto;
+   display:block;
+   object-fit: contain;
+ }
+-
+-/* Links de navegaci├│n usan la fuente de t├¡tulos para coherencia */
+ .jg-nav .navbar-nav .nav-link{ font-family: var(--jg-font-title); }
+ 
+-/* Peque├▒o bloque para el icono/brand: tama├▒o, centrado y sombra */
+ .jg-brand{
+   width: 42px;
+   height: 42px;
+@@ -33,17 +29,14 @@ .jg-brand{
+   font-weight: 900;
+   box-shadow: 0 16px 44px rgba(124,58,237,.18);
+ }
+-
+-/* Nombre del logo: tipograf├¡a y tama├▒o */
+ .logoNombre{
+   font-family: var(--jg-font-title);
+   font-size: 25px;
+ }
+ 
+-/* ---------------------------------------------------------
+-   Dropdowns: estilo general de los men├║s desplegables
+-   - Radio, borde, fondo oscuro y sombra para separar del fondo
+-   --------------------------------------------------------- */
++/* =========================================================
++   2) DROPDOWNS EST├üNDAR
++   ========================================================= */
+ .jg-nav .dropdown-menu{
+   border-radius: 18px;
+   border: 1px solid var(--jg-border);
+@@ -54,35 +47,27 @@ .jg-nav .dropdown-menu{
+   overflow: hidden;
+   z-index: 2000;
+ }
+-
+-/* Items del dropdown: espaciado, fuente y color */
+ .jg-nav .dropdown-item{
+   color: rgba(255,255,255,.85);
+   border-radius: 12px;
+   padding: 10px 12px;
+   font-family: var(--jg-font-title);
+ }
+-
+-/* Estados hover/focus de los items: resaltar con acento suave */
+ .jg-nav .dropdown-item:hover,
+ .jg-nav .dropdown-item:focus{
+   background: rgba(246,196,83,.10);
+   color: #fff;
+ }
+-
+-/* Estado activo del item: degradado violeta m├ís marcado */
+ .jg-nav .dropdown-item.active,
+ .jg-nav .dropdown-item:active{
+   background: rgba(124,58,237,.25);
+   color: #fff;
+ }
+-
+-/* Separador dentro del dropdown: color tenue */
+ .jg-nav .dropdown-divider{ border-top-color: rgba(255,255,255,.10); }
+ 
+-/* ---------------------------------------------------------
+-   Megamenu: men├║ ampliado con ancho controlado y padding
+-   --------------------------------------------------------- */
++/* =========================================================
++   3) MEGAMENU
++   ========================================================= */
+ .dropdown-menu.megamenu{
+   width: min(780px, 92vw);
+   border-radius: 18px;
+@@ -92,7 +77,6 @@ .dropdown-menu.megamenu{
+   box-shadow: 0 22px 70px rgba(0,0,0,.55);
+   padding: 14px;
+ }
+-
+ .mm-title{
+   font-weight: 900;
+   color: rgba(255,255,255,.70);
+@@ -101,8 +85,6 @@ .mm-title{
+   letter-spacing: .7px;
+   margin-bottom: 8px;
+ }
+-
+-/* Items dentro del megamenu: distribuci├│n, separaci├│n y hover */
+ .mm-item{
+   padding: 9px 10px;
+   border-radius: 12px;
+@@ -114,17 +96,15 @@ .mm-item{
+   color: var(--jg-text);
+   text-decoration: none;
+ }
+-
+ .mm-item:hover{
+   background: rgba(246,196,83,.10);
+   border-color: rgba(246,196,83,.20);
+   color: var(--jg-text);
+ }
+ 
+-/* ---------------------------------------------------------
+-   Responsive collapse (m├│vil/tablet)
+-   - Controla la visibilidad del bloque de navegaci├│n colapsable
+-   --------------------------------------------------------- */
++/* =========================================================
++   4) RESPONSIVE (COLLAPSE Y MOVILES)
++   ========================================================= */
+ @media (max-width: 991.98px){
+   .jg-nav-collapse{
+     display: block;
+@@ -140,8 +120,6 @@ @media (max-width: 991.98px){
+     backdrop-filter: none;
+     transition: max-height .25s ease, padding .2s ease, margin-top .2s ease;
+   }
+-
+-  /* Estado abierto del collapse: alto m├íximo, padding y fondo */
+   .jg-nav-collapse.is-open{
+     max-height: 80vh;
+     margin-top: 12px;
+@@ -153,14 +131,10 @@ @media (max-width: 991.98px){
+     overflow-y: auto;
+     overflow-x: visible;
+   }
+-
+-  /* Toggle colocado para orden correcto en el layout */
+   #jgNavToggle{
+     order: 2;
+     margin-left: auto;
+   }
+-
+-  /* En m├│vil los dropdowns se comportan como elementos est├íticos dentro del collapse */
+   .jg-nav-collapse .dropdown-menu{
+     position: static !important;
+     transform: none !important;
+@@ -168,13 +142,12 @@ @media (max-width: 991.98px){
+     width: 100% !important;
+     margin-top: 8px;
+   }
+-
+   .jg-nav-collapse .dropdown-menu.megamenu{ box-shadow: none; }
+ }
+ 
+-/* ---------------------------------------------------------
+-   Desktop (escritorio): mostrar nav en l├¡nea y megamenu hover
+-   --------------------------------------------------------- */
++/* =========================================================
++   5) DESKTOP
++   ========================================================= */
+ @media (min-width: 992px){
+   .jg-nav-collapse{
+     display: flex !important;
+@@ -182,11 +155,7 @@ @media (min-width: 992px){
+     overflow: visible !important;
+     flex-basis: auto;
+   }
+-
+-  /* Posicionar dropdown relativo al nav-item padre */
+   .jg-nav .nav-item.dropdown{ position: relative; }
+-
+-  /* Megamenu en escritorio: inicialmente oculto (opacity 0) y posicionado */
+   .jg-nav .dropdown-menu.megamenu{
+     position: absolute;
+     left: 50% !important;
+@@ -199,8 +168,6 @@ @media (min-width: 992px){
+     top: calc(100% + 14px);
+     transition: opacity .16s ease, top .16s ease;
+   }
+-
+-  /* Mostrar megamenu al hover/focus del nav-item padre (animado) */
+   .jg-nav .nav-item.dropdown:hover > .dropdown-menu.megamenu,
+   .jg-nav .nav-item.dropdown:focus-within > .dropdown-menu.megamenu,
+   .jg-nav .nav-item.dropdown.show > .dropdown-menu.megamenu{
+@@ -209,8 +176,6 @@ @media (min-width: 992px){
+     pointer-events: auto;
+     top: calc(82% + 8px);
+   }
+-
+-  /* Asegurar que el toggle del dropdown sea interactivo en escritorio */
+   .jg-nav .nav-item.dropdown > .nav-link.dropdown-toggle{
+     pointer-events: auto !important;
+   }
+diff --git a/resources/views/admin/orders/index.blade.php b/resources/views/admin/orders/index.blade.php
+index d1d7c9c..3170048 100644
+--- a/resources/views/admin/orders/index.blade.php
++++ b/resources/views/admin/orders/index.blade.php
+@@ -44,15 +44,13 @@
+       <div class="jg-table-wrap">
+         <div class="table-responsive">
+           <table class="table jg-table align-middle">
+-            <thead>
++            <thead style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+               <tr>
+                 <th>ID</th>
+                 <th>Usuario</th>
+                 <th>Tipo</th>
+                 <th class="text-end">Total</th>
+-                <th>Estado</th>
+-                <th>Cantidad</th>
+-                <th>Precio</th>
++                <th class="text-center">Estado</th>
+                 <th>Fecha</th>
+                 <th class="text-end">Acciones</th>
+               </tr>
+@@ -62,39 +60,59 @@
+               <!-- Recorremos los pedidos y los mostramos en la tabla -->
+               @forelse($orders as $o)
+                 
+-                <!-- Para cada pedido mostramos su informaci├│n en una fila -->
++                <!-- Definici├│n de estados y estilos visuales -->
+                 @php
+-                  $b = $o->status === 'paid' ? 'badge-primary' : ($o->status === 'shipped' ? 'badge-mint' : ($o->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
+                   $statusLabels = [
+                       'pending' => 'Pendiente',
+                       'paid' => 'Pagado',
+                       'shipped' => 'Enviado',
+                       'cancelled' => 'Cancelado'
+                   ];
++                  
++                  // Estilos brillantes y claros (mismo estilo que frontend)
++                  $badgeStyle = '';
++                  if ($o->status === 'paid') {
++                      $badgeStyle = 'background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid rgba(0, 255, 157, 0.3);';
++                  } elseif ($o->status === 'pending') {
++                      $badgeStyle = 'background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3);';
++                  } elseif ($o->status === 'shipped') {
++                      $badgeStyle = 'background: rgba(0, 195, 255, 0.15); color: #00c3ff; border: 1px solid rgba(0, 195, 255, 0.3);';
++                  } elseif ($o->status === 'cancelled') {
++                      $badgeStyle = 'background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3);';
++                  } else {
++                      $badgeStyle = 'background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
++                  }
+                 @endphp
+                 
+                 <!-- Fila para cada pedido -->
+-                <tr>
++                <tr style="border-bottom: 1px solid rgba(255,255,255,0.02);">
+                   
+                   <!-- Mostramos el ID del pedido con formato -->
+-                  <td>#{{ str_pad($o->id, 5, '0', STR_PAD_LEFT) }}</td>
++                  <td class="fw-bold opacity-75">#{{ str_pad($o->id, 5, '0', STR_PAD_LEFT) }}</td>
+                   
+                   <!-- Mostramos el nombre y email del usuario que hizo el pedido, o 'Usuario Eliminado' si el usuario ya no existe -->
+-                  <td>{{ $o->user->name ?? 'Usuario Eliminado' }} <br><small class="jg-muted">{{ $o->user->email ?? '' }}</small></td>
++                  <td>
++                    <span class="d-block">{{ $o->user->name ?? 'Usuario Eliminado' }}</span>
++                    <small class="text-white opacity-50">{{ $o->user->email ?? '' }}</small>
++                  </td>
+                   
+                   <!-- Mostramos el tipo de pedido (digital o f├¡sico) con un badge -->
+-                  <td><span class="badge badge-soft">{{ strtoupper($o->order_type) }}</span></td>
++                  <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1);">{{ strtoupper($o->order_type) }}</span></td>
+                   
+                   <!-- Mostramos el total del pedido formateado a 2 decimales y alineado a la derecha -->
+-                  <td class="text-end">{{ number_format($o->total_amount, 2) }} Ôé¼</td>
++                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ number_format($o->total_amount, 2) }} Ôé¼</td>
+                   
+                   <!-- Mostramos el estado del pedido con un badge de color seg├║n el estado -->
+-                  <td><span class="badge {{ $b }}">{{ $statusLabels[$o->status] ?? $o->status }}</span></td>
+-                  
+-                  <!-- Mostramos la cantidad total de items en el pedido -->
+-                  <td class="text-nowrap">{{ $o->created_at->format('Y-m-d H:i') }}</td>
++                  <td class="text-center">
++                    <span class="badge px-3 py-2 rounded-pill" style="{{ $badgeStyle }} font-size: 0.8rem; letter-spacing: 0.5px; font-weight: 600;">
++                      {{ $statusLabels[$o->status] ?? ucfirst($o->status) }}
++                    </span>
++                  </td>
+                   
+                   <!-- Mostramos la fecha de creaci├│n del pedido formateada -->
++                  <td class="text-nowrap text-white opacity-75">{{ $o->created_at->format('Y-m-d H:i') }}</td>
++                  
++                  <!-- Acciones -->
+                   <td class="text-end text-nowrap">
+                     <a href="{{ route('admin.orders.show', $o) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
+                     <a href="{{ route('admin.orders.edit', $o) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+diff --git a/resources/views/admin/orders/show.blade.php b/resources/views/admin/orders/show.blade.php
+index 046fb72..a72834b 100644
+--- a/resources/views/admin/orders/show.blade.php
++++ b/resources/views/admin/orders/show.blade.php
+@@ -38,9 +38,22 @@
+                   <!-- Mostramos el estado del pedido con una etiqueta de color -->
+                   @php
+                     $statusLabels = ['pending' => 'Pendiente', 'paid' => 'Pagado', 'shipped' => 'Enviado', 'cancelled' => 'Cancelado'];
+-                    $b = $order->status === 'paid' ? 'badge-primary' : ($order->status === 'shipped' ? 'badge-mint' : ($order->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
++                    $badgeStyle = '';
++                    if ($order->status === 'paid') {
++                        $badgeStyle = 'background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid rgba(0, 255, 157, 0.3);';
++                    } elseif ($order->status === 'pending') {
++                        $badgeStyle = 'background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3);';
++                    } elseif ($order->status === 'shipped') {
++                        $badgeStyle = 'background: rgba(0, 195, 255, 0.15); color: #00c3ff; border: 1px solid rgba(0, 195, 255, 0.3);';
++                    } elseif ($order->status === 'cancelled') {
++                        $badgeStyle = 'background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3);';
++                    } else {
++                        $badgeStyle = 'background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
++                    }
+                   @endphp
+-                  <span class="badge {{ $b }}">{{ $statusLabels[$order->status] ?? $order->status }}</span>
++                  <span class="badge px-3 py-2 rounded-pill" style="{{ $badgeStyle }} font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">
++                    {{ $statusLabels[$order->status] ?? ucfirst($order->status) }}
++                  </span>
+                 </td>
+               </tr>
+               
+diff --git a/resources/views/carrito.blade.php b/resources/views/carrito.blade.php
+index cc9df2e..d7b2271 100644
+--- a/resources/views/carrito.blade.php
++++ b/resources/views/carrito.blade.php
+@@ -58,11 +58,11 @@
+                                                 </div>
+                                             </td>
+                                             <td class="text-center">
+-                                                <form action="{{ route('carrito.update', $item->id) }}" method="POST" class="d-flex align-items-center justify-content-center gap-2">
++                                                <form action="{{ route('carrito.update', $item->id) }}" method="POST" class="d-flex align-items-center justify-content-center">
+                                                     @csrf
+                                                     @method('PUT')
+-                                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->game->stock }}" class="form-control form-control-sm bg-dark text-white border-secondary text-center" style="width: 60px;">
+-                                                    <button type="submit" class="btn btn-sm btn-outline-sun" title="Actualizar">
++                                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->game->stock }}" class="form-control form-control-sm bg-dark text-white border-secondary text-center" style="width: 70px;" onchange="this.form.submit()">
++                                                    <button type="submit" class="btn btn-sm btn-outline-sun d-none" title="Actualizar">
+                                                         <i class="bi bi-arrow-repeat"></i>
+                                                     </button>
+                                                 </form>
+@@ -124,15 +124,19 @@
+                             <span class="h3 mb-0" style="color: #ffcc00 !important; font-weight: 900;">{{ number_format($cart->total_price, 2) }}Ôé¼</span>
+                         </div>
+ 
+-                        <a href="{{ url('/checkout') }}" class="btn jg-btn jg-btn-sun w-100 btn-lg shadow">
+-                            Tramitar Pedido <i class="bi bi-credit-card-2-back ms-2"></i>
+-                        </a>
++                        <form action="{{ route('checkout.session') }}" method="POST">
++                            @csrf
++                            <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg shadow">
++                                Tramitar Pedido <i class="bi bi-credit-card-2-back ms-2"></i>
++                            </button>
++                        </form>
+                         
+-                        <div class="mt-4 text-center">
+-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="me-3 opacity-50" alt="PayPal">
+-                            <i class="bi bi-credit-card-fill h4 text-muted mx-1 opacity-50"></i>
+-                            <i class="bi bi-apple h4 text-muted mx-1 opacity-50"></i>
+-                            <div class="small text-white opacity-60 mt-2">Pago 100% Seguro y Encriptado</div>
++                        <div class="text-center mt-4 pt-2">
++                            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
++                                <span class="text-white opacity-50 fw-medium text-nowrap" style="font-size: 0.85rem;">Pago seguro con</span>
++                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style="height: 22px !important; width: auto !important; filter: brightness(0) invert(1); opacity: 0.9;">
++                            </div>
++                            <div class="small text-white opacity-25">Transacci├│n 100% encriptada</div>
+                         </div>
+                     </div>
+                 </div>
+@@ -159,26 +163,4 @@
+     </div>
+ </div>
+ 
+-<style>
+-    .jg-table thead {
+-        border-bottom: 2px solid var(--jg-border);
+-    }
+-    .jg-table tr {
+-        border-bottom: 1px solid rgba(255,255,255,.05);
+-    }
+-    .jg-table tr:last-child {
+-        border-bottom: none;
+-    }
+-    .bg-darker {
+-        background: rgba(0,0,0,0.2) !important;
+-    }
+-    .btn-outline-sun {
+-        color: var(--jg-sun);
+-        border-color: var(--jg-sun);
+-    }
+-    .btn-outline-sun:hover {
+-        background-color: var(--jg-sun);
+-        color: #000;
+-    }
+-</style>
+ @endsection
+diff --git a/resources/views/checkout/cancel.blade.php b/resources/views/checkout/cancel.blade.php
+new file mode 100644
+index 0000000..9a2e46c
+--- /dev/null
++++ b/resources/views/checkout/cancel.blade.php
+@@ -0,0 +1,29 @@
++@extends('layouts.app')
++
++@section('title', 'Pago Cancelado - Jediga')
++
++@section('content')
++<div class="container py-5 text-center" style="min-height: 60vh; display: flex; align-items: center; justify-content: center;">
++    <div class="card jg-card border-0 shadow-lg p-5" style="max-width: 600px; width: 100%;">
++        <div class="mb-4">
++            <i class="bi bi-x-circle text-danger" style="font-size: 5rem;"></i>
++        </div>
++        <h1 class="display-5 fw-bold text-white mb-3">Pago Cancelado</h1>
++        <p class="lead text-white opacity-75 mb-4">
++            No te preocupes, el proceso de pago ha sido cancelado y <strong class="text-danger">no se ha realizado ning├║n cargo</strong> en tu cuenta.
++        </p>
++        <p class="text-white opacity-50 mb-5">
++            Tus art├¡culos siguen guardados en el carrito por si decides continuar la compra m├ís adelante.
++        </p>
++
++        <div class="d-flex gap-3 justify-content-center">
++            <a href="{{ route('carrito.index') }}" class="btn btn-outline-light border-secondary btn-lg px-4">
++                Volver al carrito
++            </a>
++            <a href="{{ route('catalogo') }}" class="btn jg-btn jg-btn-sun btn-lg px-4">
++                Ir al cat├ílogo
++            </a>
++        </div>
++    </div>
++</div>
++@endsection
+diff --git a/resources/views/checkout/success.blade.php b/resources/views/checkout/success.blade.php
+new file mode 100644
+index 0000000..995a4b0
+--- /dev/null
++++ b/resources/views/checkout/success.blade.php
+@@ -0,0 +1,34 @@
++@extends('layouts.app')
++
++@section('title', 'Pago Completado - Jediga')
++
++@section('content')
++<div class="container py-5 text-center" style="min-height: 60vh; display: flex; align-items: center; justify-content: center;">
++    <div class="card jg-card border-0 shadow-lg p-5" style="max-width: 600px; width: 100%;">
++        <div class="mb-4">
++            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
++        </div>
++        <h1 class="display-5 fw-bold text-white mb-3">┬íPago Completado!</h1>
++        <p class="lead text-white opacity-75 mb-4">
++            Gracias por tu compra. Tu pedido <strong class="text-sun">#{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</strong> se ha procesado correctamente.
++        </p>
++
++        <div class="bg-dark p-3 rounded mb-4 text-start">
++            <div class="d-flex justify-content-between mb-2">
++                <span class="text-white opacity-75">Total Pagado:</span>
++                <strong class="text-white">{{ number_format($order->total_amount, 2) }}Ôé¼</strong>
++            </div>
++            <div class="d-flex justify-content-between">
++                <span class="text-white opacity-75">Estado:</span>
++                <strong class="text-success"><i class="bi bi-check-circle"></i> Confirmado</strong>
++            </div>
++        </div>
++
++        <p class="text-white opacity-50 small mb-4">Te hemos enviado un correo electr├│nico con los detalles de tu pedido.</p>
++
++        <a href="{{ route('catalogo') }}" class="btn jg-btn jg-btn-sun btn-lg w-100">
++            Seguir explorando el cat├ílogo
++        </a>
++    </div>
++</div>
++@endsection
+diff --git a/resources/views/emails/order-confirmed.blade.php b/resources/views/emails/order-confirmed.blade.php
+new file mode 100644
+index 0000000..1192fbf
+--- /dev/null
++++ b/resources/views/emails/order-confirmed.blade.php
+@@ -0,0 +1,35 @@
++<x-mail::message>
++# ┬íPago Completado con ├ëxito!
++
++Hola **{{ $order->user->name }}**,
++
++┬íGracias por tu compra en **Jediga**! Hemos procesado tu pago correctamente y tu pedido ya est├í en marcha.
++Aqu├¡ tienes los detalles de tu adquisici├│n:
++
++<x-mail::panel>
++**ID Pedido:** #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}<br>
++**Fecha:** {{ $order->created_at->format('d/m/Y H:i') }}<br>
++**Tipo de Pedido:** {{ strtoupper($order->order_type) }}<br>
++**Direcci├│n de Env├¡o:** {{ $order->shipping_address ?? 'Digital / No especificada' }}
++</x-mail::panel>
++
++### Resumen de la compra
++
++<x-mail::table>
++| Art├¡culo       | Cantidad | Precio Unitario | Subtotal |
++| :---           | :---:    | :---:           | :---:    |
++@foreach($order->items as $item)
++| **{{ $item->game->title }}**<br><span style="color: #6c757d; font-size: 0.85em;">{{ $item->game->platform->name ?? 'Varias' }}</span> | {{ $item->quantity }}x | {{ number_format($item->price_at_purchase, 2) }}Ôé¼ | {{ number_format($item->price_at_purchase * $item->quantity, 2) }}Ôé¼ |
++@endforeach
++| &nbsp; | &nbsp; | **TOTAL** | **{{ number_format($order->total_amount, 2) }}Ôé¼** |
++</x-mail::table>
++
++Si deseas revisar el estado actual de este y otros pedidos, visita tu historial de compras desde tu perfil en la plataforma:
++
++<x-mail::button :url="route('profile.orders')" color="success">
++Ver Mis Pedidos
++</x-mail::button>
++
++Gracias por formar parte de la comunidad Jediga.<br>
++**{{ config('app.name') }}**
++</x-mail::message>
+diff --git a/resources/views/partials/navbar-public.blade.php b/resources/views/partials/navbar-public.blade.php
+index 9e49cbf..23c28ed 100644
+--- a/resources/views/partials/navbar-public.blade.php
++++ b/resources/views/partials/navbar-public.blade.php
+@@ -181,8 +181,8 @@
+             </button>
+             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary mt-2 p-2 jg-panel" aria-labelledby="userDropdown" style="min-width: 200px;">
+               <li class="px-3 py-2 border-bottom border-secondary mb-2">
+-                <div class="small text-muted">Sesi├│n de:</div>
+-                <div class="fw-bold text-white text-truncate">{{ auth()->user()->name }}</div>
++                <div class="small text-white">Sesi├│n de:</div>
++                <div class="text-white text-truncate">{{ auth()->user()->name }}</div>
+               </li>
+               @if($isAdmin)
+                 <li>
+@@ -198,11 +198,11 @@
+               </li>
+               <li>
+                 <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}">
+-                  <i class="bi bi-collection-play me-2 text-sun"></i>Mi Biblioteca
++                  <i class="bi bi-collection-play me-2 text-sun"></i> Mi Biblioteca
+                 </a>
+               </li>
+               <li>
+-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/mis-pedidos') }}">
++                <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.orders') }}">
+                   <i class="bi bi-bag-check me-2 text-sun"></i> Mis Pedidos
+                 </a>
+               </li>
+diff --git a/resources/views/profile/orders.blade.php b/resources/views/profile/orders.blade.php
+new file mode 100644
+index 0000000..d964285
+--- /dev/null
++++ b/resources/views/profile/orders.blade.php
+@@ -0,0 +1,130 @@
++@extends('layouts.app')
++
++@section('title', 'Mis Pedidos - Jediga')
++
++@section('content')
++<div class="container py-5">
++    <div class="row mb-4">
++        <div class="col-12 text-center text-md-start">
++            <h1 class="display-5 fw-bold text-white mb-2" style="font-family: var(--jg-font-title); letter-spacing: 1px;">
++                Mis <span class="jg-sun px-2 py-1 rounded" style="background: rgba(255, 204, 0, 0.1);">Pedidos</span>
++            </h1>
++            <p class="text-white opacity-75 lead" style="font-weight: 300;">Visualiza el historial completo de tus compras.</p>
++        </div>
++    </div>
++
++    @if($orders->count() > 0)
++        <div class="card jg-card border-0 shadow-sm mb-4">
++            <div class="card-body p-0">
++                <div class="table-responsive">
++                    <table class="table table-dark table-hover align-middle mb-0 jg-table">
++                        <thead class="bg-darker">
++                        <tr>
++                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3 ps-4" style="letter-spacing: 1px;"># Pedido</th>
++                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3" style="letter-spacing: 1px;">Fecha Generada</th>
++                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3" style="letter-spacing: 1px;">Valor Total</th>
++                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3 text-center" style="letter-spacing: 1px;">Estado</th>
++                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3 text-center pe-4" style="letter-spacing: 1px;">Ver Detalle</th>
++                        </tr>
++                    </thead>
++                    <tbody>
++                        @foreach($orders as $order)
++                            <!-- Fila Principal del Pedido -->
++                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='transparent'">
++                                <td class="ps-4 py-4">
++                                    <span class="text-white fw-bold opacity-75 fs-6">{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}</span>
++                                </td>
++                                <td class="py-4">
++                                    <span class="text-white">{{ $order->created_at->format('d/m/Y') }}</span>
++                                </td>
++                                <td class="py-4">
++                                    <span class="fw-bold" style="color: #00ff9d;">{{ number_format($order->total_amount, 2) }}Ôé¼</span>
++                                </td>
++                                <td class="py-4 text-center">
++                                    @if($order->status === 'paid')
++                                        <span class="badge w-100 py-2 rounded-2 shadow-sm" style="background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid rgba(0, 255, 157, 0.3); font-size: 0.85rem; letter-spacing: 0.5px;">Completado</span>
++                                    @elseif($order->status === 'pending')
++                                        <span class="badge w-100 py-2 rounded-2 shadow-sm" style="background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3); font-size: 0.85rem; letter-spacing: 0.5px;">Pendiente</span>
++                                    @elseif($order->status === 'shipped')
++                                        <span class="badge w-100 py-2 rounded-2 shadow-sm" style="background: rgba(0, 195, 255, 0.15); color: #00c3ff; border: 1px solid rgba(0, 195, 255, 0.3); font-size: 0.85rem; letter-spacing: 0.5px;">Enviado</span>
++                                    @elseif($order->status === 'cancelled')
++                                        <span class="badge w-100 py-2 rounded-2 shadow-sm" style="background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); font-size: 0.85rem; letter-spacing: 0.5px;">Cancelado</span>
++                                    @endif
++                                </td>
++                                <td class="py-4 text-center pe-4">
++                                    <button class="btn btn-sm btn-outline-light border-secondary shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrder{{ $order->id }}" aria-expanded="false" aria-controls="collapseOrder{{ $order->id }}" title="Ver detalles">
++                                        <i class="bi bi-box-arrow-up-right"></i>
++                                    </button>
++                                </td>
++                            </tr>
++                            
++                            <!-- Fila Desplegable con los Detalles -->
++                            <tr class="collapse" id="collapseOrder{{ $order->id }}">
++                                <td colspan="5" class="p-0 border-0 bg-darker">
++                                    <div class="p-4" style="background: rgba(0,0,0,0.15); box-shadow: inset 0 5px 15px rgba(0,0,0,0.2);">
++                                        
++                                        <!-- Lista vertical de juegos -->
++                                        <div class="d-flex flex-column gap-2 mb-3">
++                                            @foreach($order->items as $item)
++                                                <div class="d-flex align-items-center p-3 rounded" style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--jg-sun); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
++                                                    <div class="flex-shrink-0 shadow-sm rounded overflow-hidden" style="width: 55px; height: 75px;">
++                                                        @if($item->game->cover_image)
++                                                            <img src="{{ asset('storage/' . $item->game->cover_image) }}" alt="{{ $item->game->title }}" class="w-100 h-100 object-fit-cover">
++                                                        @else
++                                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-dark"><i class="bi bi-controller"></i></div>
++                                                        @endif
++                                                    </div>
++                                                    <div class="flex-grow-1 ms-4">
++                                                        <h6 class="text-white fw-bold mb-1 fs-5" style="letter-spacing: 0.5px;">{{ $item->game->title }}</h6>
++                                                        <div class="text-white opacity-50 small">Precio unitario: {{ number_format($item->price_at_purchase, 2) }}Ôé¼ &nbsp;&bull;&nbsp; Cantidad x{{ $item->quantity }}</div>
++                                                    </div>
++                                                    <div class="text-white fw-bold fs-5 px-3">
++                                                        {{ number_format($item->price_at_purchase * $item->quantity, 2) }}Ôé¼
++                                                    </div>
++                                                </div>
++                                            @endforeach
++                                        </div>
++
++                                        <!-- Direcci├│n -->
++                                        @if($order->shipping_address)
++                                            <div class="border-top border-secondary border-opacity-25 pt-3 d-flex align-items-center">
++                                                <div class="bg-dark p-2 rounded-circle me-3 border border-secondary border-opacity-25 shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
++                                                    <i class="bi bi-geo-alt-fill text-sun" style="font-size: 0.9rem;"></i>
++                                                </div>
++                                                <div>
++                                                    <span class="text-white opacity-50 small text-uppercase" style="letter-spacing: 1px;">Enviado a:</span>
++                                                    <span class="text-white small ms-2 fw-bold opacity-75">{{ $order->shipping_address }}</span>
++                                                </div>
++                                            </div>
++                                        @endif
++                                    </div>
++                                </td>
++                            </tr>
++                        @endforeach
++                    </tbody>
++                </table>
++            </div>
++        </div>
++    @else
++        <!-- Sin pedidos -->
++        <div class="row mt-5">
++            <div class="col-12">
++                <div class="card jg-card border-0 text-center py-5 shadow-sm">
++                    <div class="py-4">
++                        <div class="d-inline-flex p-4 rounded-circle mb-4 bg-dark">
++                            <i class="bi bi-bag-x text-muted" style="font-size: 3rem;"></i>
++                        </div>
++                        <h2 class="text-white fw-bold mb-3" style="font-family: var(--jg-font-title); letter-spacing: 1px;">A├║n no tienes ning├║n pedido</h2>
++                        <p class="text-white opacity-75 mb-5 mx-auto" style="max-width: 500px;">A├║n no tienes facturas ni pedidos generados en tu historial.</p>
++                        <a href="{{ url('/catalogo') }}" class="btn jg-btn jg-btn-sun btn-lg px-5 border-0 shadow" style="letter-spacing: 1px;">
++                            Explorar Cat├ílogo <i class="bi bi-arrow-right ms-2"></i>
++                        </a>
++                    </div>
++                </div>
++            </div>
++        </div>
++    @endif
++</div>
++
++
++@endsection
+diff --git a/routes/web.php b/routes/web.php
+index 0fa6926..809cf7e 100644
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -56,6 +56,20 @@
+     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+ });
+ 
++// Rutas de Checkout (Stripe)
++use App\Http\Controllers\Web\CheckoutController;
++Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function () {
++    Route::post('/session', [CheckoutController::class, 'createSession'])->name('session');
++    Route::get('/success', [CheckoutController::class, 'success'])->name('success');
++    Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('cancel');
++});
++
++// Rutas del Perfil de Usuario
++use App\Http\Controllers\Web\ProfileController;
++Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
++    Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
++});
++
+ // Rutas de Juegos y Cat├ílogo
+ use App\Http\Controllers\Web\GameController as WebGameController;
+ Route::get('/catalogo', [WebGameController::class, 'index'])->name('catalogo');

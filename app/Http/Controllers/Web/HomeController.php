@@ -17,7 +17,7 @@ class HomeController extends Controller
             'tag' => $game->platform->name ?? 'Multi',
             'slug' => $game->slug,
             'cover_image' => $game->cover_image,
-            'youtube_id' => $game->youtube_id, // null si no tiene trailer
+            'youtube_id' => $game->youtube_id ?? null,
         ];
 
         // Próximamente: juegos que NO han salido todavía

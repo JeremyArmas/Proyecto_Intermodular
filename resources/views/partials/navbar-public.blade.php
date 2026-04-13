@@ -144,9 +144,12 @@
           <button class="btn jg-btn jg-btn-outline" data-bs-toggle="dropdown" aria-expanded="false" title="Idioma">
             <i class="bi bi-globe2"></i>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end jg-dd">
-            <li><a class="dropdown-item" href="{{ url('/lang/es') }}">Español</a></li>
-            <li><a class="dropdown-item" href="{{ url('/lang/en') }}">English</a></li>
+          <ul class="dropdown-menu dropdown-menu-end jg-dd"> <!-- Opciones de idioma -->
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('es')">Español</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('en')">English</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('de')">Alemán</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('it')">Italiano</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('pt')">Portugués</a></li>
           </ul>
         </div>
 
@@ -172,10 +175,17 @@
           <div class="dropdown">
             <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-2 p-1 pe-3 rounded-pill" 
                     type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+
+              @if(auth()->user()->avatar)
+              <img src="{{ asset('avatars/' . auth()->user()->avatar) }}" class="rounded-circle"
+                        style="width:32px; height:32px; object-fit:cover; border: 1px solid #ffcc00;">
+              @else
               <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
                    style="width: 32px; height: 32px; background-color: #ffcc00 !important; color: #000 !important; font-weight: 900; font-size: 1rem; font-family: var(--jg-font-title);">
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
               </div>
+              @endif
+
               <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', auth()->user()->name)[0] }}</span>
               <i class="bi bi-chevron-down small opacity-50"></i>
             </button>
@@ -186,18 +196,18 @@
               </li>
               @if($isAdmin)
                 <li>
-                  <a class="dropdown-item py-2 rounded-3" href="{{ url('/admin') }}">
+                  <a class="dropdown-item py-2 rounded-3" href="{{ url('/admin') }}"> <!-- Ruta a admin -->
                     <i class="bi bi-speedometer2 me-2 text-sun"></i> Panel Admin
                   </a>
                 </li>
               @endif
               <li>
-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/perfil') }}">
+                <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.show') }}"> <!-- Ruta a perfil -->
                   <i class="bi bi-person me-2 text-sun"></i> Mi Perfil
                 </a>
               </li>
               <li>
-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}">
+                <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}"> <!-- Ruta a biblioteca -->
                   <i class="bi bi-collection-play me-2 text-sun"></i> Mi Biblioteca
                 </a>
               </li>

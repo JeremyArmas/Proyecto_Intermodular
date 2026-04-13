@@ -67,6 +67,8 @@ Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function
 // Rutas del Perfil de Usuario
 use App\Http\Controllers\Web\ProfileController;
 Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'show'])->name('show');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
 });
 
@@ -95,3 +97,15 @@ Route::get('/forgot-password', function () { return view('auth.forgot-password')
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
 Route::get('/reset-password/{token}', function ($token) { return view('auth.reset-password', ['token' => $token]); })->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');
+
+//Ruta a Aviso Legal
+
+Route::get('/aviso-legal', function () { return view('aviso-legal'); })->name('aviso-legal');
+
+//Ruta a terminos y condiciones
+
+Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
+
+//Ruta a cookies
+
+Route::get('/cookies', function () { return view('cookies'); })->name('cookies');
