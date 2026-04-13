@@ -67,6 +67,8 @@ Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function
 // Rutas del Perfil de Usuario
 use App\Http\Controllers\Web\ProfileController;
 Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'show'])->name('show');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
 });
 
