@@ -30,7 +30,7 @@ class CheckoutController extends Controller
         }
 
         // Configura la clave secreta de Stripe
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
 
         // Construye los line_items para Stripe
         $lineItems = [];
@@ -96,7 +96,7 @@ class CheckoutController extends Controller
             return redirect()->route('home');
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
 
         try {
             // Recuperamos la sesión de Stripe
