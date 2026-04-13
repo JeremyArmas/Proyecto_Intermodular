@@ -1,13 +1,11 @@
 /* =========================================================
    FOOTER
-   Contiene estilos del pie de página: separación, bordes,
-   fondo glass, estilos de enlaces y botones sociales.
+   Contiene estilos del pie de página.
    ========================================================= */
 
-/* Estilos generales del footer:
-   - Margen superior para separación del contenido.
-   - Borde superior con color acento (amarillo suave).
-   - Fondo semitransparente oscuro con efecto blur. */
+/* =========================================================
+   1) CONTENEDOR PRINCIPAL
+   ========================================================= */
 footer{
   margin-top: 46px;
   border-top: 1px solid rgba(246,196,83,.40);
@@ -15,27 +13,22 @@ footer{
   backdrop-filter: blur(14px);
 }
 
-/* Título dentro del footer:
-   - Peso tipográfico alto y separación inferior. */
+/* =========================================================
+   2) TIPOGRAFÍA Y ENLACES
+   ========================================================= */
 .ft-title{
   font-weight: 900;
   margin-bottom: 10px;
 }
-
-/* Enlaces atenuados del footer:
-   - Color suave, sin subrayado por defecto.
-   - Al pasar el ratón, aumentar contraste hacia el texto principal. */
 .jg-link-muted{
   color: rgba(255,255,255,.75);
   text-decoration:none;
 }
 .jg-link-muted:hover{ color: var(--jg-text); }
 
-/* Botones sociales (iconos):
-   - Tamaño cuadrado con centrado de contenido.
-   - Bordes redondeados y borde semitransparente.
-   - Fondo sutil y color del icono tomado de la variable de texto.
-   - Transiciones para transform, borde y fondo. */
+/* =========================================================
+   3) BOTONES SOCIALES
+   ========================================================= */
 .social-btn{
   width: 42px;
   height: 42px;
@@ -47,10 +40,6 @@ footer{
   color: var(--jg-text);
   transition: transform .18s ease, border-color .18s ease, background .18s ease;
 }
-
-/* Hover de los botones sociales:
-   - Levantar ligeramente el botón.
-   - Usar fondo y borde con acento amarillo para destacar. */
 .social-btn:hover{
   transform: translateY(-2px);
   background: rgba(246,196,83,.10);

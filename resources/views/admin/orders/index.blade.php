@@ -44,15 +44,13 @@
       <div class="jg-table-wrap">
         <div class="table-responsive">
           <table class="table jg-table align-middle">
-            <thead>
+            <thead style="border-bottom: 2px solid rgba(255,255,255,0.1);">
               <tr>
                 <th>ID</th>
                 <th>Usuario</th>
                 <th>Tipo</th>
                 <th class="text-end">Total</th>
-                <th>Estado</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
+                <th class="text-center">Estado</th>
                 <th>Fecha</th>
                 <th class="text-end">Acciones</th>
               </tr>
@@ -62,39 +60,59 @@
               <!-- Recorremos los pedidos y los mostramos en la tabla -->
               @forelse($orders as $o)
                 
-                <!-- Para cada pedido mostramos su información en una fila -->
+                <!-- Definición de estados y estilos visuales -->
                 @php
-                  $b = $o->status === 'paid' ? 'badge-primary' : ($o->status === 'shipped' ? 'badge-mint' : ($o->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
                   $statusLabels = [
                       'pending' => 'Pendiente',
                       'paid' => 'Pagado',
                       'shipped' => 'Enviado',
                       'cancelled' => 'Cancelado'
                   ];
+                  
+                  // Estilos brillantes y claros (mismo estilo que frontend)
+                  $badgeStyle = '';
+                  if ($o->status === 'paid') {
+                      $badgeStyle = 'background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid rgba(0, 255, 157, 0.3);';
+                  } elseif ($o->status === 'pending') {
+                      $badgeStyle = 'background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3);';
+                  } elseif ($o->status === 'shipped') {
+                      $badgeStyle = 'background: rgba(0, 195, 255, 0.15); color: #00c3ff; border: 1px solid rgba(0, 195, 255, 0.3);';
+                  } elseif ($o->status === 'cancelled') {
+                      $badgeStyle = 'background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3);';
+                  } else {
+                      $badgeStyle = 'background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
+                  }
                 @endphp
                 
                 <!-- Fila para cada pedido -->
-                <tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.02);">
                   
                   <!-- Mostramos el ID del pedido con formato -->
-                  <td>#{{ str_pad($o->id, 5, '0', STR_PAD_LEFT) }}</td>
+                  <td class="fw-bold opacity-75">#{{ str_pad($o->id, 5, '0', STR_PAD_LEFT) }}</td>
                   
                   <!-- Mostramos el nombre y email del usuario que hizo el pedido, o 'Usuario Eliminado' si el usuario ya no existe -->
-                  <td>{{ $o->user->name ?? 'Usuario Eliminado' }} <br><small class="jg-muted">{{ $o->user->email ?? '' }}</small></td>
+                  <td>
+                    <span class="d-block">{{ $o->user->name ?? 'Usuario Eliminado' }}</span>
+                    <small class="text-white opacity-50">{{ $o->user->email ?? '' }}</small>
+                  </td>
                   
                   <!-- Mostramos el tipo de pedido (digital o físico) con un badge -->
-                  <td><span class="badge badge-soft">{{ strtoupper($o->order_type) }}</span></td>
+                  <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1);">{{ strtoupper($o->order_type) }}</span></td>
                   
                   <!-- Mostramos el total del pedido formateado a 2 decimales y alineado a la derecha -->
-                  <td class="text-end">{{ number_format($o->total_amount, 2) }} €</td>
+                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ number_format($o->total_amount, 2) }} €</td>
                   
                   <!-- Mostramos el estado del pedido con un badge de color según el estado -->
-                  <td><span class="badge {{ $b }}">{{ $statusLabels[$o->status] ?? $o->status }}</span></td>
-                  
-                  <!-- Mostramos la cantidad total de items en el pedido -->
-                  <td class="text-nowrap">{{ $o->created_at->format('Y-m-d H:i') }}</td>
+                  <td class="text-center">
+                    <span class="badge px-3 py-2 rounded-pill" style="{{ $badgeStyle }} font-size: 0.8rem; letter-spacing: 0.5px; font-weight: 600;">
+                      {{ $statusLabels[$o->status] ?? ucfirst($o->status) }}
+                    </span>
+                  </td>
                   
                   <!-- Mostramos la fecha de creación del pedido formateada -->
+                  <td class="text-nowrap text-white opacity-75">{{ $o->created_at->format('Y-m-d H:i') }}</td>
+                  
+                  <!-- Acciones -->
                   <td class="text-end text-nowrap">
                     <a href="{{ route('admin.orders.show', $o) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
                     <a href="{{ route('admin.orders.edit', $o) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>

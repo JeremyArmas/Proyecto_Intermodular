@@ -38,9 +38,22 @@
                   <!-- Mostramos el estado del pedido con una etiqueta de color -->
                   @php
                     $statusLabels = ['pending' => 'Pendiente', 'paid' => 'Pagado', 'shipped' => 'Enviado', 'cancelled' => 'Cancelado'];
-                    $b = $order->status === 'paid' ? 'badge-primary' : ($order->status === 'shipped' ? 'badge-mint' : ($order->status === 'cancelled' ? 'badge-sun' : 'badge-soft'));
+                    $badgeStyle = '';
+                    if ($order->status === 'paid') {
+                        $badgeStyle = 'background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid rgba(0, 255, 157, 0.3);';
+                    } elseif ($order->status === 'pending') {
+                        $badgeStyle = 'background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3);';
+                    } elseif ($order->status === 'shipped') {
+                        $badgeStyle = 'background: rgba(0, 195, 255, 0.15); color: #00c3ff; border: 1px solid rgba(0, 195, 255, 0.3);';
+                    } elseif ($order->status === 'cancelled') {
+                        $badgeStyle = 'background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3);';
+                    } else {
+                        $badgeStyle = 'background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
+                    }
                   @endphp
-                  <span class="badge {{ $b }}">{{ $statusLabels[$order->status] ?? $order->status }}</span>
+                  <span class="badge px-3 py-2 rounded-pill" style="{{ $badgeStyle }} font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">
+                    {{ $statusLabels[$order->status] ?? ucfirst($order->status) }}
+                  </span>
                 </td>
               </tr>
               

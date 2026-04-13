@@ -17,7 +17,6 @@ class HomeController extends Controller
             'tag' => $game->platform->name ?? 'Multi',
             'slug' => $game->slug,
             'cover_image' => $game->cover_image,
-            'youtube_id' => $game->youtube_id, // null si no tiene trailer
         ];
 
         // Próximamente: juegos que NO han salido todavía
@@ -38,7 +37,7 @@ class HomeController extends Controller
             ->where(function($q) {
                 $q->whereNull('release_date')->orWhereDate('release_date', '<=', now());
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('stock', 'asc')
             ->take(3)
             ->get()
             ->map($mapGame)
