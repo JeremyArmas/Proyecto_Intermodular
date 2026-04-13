@@ -11,11 +11,8 @@
     </a>
 
     <!-- Toggle (desplegable) -->
-    <button class="navbar-toggler" type="button"
-      aria-controls="navJedigaAdmin"
-      aria-expanded="false"
-      aria-label="Abrir menú"
-      data-jg-nav-toggle>
+    <button class="navbar-toggler" type="button" aria-controls="navJedigaAdmin" aria-expanded="false"
+      aria-label="Abrir menú" data-jg-nav-toggle>
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -38,9 +35,12 @@
             <i class="bi bi-globe2"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end"
-              style="background: rgba(14,14,26,.95); border:1px solid var(--jg-border);">
-            <li><a class="dropdown-item text-light" href="{{ url('/lang/es') }}">Español</a></li>
-            <li><a class="dropdown-item text-light" href="{{ url('/lang/en') }}">English</a></li>
+            style="background: rgba(14,14,26,.95); border:1px solid var(--jg-border);">
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('es')">Español</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('en')">English</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('de')">Alemán</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('it')">Italiano</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarIdioma('pt')">Portugués</a></li>
           </ul>
         </div>
 

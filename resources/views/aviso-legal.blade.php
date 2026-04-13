@@ -91,6 +91,16 @@
                  se someten a los juzgados y tribunales de <strong>Las Palmas de gran canarias , Las Palmas</strong>, salvo que la normativa aplicable disponga lo contrario.
                 </p>
             </div>
+
+            <!--Aviso de que es una página no oficial-->
+             <div class="mb-4">
+                <h4 class="fw-bold">Aviso de que es una página no oficial</h4>
+                <p class="opacity-75">
+                Esta página web es una página no oficial creada por alumnos de grado superior en desarrollo de aplicaciones web para 
+                fines educativos. No se va a adquirir juegos reales ni nada por el estilo.
+                </p>
+            </div>
+
         </div>
     </div>
 </div>

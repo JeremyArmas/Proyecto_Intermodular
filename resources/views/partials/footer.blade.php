@@ -16,22 +16,13 @@
         </div>
       </div>
 
-      <!-- Región / precios -->
-      <div class="col-md-4">
-        <div class="ft-title">Precios regionales</div>
-        <div class="small jg-muted mb-2">Selecciona tu región para mostrar precios locales.</div>
-        <select class="form-select" aria-label="Precios regionales">
-          <option selected>España (EUR)</option>
-          <option>Reino Unido (GBP)</option>
-          <option>EE. UU. (USD)</option>
-          <option>LatAm (USD)</option>
-        </select>
-
         <!-- Enlaces legales -->
+        <div class="col-md-4">
+        <div class="ft-title">Apartado legal</div>
         <div class="mt-3 d-flex flex-wrap gap-3 small">
           <a class="jg-link-muted" href="{{ url('/aviso-legal') }}">Aviso legal</a>
-          <a class="jg-link-muted" href="{{ url('/terminos') }}">Términos</a>
-          <a class="jg-link-muted" href="{{ url('/cookies') }}">Cookies</a>
+          <a class="jg-link-muted" href="{{ url('/terminos') }}">Términos y condiciones</a>
+          <a class="jg-link-muted" href="{{ url('/cookies') }}">Política de cookies</a>
         </div>
       </div>
 

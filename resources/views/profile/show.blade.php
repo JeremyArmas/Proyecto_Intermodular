@@ -61,8 +61,6 @@
                     <option value="Alemania" {{ auth()->user()->country == 'Alemania' ? 'selected' : '' }}>Alemania</option>
                     <option value="Italia" {{ auth()->user()->country == 'Italia' ? 'selected' : '' }}>Italia</option>
                     <option value="Portugal" {{ auth()->user()->country == 'Portugal' ? 'selected' : '' }}>Portugal</option>
-                    <option value="USA" {{ auth()->user()->country == 'USA' ? 'selected' : '' }}>USA</option>
-                    <option value="Reino unido" {{ auth()->user()->country == 'Reino unido' ? 'selected' : '' }}>Reino unido</option>
                 </select>
             </div>
 
