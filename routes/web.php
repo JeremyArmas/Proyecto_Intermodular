@@ -70,6 +70,7 @@ Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function ()
     Route::get('/', [ProfileController::class, 'show'])->name('show');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
+    Route::get('/mis-pedidos/{id}/descargar', [ProfileController::class, 'downloadOrderPdf'])->name('orders.download'); //Descargar la factura en pdf
 });
 
 // Rutas de Juegos y Catálogo
@@ -89,6 +90,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::resource('platforms', PlatformController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
+    Route::get('/orders/{id}/download', [OrderController::class, 'downloadOrderPdf'])->name('orders.download'); // Descargar la factura en pdf
     Route::resource('tickets', AdminContactController::class)->only(['index', 'show', 'update']);
 });
 

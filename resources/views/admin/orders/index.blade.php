@@ -123,6 +123,10 @@
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </form>
+
+                    <!-- Descargar PDF -->
+                    <a href="{{ route('admin.orders.download', $o->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar factura en PDF"><i class="bi bi-download"></i></a>
+                    <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
                   </td>
                 </tr>
               @empty

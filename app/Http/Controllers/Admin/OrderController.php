@@ -73,4 +73,12 @@ class OrderController extends Controller
         $order->delete();
         return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado de la base de datos.');
     }
+
+    public function downloadOrderPdf($id){ // Descargar la factura en pdf
+        $order = Order::with('items.game')->findOrFail($id); // Busca un pedido por la id y carga los items y juegos
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+
+        return $pdf->download('Factura_Jediga_' . 'order-' . $order->id . '.pdf'); // Descargamos la factura
+    }
 }

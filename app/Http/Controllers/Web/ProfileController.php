@@ -19,7 +19,15 @@ class ProfileController extends Controller
         return view('profile.orders', compact('orders'));
     }
 
-    public function show()
+    public function downloadOrderPdf($id){ // Descargar la factura en pdf
+        $order = auth()->user()->orders()->with('items.game')->findOrFail($id); // Buscamos el pedido por id
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+
+        return $pdf->download('Factura_Jediga_' . 'order-' . $order->id . '.pdf'); // Descargamos la factura
+    }
+
+    public function show() // Mostrar el perfil del usuario
     {
         return view('profile.show');
     }

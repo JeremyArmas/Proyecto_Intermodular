@@ -626,7 +626,7 @@
                         <!-- Fecha y hora de creación del pedido -->
                         <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
 
-                        <!-- Botones de acción para auditar el pedido o eliminarlo -->
+                        <!-- Botones de acción para auditar el pedido , eliminarlo y descargar la factura -->
                         <td class="text-end">
                           <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-eye"></i></a>
@@ -637,6 +637,9 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar">
+                            <i class="bi bi-download"></i> <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
+                          </a>
                         </td>
                       </tr>
 

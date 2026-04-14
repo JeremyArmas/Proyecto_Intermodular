@@ -25,6 +25,7 @@
                             <th scope="col" class="text-white opacity-75 text-uppercase small py-3" style="letter-spacing: 1px;">Valor Total</th>
                             <th scope="col" class="text-white opacity-75 text-uppercase small py-3 text-center" style="letter-spacing: 1px;">Estado</th>
                             <th scope="col" class="text-white opacity-75 text-uppercase small py-3 text-center pe-4" style="letter-spacing: 1px;">Ver Detalle</th>
+                            <th scope="col" class="text-white opacity-75 text-uppercase small py-3 text-center pe-4" style="letter-spacing: 1px;">Descargar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,15 +53,20 @@
                                     @endif
                                 </td>
                                 <td class="py-4 text-center pe-4">
-                                    <button class="btn btn-sm btn-outline-light border-secondary shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrder{{ $order->id }}" aria-expanded="false" aria-controls="collapseOrder{{ $order->id }}" title="Ver detalles">
+                                    <button class="btn btn-sm jg-btn jg-btn-outline" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrder{{ $order->id }}" aria-expanded="false" aria-controls="collapseOrder{{ $order->id }}" title="Ver detalles">
                                         <i class="bi bi-box-arrow-up-right"></i>
                                     </button>
+                                </td>
+                                <td class="py-4 text-center pe-4"> <!-- Boton para descargar la factura -->
+                                    <a href="{{ route('profile.orders.download', $order->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar"> <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
+                                        <i class="bi bi-download"></i>
+                                    </a>
                                 </td>
                             </tr>
                             
                             <!-- Fila Desplegable con los Detalles -->
                             <tr class="collapse" id="collapseOrder{{ $order->id }}">
-                                <td colspan="5" class="p-0 border-0 bg-darker">
+                                <td colspan="6" class="p-0 border-0 bg-darker">
                                     <div class="p-4" style="background: rgba(0,0,0,0.15); box-shadow: inset 0 5px 15px rgba(0,0,0,0.2);">
                                         
                                         <!-- Lista vertical de juegos -->
