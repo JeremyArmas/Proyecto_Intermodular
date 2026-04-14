@@ -85,12 +85,13 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/', [AdminController::class, 'index'])->name('panel');
     
     // CRUDs
+    Route::get('/orders/{id}/download', [OrderController::class, 'downloadOrderPdf'])->name('orders.download'); // Descargar la factura en pdf
+    Route::get('/orders/download-all', [OrderController::class, 'exportAllPdfs'])->name('orders.download-all'); // Descargar todas las facturas en pdf
     Route::resource('games', GameController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('platforms', PlatformController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
-    Route::get('/orders/{id}/download', [OrderController::class, 'downloadOrderPdf'])->name('orders.download'); // Descargar la factura en pdf
     Route::resource('tickets', AdminContactController::class)->only(['index', 'show', 'update']);
 });
 

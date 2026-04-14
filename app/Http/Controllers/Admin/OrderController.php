@@ -81,4 +81,25 @@ class OrderController extends Controller
 
         return $pdf->download('Factura_Jediga_' . 'order-' . $order->id . '.pdf'); // Descargamos la factura
     }
+
+    public function exportAllPdfs(){ // Exportar todas las facturas en un zip
+        $orders = Order::with('items.game')->get(); // Busca todos los pedidos
+        
+        $zip = new \ZipArchive(); // Creamos un zip
+        $zipFileName = 'Facturas_de_los_pedidos_jediga.zip'; // Nombre del zip
+        $zipPath = storage_path('app/public/' . $zipFileName); // Ruta del zip
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) { // Si no se pudo crear el zip , devuelve un error
+            return back()->with('error', 'No se pudo crear el archivo ZIP.');
+        }
+
+        foreach ($orders as $order) { // Recorremos todos los pedidos
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+            $zip->addFromString('Factura_Jediga_order-' . $order->id . '.pdf', $pdf->output()); // Añadimos la factura al zip
+        }
+
+        $zip->close(); // Cerramos el zip
+
+        return response()->download($zipPath)->deleteFileAfterSend(true); // Descargamos el zip y lo eliminamos después de enviarlo.
+    }
 }

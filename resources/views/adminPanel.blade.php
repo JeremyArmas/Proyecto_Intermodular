@@ -568,7 +568,7 @@
                 <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todos los pedidos
                 </a>
-                <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-sun disabled">
+                <a href="{{ route('admin.orders.download-all') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-download me-1"></i> Exportar
                 </a>
               </div>
