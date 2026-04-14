@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
-    use HasFactory;
-    protected $fillable = [
+    use HasFactory; 
+    protected $fillable = [ // Esto es para poder crear datos de prueba
         'title',
         'content',
         'image',
