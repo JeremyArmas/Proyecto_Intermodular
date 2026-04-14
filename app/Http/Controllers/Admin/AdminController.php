@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\ContactMessage;
+use App\Models\News;
 
 class AdminController extends Controller
 {
@@ -86,6 +87,9 @@ class AdminController extends Controller
         $sinStock = Game::where('stock', 0)->count();
         $borradores = Game::where('is_active', false)->count();
 
+        // Noticias
+        $noticias = News::orderBy('created_at','desc')->paginate(10);
+
         // Retorna la vista del panel de administración con los datos obtenidos
         return view('/adminPanel', compact(
             'productos',
@@ -96,7 +100,8 @@ class AdminController extends Controller
             'totalProductos',
             'bajoStock',
             'sinStock',
-            'borradores'
+            'borradores',
+            'noticias',
         ));
     }
 }

@@ -349,6 +349,21 @@ class DatabaseSeeder extends Seeder
             ]
         ];
 
+        // 5. CREAR NOTICIAS
+
+        $noticias = [
+            [
+            'title' => 'Sección de Noticias',
+            'content' => 'Dentro de poco podrás encontrar aquí las últimas noticias sobre videojuegos.',
+            'image' => '../images/logo_jediga_provisional.png',
+            'is_published' => true,
+            ]
+        ];
+
+        foreach ($noticias as $n) { //Busca si ya existe una noticia con ese título y, si no la encuentra, vuelca todos los datos del array directamente para crearla de golpe.
+            \App\Models\News::firstOrCreate(['title' => $n['title']], $n);
+        }
+
         // Elimina juegos cuyo slug ya no aparece en el seeder.
         // Así el catálogo queda sincronizado con el array de arriba.
         $seederSlugs = array_column($games, 'slug');

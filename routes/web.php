@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\News;
 
 //Web Controllers
 use App\Http\Controllers\Web\HomeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Admin\NewsController;
 
 
 //Ruta del home principal
@@ -25,7 +27,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sobre-nosotros', function() {return view('sobre-nosotros'); });
 
 //Ruta a noticias
-Route::get('/noticias', function() {return view('noticias'); });
+Route::get('/noticias', function() {
+    $noticias = News::where('is_published', true)->orderBy('created_at','desc')->paginate(10);
+    return view('noticias', compact('noticias'));
+})->name('noticias.public');
+
+Route::get('/noticias/{id}', function($id) {
+    $news = News::where('is_published', true)->findOrFail($id);
+    return view('noticias_show', compact('news'));
+})->name('noticias.show.public');
+
 
 //Ruta a soporte
 Route::get('/soporte', function() {return view('soporte'); });
@@ -92,6 +103,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::resource('platforms', PlatformController::class);
     Route::resource('users', UserController::class);
     Route::resource('orders', OrderController::class);
+    Route::resource('news', NewsController::class); // CRUD de noticias
     Route::resource('tickets', AdminContactController::class)->only(['index', 'show', 'update']);
 });
 

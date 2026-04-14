@@ -159,6 +159,14 @@
             <i class="bi bi-ticket me-1"></i> Tickets
           </button>
         </li>
+
+      <!-- Pestaña de noticias -->
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-noticias" data-bs-toggle="tab" data-bs-target="#noticias" type="button"
+            role="tab">
+            <i class="bi bi-newspaper me-1"></i> Noticias
+          </button>
+        </li>
       </ul>
 
 
@@ -716,20 +724,105 @@
                 @endforelse
               </tbody>
             </table>
+            <!-- Paginación de tickets -->
+            <div class="d-flex justify-content-end mt-2">
+              {{ $tickets->links() }}
+            </div>
           </div>
-        </div>
-      </div>
-
-        <!-- Paginación de tickets -->
-        <div class="d-flex justify-content-end mt-2">
-          {{ $tickets->links() }}
-        </div>
-
-        </div>
         </div>
       </div>
     </div>
   </div>
+
+      <!-- Pestaña de noticias -->
+      
+      <div class="tab-pane fade" id="noticias" role="tabpanel" aria-labelledby="tab-noticias">
+          <div class="jg-card p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+
+              <!-- Título de la sección de noticias y descripción breve -->
+              <div>
+                <div class="h4 mb-1">Noticias</div>
+                <div class="jg-muted">Gestión de las noticias y las novedades.</div>
+              </div>
+
+              <a href="{{ route('admin.news.create') }}" class="btn btn-sm jg-btn jg-btn-outline"> <!--Enlace para crear una nueva noticia-->
+                <i class="bi bi-plus-circle"></i> Crear noticia
+              </a>
+            </div>
+        </div>
+
+        <div id="contenedorNoticias" class="js-paginacion-admin">
+          <div class="jg-card p-3 mb-3">
+            <div class="jg-table-wrap">
+              <div class="table-responsive">
+                <table class="table jg-table align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Imagen para la portada</th>
+                      <th>Título</th>
+                      <th>Fecha</th>
+                      <th>Estado de la noticia</th>
+                      <th class="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($noticias as $n)
+                      <tr>
+                        <td>
+                          {{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}
+                        </td> <!--ID de la noticia-->
+                        <td>
+                          <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" class="img-fluid" style="width: 100px;">
+                        </td> <!--Imagen para la portada-->
+                        <td class="fw-bold">
+                          {{ $n->title }}
+                        </td> <!--Título de la noticia-->
+                        <td>
+                          {{ $n->created_at->format('Y-m-d') }}
+                        </td> <!--Fecha de la noticia-->
+                        <td>
+                          @if($n->is_published)
+                            <span class="badge badge-mint">Publicada</span>
+                          @else
+                            <span class="badge badge-sun">Borrador</span>
+                          @endif
+                        </td> <!--Estado de la noticia-->
+                        <td class="text-end">
+                          <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Ver noticia">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Editar noticia">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta noticia?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm jg-btn jg-btn-outline" title="Eliminar noticia">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+                <!-- Paginación de noticias -->
+                <div class="d-flex justify-content-end mt-2">
+                  {{ $noticias->links() }}
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Script para el filtro básico de productos en la pestaña de productos -->
   @push('scripts')
