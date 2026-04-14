@@ -329,20 +329,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /* HERO SLIDER (Swiper)
-   - inicializa el slider si existe y sincroniza la reproducción de vídeos
+   - inicializa el slider si existe y sincroniza la reproducción de trailers de YouTube
    - autoplay con pausa en interacción del usuario */
 document.addEventListener('DOMContentLoaded', () => {
   const swiperJG = document.querySelector('.jg-hero-swiper');
   
-  // Si no hay slider o Swiper no está cargado, no hacer nada
   if (!swiperJG || typeof window.Swiper === 'undefined'){
     return;
   } 
 
-  // Busca el contenedor principal del slider para asignar correctamente los botones de navegación, ya sea un elemento padre directo o un contenedor específico
   const contenedor = swiperJG.closest('.jg-hero-container') || swiperJG.parentElement;
 
-  // Inicializa Swiper con las opciones deseadas: loop infinito, efecto slide, separacion entre slides
   const swiper = new Swiper(swiperJG, {
     loop: true,
     speed: 1300, 
@@ -363,15 +360,14 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  // Control de iframes de YouTube en el Swiper del hero:
-  // - Al salir de un slide: vaciar su iframe para que se detenga y no consuma recursos
-  // - Al entrar en un slide: recargar el iframe desde el principio
+  // Control de iframes de YouTube:
+  // - Al salir de un slide: vaciar su iframe para detener el video
+  // - Al entrar en un slide: recargar el iframe (desde data-src) para reiniciar el video
   function getSlideIframe(slideEl) {
     return slideEl ? slideEl.querySelector('iframe.jg-hero-vid') : null;
   }
 
   swiper.on('slideChangeTransitionStart', function () {
-    // Detiene el iframe del slide que acaba de dejar de ser activo
     const prevSlide = swiper.slides[swiper.previousIndex];
     const prevIframe = getSlideIframe(prevSlide);
     if (prevIframe && prevIframe.dataset.src) {
@@ -380,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   swiper.on('slideChangeTransitionEnd', function () {
-    // Reinicia el iframe del nuevo slide activo desde el principio
     const activeSlide = swiper.slides[swiper.activeIndex];
     const activeIframe = getSlideIframe(activeSlide);
     if (activeIframe && activeIframe.dataset.src) {
@@ -388,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Carga inicial: activa el video del primer slide nada más cargar
+  // Carga inicial para el primer slide
   const initialIframe = getSlideIframe(swiper.slides[swiper.activeIndex]);
   if (initialIframe && initialIframe.dataset.src) {
     initialIframe.src = initialIframe.dataset.src;
@@ -398,17 +393,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* LÓGICAS NAVEGACIÓN Y UI */
 function configurarUI() {
-  
   // Manejo de Logout: asegura que el formulario se envíe por POST
   const btnLogout = document.querySelector('form[action$="/logout"] button[type="submit"]');
-  
-  // Si se encuentra el botón de logout, agrega un event listener para manejar el click
   if (btnLogout) {
     btnLogout.addEventListener('click', (e) => {
       e.preventDefault();
       console.log('Iniciando cierre de sesión...');
-      
-      // alert('Cerrando ssión...'); 
+      // alert('Cerrando sesión...'); // Uncomment if needed for manual verification
       btnLogout.closest('form').submit();
     });
   }
@@ -462,40 +453,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function register(form, contenedorErrores) {
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
-  
   try {
     const res = await fetch(form.action, {
       method: 'POST',
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
       body: new FormData(form),
     });
-    
-    if(res.status === 419) { 
-      window.location.reload(); return; 
-    }
-    
+    if (res.status === 419) { window.location.reload(); return; }
     const data = await res.json().catch(() => ({}));
-    
-    if(res.ok && data.success) {
-      window.location.href = data.redirect || '/'; return; 
-    }
-    
+    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
     let msg = 'Error al crear la cuenta';
-    
-    if(data && data.message){
-      msg = data.message;
-    }else if (data && data.errors){
-      msg = Object.values(data.errors)[0][0];
-    }
-    
-    if(contenedorErrores) {
+    if (data && data.message) msg = data.message;
+    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
+    if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
     } else alert(msg);
     document.getElementById('reloadCaptchaRegistro')?.click();
   } catch {
     const msg = 'Error de red. Inténtalo de nuevo.';
-    
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
@@ -517,11 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('reloadCaptchaRegistro');
   const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
   const input = document.querySelector('#registerModal input[name="captcha"]');
-  
-  if (!btn || !frame){
-    return;
-  } 
-
+  if (!btn || !frame) return;
   const recargarCaptcha = async () => {
     btn.disabled = true;
     try {

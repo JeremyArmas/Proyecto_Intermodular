@@ -10,8 +10,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Convierte un modelo Game al formato de array que usa la vista
+        // Función auxiliar para mapear juegos al formato de la vista
         $mapGame = fn($game) => [
+            'id' => $game->id,
             'title' => $game->title,
             'desc' => Str::limit($game->description, 70),
             'tag' => $game->platform->name ?? 'Multi',
@@ -20,7 +21,7 @@ class HomeController extends Controller
             'youtube_id' => $game->youtube_id ?? null,
         ];
 
-        // Próximamente: juegos que NO han salido todavía
+        // Secciones de Jere: Próximamente, Populares, Gratis
         $upcoming = Game::with(['platform'])
             ->where('is_active', true)
             ->whereNotNull('release_date')
@@ -32,7 +33,6 @@ class HomeController extends Controller
             ->values()
             ->toArray();
 
-        // Populares (Ejemplo: ordenados por stock o id decendente)
         $popular = Game::with(['platform'])
             ->where('is_active', true)
             ->where(function($q) {
@@ -45,7 +45,6 @@ class HomeController extends Controller
             ->values()
             ->toArray();
 
-        // Gratis: juegos con precio 0 (el admin los pone a 0 desde el panel)
         $free = Game::with(['platform'])
             ->where('is_active', true)
             ->where(function($q) {
@@ -58,14 +57,12 @@ class HomeController extends Controller
             ->values()
             ->toArray();
 
-        // Fallback: si alguna sección quedara vacía, usa la primera disponible
-        if (empty($upcoming)) {
-            $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#','cover_image'=>null,'youtube_id'=>null]];
-        }
-        if (empty($popular)) $popular = $upcoming;
-        if (empty($free)) $free = []; // Sección oculta si no hay juegos gratis aún
+        // Fallback para evitar errores si las secciones están vacías
+        if (empty($upcoming)) $upcoming = [['title'=>'Próximamente','desc'=>'','tag'=>'','slug'=>'#']];
+        if (empty($popular))  $popular  = $upcoming;
+        if (empty($free))     $free     = []; 
 
-        // Slides del hero — apuntan al primer juego de cada sección
+        // Slides del Hero - Lógica de Jere con trailers de YouTube
         $heroSlides = [
             [
                 'pill' => 'Próximamente',
@@ -73,10 +70,9 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-soft',
                 'badgeText' => 'Soon',
                 'game' => $upcoming[0],
-                'youtube_id' => $upcoming[0]['youtube_id'] ?? null,
-                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $upcoming[0]['slug']),     'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?status=upcoming'),           'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($upcoming[0]['slug'] ?? '#')), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?status=upcoming'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Más populares',
@@ -84,21 +80,19 @@ class HomeController extends Controller
                 'badgeClass' => 'badge-sun',
                 'badgeText' => 'Top',
                 'game' => $popular[0],
-                'youtube_id' => $popular[0]['youtube_id'] ?? null,
-                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . $popular[0]['slug']),       'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?sort=popular'),               'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . ($popular[0]['slug'] ?? '#')), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?sort=popular'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
             [
                 'pill' => 'Gratis',
                 'desc2' => 'Entra sin pagar: juegos y packs para empezar rápido.',
                 'badgeClass' => 'badge-mint',
                 'badgeText' => 'Free',
-                'game' => $free[0] ?? $upcoming[0],
-                'youtube_id' => ($free[0]['youtube_id'] ?? $upcoming[0]['youtube_id']) ?? null,
-                'primary' => ['text' => 'Ver ficha',  'href' => url('/juego/' . ($free[0]['slug'] ?? $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
-                'secondary' => ['text' => 'Ver todos',  'href' => url('/catalogo?price_max=0'),               'class' => 'jg-btn-primary'],
-                'tertiary' => ['text' => 'Catálogo',   'href' => url('/catalogo'),                            'class' => 'jg-btn-outline'],
+                'game' => !empty($free) ? $free[0] : $upcoming[0],
+                'primary' => ['text' => 'Ver ficha', 'href' => url('/juego/' . (!empty($free) ? $free[0]['slug'] : $upcoming[0]['slug'])), 'class' => 'jg-btn-sun'],
+                'secondary' => ['text' => 'Ver todos', 'href' => url('/catalogo?price_max=0'), 'class' => 'jg-btn-primary'],
+                'tertiary' => ['text' => 'Catálogo', 'href' => url('/catalogo'), 'class' => 'jg-btn-outline'],
             ],
         ];
 
