@@ -15,7 +15,6 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-<<<<<<< HEAD
         // Colecciones para los desplegables de filtros
         $platforms = Platform::orderBy('name')->get();
         $categories = Category::orderBy('name')->get();
@@ -97,18 +96,6 @@ class GameController extends Controller
         }
 
         $games = $query->with('platform')->paginate(12)->withQueryString();
-=======
-        $query = Game::where('is_active', true);
-
-        // Filtros (opcionales por ahora, pero preparados)
-        if ($request->has('platform')) {
-            $query->whereHas('platform', function($q) use ($request) {
-                $q->where('slug', $request->platform);
-            });
-        }
-
-        $games = $query->with('platform')->paginate(12);
->>>>>>> remotes/origin/rama-gabri-dev
 
         return view('catalogo', compact('games', 'platforms', 'categories'));
     }
