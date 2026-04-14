@@ -20,7 +20,7 @@
 
             <!-- Campo Imagen -->
             <div class="mb-3">
-                <label class="form-label">Imagen Destacada *</label>
+                <label class="form-label">Imagen Destacada </label>
                 <input type="file" name="image" class="form-control" accept="image/*">
                 @error('image') <small class="text-danger">{{ $message }}</small> @enderror
                 <small class="d-block mt-2"><i class="bi bi-info-circle"></i> Tamaño recomendado: 1920x1080. Solo se permiten los formatos jpeg,png,jpg,gif y el tamaño máximo es de 2MB</small>
