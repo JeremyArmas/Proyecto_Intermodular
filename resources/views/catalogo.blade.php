@@ -95,12 +95,16 @@
                                 $isUpcoming = $game->release_date && $game->release_date->isFuture();
                             @endphp
 
+                            @if(auth()->check() && (auth()->user()->isCompany() || auth()->user()->isAdmin()))
                             @if($isUpcoming)
                                 <span class="badge text-sun border-sun small" style="border: 1px solid var(--jg-sun);">Reserva</span>
                             @elseif($game->stock > 0)
                                 <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
                             @else
                                 <span class="badge text-danger border-danger small">Agotado</span>
+                            @endif
+                            @else
+                                <span class="badge text-mint border-mint small"><i class="bi bi-cloud-down"></i> Versión digital</span>
                             @endif
                         </div>
 
@@ -109,23 +113,27 @@
                                 <form action="{{ route('carrito.add') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="game_id" value="{{ $game->id }}">
+                                    <input type="hidden" name="quantity" value="1">
                                     @if($isUpcoming)
                                         <button type="submit" class="btn jg-btn jg-btn-primary w-100 rounded-pill">
                                             <i class="bi bi-calendar-check me-1"></i> Reservar
                                         </button>
                                     @else
-                                        <button type="submit" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}">
+                                    @php 
+                                        $isDisabledForCompany = auth()->user()->isCompany() && $game->stock <= 0;
+                                    @endphp
+                                        <button type="submit" class="btn jg-btn jg-btn-sun w-100 {{ $isDisabledForCompany ? 'disabled' : '' }}">
                                             <i class="bi bi-cart-plus me-1"></i> Añadir
                                         </button>
                                     @endif
                                 </form>
                             @else
-                                @if($isUpcoming)
+                                @if($isUpcoming) <!-- Para usuarios no logueados -->
                                     <button type="button" class="btn jg-btn jg-btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal">
                                         <i class="bi bi-calendar-check me-1"></i> Reservar
                                     </button>
                                 @else
-                                    <button type="button" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <button type="button" class="btn jg-btn jg-btn-sun w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
                                         <i class="bi bi-cart-plus me-1"></i> Añadir
                                     </button>
                                 @endif

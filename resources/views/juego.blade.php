@@ -125,7 +125,7 @@
                     <form action="{{ route('carrito.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="game_id" value="{{ $game->id }}"> <!-- Enviamos el ID del juego al carrito de forma invisible, y si el usuario está conectado y es una Empresa, le mostramos el desplegable para que elija cuántas cajas físicas quiere comprar (hasta un máximo de 10). -->
-                        @if(auth()->check() && auth()->user()->role()->isCompany())
+                        @if(auth()->check() && auth()->user()->isCompany())
                         <div class="mb-3">
                             <label class="form-label small text-white opacity-75">Seleccionar Cantidad</label>
                             <select name="quantity" class="form-select bg-dark text-white border-secondary mb-3" {{ $game->stock <= 0 ? 'disabled' : '' }}>

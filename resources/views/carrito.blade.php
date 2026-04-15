@@ -58,6 +58,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
+                                                @if(auth()->user()->isCompany() || auth()->user()->isAdmin())
                                                 <form action="{{ route('carrito.update', $item->id) }}" method="POST" class="d-flex align-items-center justify-content-center">
                                                     @csrf
                                                     @method('PUT')
@@ -66,6 +67,9 @@
                                                         <i class="bi bi-arrow-repeat"></i>
                                                     </button>
                                                 </form>
+                                                @else
+                                                <span class="badge bg-dark border border-secondary text-white px-3 py-2">1</span>
+                                                @endif
                                             </td>
                                             <td class="text-end text-sun fw-bold">
                                                 {{ number_format($item->subtotal, 2) }}€
