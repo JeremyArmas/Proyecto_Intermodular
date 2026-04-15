@@ -140,6 +140,19 @@
           @endif
         </a>
 
+        <!-- Selector de Moneda -->
+        <div class="dropdown">
+          <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false" title="Cambiar Moneda">
+            <span>{{ \App\Services\CurrencyService::getSymbol() }}</span>
+            <span class="small opacity-50">{{ \App\Services\CurrencyService::getCurrent() }}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end jg-dd">
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'EUR') }}">Euro (€)</a></li>
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'USD') }}">Dólar ($)</a></li>
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'GBP') }}">Libra (£)</a></li>
+          </ul>
+        </div>
+
         <div class="dropdown">
           <button class="btn jg-btn jg-btn-outline" data-bs-toggle="dropdown" aria-expanded="false" title="Idioma">
             <i class="bi bi-globe2"></i>

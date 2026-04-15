@@ -38,7 +38,7 @@
                                     <span class="text-white">{{ $order->created_at->format('d/m/Y') }}</span>
                                 </td>
                                 <td class="py-4">
-                                    <span class="fw-bold" style="color: #00ff9d;">{{ number_format($order->total_amount, 2) }}€</span>
+                                    <span class="fw-bold" style="color: #00ff9d;">{{ \App\Services\CurrencyService::format($order->total_amount) }}</span>
                                 </td>
                                 <td class="py-4 text-center">
                                     @if($order->status === 'paid')
@@ -76,10 +76,10 @@
                                                     </div>
                                                     <div class="flex-grow-1 ms-4">
                                                         <h6 class="text-white fw-bold mb-1 fs-5" style="letter-spacing: 0.5px;">{{ $item->game->title }}</h6>
-                                                        <div class="text-white opacity-50 small">Precio unitario: {{ number_format($item->price_at_purchase, 2) }}€ &nbsp;&bull;&nbsp; Cantidad x{{ $item->quantity }}</div>
+                                                        <div class="text-white opacity-50 small">Precio unitario: {{ \App\Services\CurrencyService::format($item->price_at_purchase) }} &nbsp;&bull;&nbsp; Cantidad x{{ $item->quantity }}</div>
                                                     </div>
                                                     <div class="text-white fw-bold fs-5 px-3">
-                                                        {{ number_format($item->price_at_purchase * $item->quantity, 2) }}€
+                                                        {{ \App\Services\CurrencyService::format($item->price_at_purchase * $item->quantity) }}
                                                     </div>
                                                 </div>
                                             @endforeach

@@ -64,6 +64,10 @@ Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function
     Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('cancel');
 });
 
+// Ruta de Cambio de Moneda
+use App\Http\Controllers\Web\CurrencyController;
+Route::get('/moneda/{code}', [CurrencyController::class, 'switch'])->name('currency.switch');
+
 // Rutas del Perfil de Usuario
 use App\Http\Controllers\Web\ProfileController;
 Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {

@@ -89,7 +89,7 @@
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Precio Habitual</span>
-                        <strong class="text-white opacity-50 h5 text-decoration-line-through">{{ number_format($game->price * 1.2, 2) }}€</strong>
+                        <strong class="text-white opacity-50 h5 text-decoration-line-through">{{ \App\Services\CurrencyService::format($game->price * 1.2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@
             <div class="card jg-card p-4 rounded-4 text-white border-0 sticky-top" style="top: 100px;">
                 <div class="mb-4">
                     <h4 class="jg-muted small text-uppercase mb-2">{{ $isUpcoming ? 'Reservar Hoy' : 'Comprar Hoy' }}</h4>
-                    <div class="display-4 fw-bold text-sun mb-1">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</div>
+                    <div class="display-4 fw-bold text-sun mb-1">{{ \App\Services\CurrencyService::format($game->getPriceForUser(auth()->user())) }}</div>
                     <div class="text-mint small">
                         @if($isUpcoming)
                             <i class="bi bi-calendar-date me-1"></i> Lanzamiento: {{ $game->release_date->format('d/m/Y') }}

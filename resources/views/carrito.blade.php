@@ -68,7 +68,7 @@
                                                 </form>
                                             </td>
                                             <td class="text-end text-sun fw-bold">
-                                                {{ number_format($item->subtotal, 2) }}€
+                                                {{ \App\Services\CurrencyService::format($item->subtotal) }}
                                             </td>
                                             <td class="text-end pe-4">
                                                 <form action="{{ route('carrito.remove', $item->id) }}" method="POST" onsubmit="return confirm('¿Eliminar este juego?')">
@@ -109,7 +109,7 @@
                         
                         <div class="d-flex justify-content-between mb-3 px-1">
                             <span style="color: #ffffff !important; opacity: 1 !important; font-weight: 500;">Subtotal ({{ $items->count() }} Juegos)</span>
-                            <span style="color: #ffffff !important; font-weight: 700;">{{ number_format($cart->total_price, 2) }}€</span>
+                            <span style="color: #ffffff !important; font-weight: 700;">{{ \App\Services\CurrencyService::format($cart->total_price) }}</span>
                         </div>
                         
                         <div class="d-flex justify-content-between mb-3 px-1">
@@ -121,7 +121,7 @@
                         
                         <div class="d-flex justify-content-between align-items-center mb-4 px-1 pt-2">
                             <span class="h5 mb-0" style="color: #ffffff !important; font-weight: 700;">Total</span>
-                            <span class="h3 mb-0" style="color: #ffcc00 !important; font-weight: 900;">{{ number_format($cart->total_price, 2) }}€</span>
+                            <span class="h3 mb-0" style="color: #ffcc00 !important; font-weight: 900;">{{ \App\Services\CurrencyService::format($cart->total_price) }}</span>
                         </div>
 
                         <form action="{{ route('checkout.session') }}" method="POST">

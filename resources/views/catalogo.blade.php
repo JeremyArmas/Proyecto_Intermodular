@@ -44,7 +44,7 @@
 
                 <!-- Rango de precio (min y max) -->
                 <div class="col-12 col-md-3">
-                    <label class="form-label text-white-50 small mb-1">Precio (€)</label>
+                    <label class="form-label text-white-50 small mb-1">Precio ({{ \App\Services\CurrencyService::getSymbol() }})</label>
                     <div class="input-group input-group-sm">
                         <input type="number" class="form-control bg-transparent text-white border-secondary px-2" name="price_min" placeholder="Rango Mínimo" value="{{ request('price_min') }}" min="0" step="1">
                         <span class="input-group-text bg-transparent border-secondary text-white-50 px-2">-</span>
@@ -90,7 +90,7 @@
                     
                     <div class="mt-auto">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h4 text-sun mb-0 fw-bold text-white">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
+                            <span class="h4 text-sun mb-0 fw-bold text-white">{{ \App\Services\CurrencyService::format($game->getPriceForUser(auth()->user())) }}</span>
                             @php
                                 $isUpcoming = $game->release_date && $game->release_date->isFuture();
                             @endphp

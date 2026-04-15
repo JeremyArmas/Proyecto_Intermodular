@@ -65,11 +65,13 @@ class GameController extends Controller
 
         // Rango de precio (min y max)
         if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
+            $priceMin = \App\Services\CurrencyService::convertToEur($request->price_min);
+            $query->where('price', '>=', $priceMin);
         }
 
         if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
+            $priceMax = \App\Services\CurrencyService::convertToEur($request->price_max);
+            $query->where('price', '<=', $priceMax);
         }
 
         // Ordenamiento
