@@ -160,7 +160,7 @@
           </button>
         </li>
 
-      <!-- Pestaña de noticias -->
+        <!-- Pestaña de noticias -->
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-noticias" data-bs-toggle="tab" data-bs-target="#noticias" type="button"
             role="tab">
@@ -634,10 +634,12 @@
                         <!-- Fecha y hora de creación del pedido -->
                         <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
 
-                        <!-- Botones de acción para auditar el pedido , eliminarlo y descargar la factura -->
+                        <!-- Botones de acción para auditar el pedido , eliminarlo, editarlo y descargar la factura -->
                         <td class="text-end">
                           <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-eye"></i></a>
+                          <a href="{{ route('admin.orders.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
+                              class="bi bi-pencil"></i></a>
                           <form action="{{ route('admin.orders.destroy', $p) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
                             @csrf
@@ -645,8 +647,10 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
-                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar">
-                            <i class="bi bi-download"></i> <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
+                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
+                            target="_blank" title="Descargar">
+                            <i class="bi bi-download"></i>
+                            <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
                           </a>
                         </td>
                       </tr>
@@ -681,62 +685,62 @@
 
         <!-- Pestaña de tickets -->
         <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tab-tickets">
-        <div class="jg-card p-3 mb-3">
-        <div id="contenedorTickets" class="js-paginacion-admin">
-        <div class="jg-table-wrap">
-          <div class="table-responsive">
-            <table class="table jg-table align-middle">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Asunto</th>
-                  <th>Estado</th>
-                  <th>Recibido</th>
-                  <th class="text-end">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($tickets as $t)
-                  <tr>
-                    <td>
-                      <span class="fw-bold">{{ $t->name }}</span><br>
-                      <small class="jg-muted">{{ $t->email }}</small>
-                    </td>
-                    <td class="fw-bold">{{ $t->subject }}</td>
-                    <td>
-                      @if($t->status === 'pendiente')
-                        <span class="badge badge-sun">Pendiente</span>
-                      @else
-                        <span class="badge badge-mint">Respondido</span>
-                      @endif
-                    </td>
-                    <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
-                    <td class="text-end">
-                      <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
-                        <i class="bi bi-envelope-open"></i> Responder
-                      </a>
-                    </td>
-                  </tr>
-                @empty
-                  <tr>
-                    <td colspan="5" class="text-center py-4 jg-muted">No hay tickets de soporte.</td>
-                  </tr>
-                @endforelse
-              </tbody>
-            </table>
-            <!-- Paginación de tickets -->
-            <div class="d-flex justify-content-end mt-2">
-              {{ $tickets->links() }}
+          <div class="jg-card p-3 mb-3">
+            <div id="contenedorTickets" class="js-paginacion-admin">
+              <div class="jg-table-wrap">
+                <div class="table-responsive">
+                  <table class="table jg-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Asunto</th>
+                        <th>Estado</th>
+                        <th>Recibido</th>
+                        <th class="text-end">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse($tickets as $t)
+                        <tr>
+                          <td>
+                            <span class="fw-bold">{{ $t->name }}</span><br>
+                            <small class="jg-muted">{{ $t->email }}</small>
+                          </td>
+                          <td class="fw-bold">{{ $t->subject }}</td>
+                          <td>
+                            @if($t->status === 'pendiente')
+                              <span class="badge badge-sun">Pendiente</span>
+                            @else
+                              <span class="badge badge-mint">Respondido</span>
+                            @endif
+                          </td>
+                          <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
+                          <td class="text-end">
+                            <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
+                              <i class="bi bi-envelope-open"></i> Responder
+                            </a>
+                          </td>
+                        </tr>
+                      @empty
+                        <tr>
+                          <td colspan="5" class="text-center py-4 jg-muted">No hay tickets de soporte.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                  <!-- Paginación de tickets -->
+                  <div class="d-flex justify-content-end mt-2">
+                    {{ $tickets->links() }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-      <!-- Pestaña de noticias -->
-      
-      <div class="tab-pane fade" id="noticias" role="tabpanel" aria-labelledby="tab-noticias">
+        <!-- Pestaña de noticias -->
+
+        <div class="tab-pane fade" id="noticias" role="tabpanel" aria-labelledby="tab-noticias">
           <div class="jg-card p-3 mb-3">
             <div class="d-flex justify-content-between align-items-center">
 
@@ -746,281 +750,287 @@
                 <div class="jg-muted">Gestión de las noticias y las novedades.</div>
               </div>
 
-              <a href="{{ route('admin.news.create') }}" class="btn btn-sm jg-btn jg-btn-outline"> <!--Enlace para crear una nueva noticia-->
+              <a href="{{ route('admin.news.create') }}" class="btn btn-sm jg-btn jg-btn-outline">
+                <!--Enlace para crear una nueva noticia-->
                 <i class="bi bi-plus-circle"></i> Crear noticia
               </a>
             </div>
-        </div>
+          </div>
 
-        <div id="contenedorNoticias" class="js-paginacion-admin">
-          <div class="jg-card p-3 mb-3">
-            <div class="jg-table-wrap">
-              <div class="table-responsive">
-                <table class="table jg-table align-middle">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Imagen para la portada</th>
-                      <th>Título</th>
-                      <th>Fecha</th>
-                      <th>Estado de la noticia</th>
-                      <th class="text-end">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse($noticias as $n)
+          <div id="contenedorNoticias" class="js-paginacion-admin">
+            <div class="jg-card p-3 mb-3">
+              <div class="jg-table-wrap">
+                <div class="table-responsive">
+                  <table class="table jg-table align-middle">
+                    <thead>
                       <tr>
-                        <td>
-                          {{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}
-                        </td> <!--ID de la noticia-->
-                        <td>
-                          <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" class="img-fluid" style="width: 100px;">
-                        </td> <!--Imagen para la portada-->
-                        <td class="fw-bold">
-                          {{ $n->title }}
-                        </td> <!--Título de la noticia-->
-                        <td>
-                          {{ $n->created_at->format('Y-m-d') }}
-                        </td> <!--Fecha de la noticia-->
-                        <td>
-                          @if($n->is_published)
-                            <span class="badge badge-mint">Publicada</span>
-                          @else
-                            <span class="badge badge-sun">Borrador</span>
-                          @endif
-                        </td> <!--Estado de la noticia-->
-                        <td class="text-end">
-                          <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Ver noticia">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Editar noticia">
-                            <i class="bi bi-pencil"></i>
-                          </a>
-                          <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta noticia?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm jg-btn jg-btn-outline" title="Eliminar noticia">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </td>
+                        <th>ID</th>
+                        <th>Imagen para la portada</th>
+                        <th>Título</th>
+                        <th>Fecha</th>
+                        <th>Estado de la noticia</th>
+                        <th class="text-end">Acciones</th>
                       </tr>
-                    @empty
-                      <tr>
-                        <td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td>
-                      </tr>
-                    @endforelse
-                  </tbody>
-                </table>
-                <!-- Paginación de noticias -->
-                <div class="d-flex justify-content-end mt-2">
-                  {{ $noticias->links() }}
+                    </thead>
+                    <tbody>
+                      @forelse($noticias as $n)
+                        <tr>
+                          <td>
+                            {{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}
+                          </td> <!--ID de la noticia-->
+                          <td>
+                            <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" class="img-fluid"
+                              style="width: 100px;">
+                          </td> <!--Imagen para la portada-->
+                          <td class="fw-bold">
+                            {{ $n->title }}
+                          </td> <!--Título de la noticia-->
+                          <td>
+                            {{ $n->created_at->format('Y-m-d') }}
+                          </td> <!--Fecha de la noticia-->
+                          <td>
+                            @if($n->is_published)
+                              <span class="badge badge-mint">Publicada</span>
+                            @else
+                              <span class="badge badge-sun">Borrador</span>
+                            @endif
+                          </td> <!--Estado de la noticia-->
+                          <td class="text-end">
+                            <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
+                              title="Ver noticia">
+                              <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
+                              title="Editar noticia">
+                              <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST"
+                              onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta noticia?')"
+                              style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button type="submit" class="btn btn-sm jg-btn jg-btn-outline" title="Eliminar noticia">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                      @empty
+                        <tr>
+                          <td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                  <!-- Paginación de noticias -->
+                  <div class="d-flex justify-content-end mt-2">
+                    {{ $noticias->links() }}
+                  </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-  <!-- Script para el filtro básico de productos en la pestaña de productos -->
-  @push('scripts')
-    <script>
+    <!-- Script para el filtro básico de productos en la pestaña de productos -->
+    @push('scripts')
+      <script>
 
-      // Filtro básico front
-      document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('adminSearchProductos');
-        const estado = document.getElementById('adminEstadoProductos');
-        const orden = document.getElementById('adminOrdenProductos');
-        const tabla = document.getElementById('tablaProductos');
+        // Filtro básico front
+        document.addEventListener('DOMContentLoaded', () => {
+          const input = document.getElementById('adminSearchProductos');
+          const estado = document.getElementById('adminEstadoProductos');
+          const orden = document.getElementById('adminOrdenProductos');
+          const tabla = document.getElementById('tablaProductos');
 
-        // Si no se encuentran los elementos necesarios, no se aplica el filtro
-        if (!input || !estado || !orden || !tabla) {
-          return;
-        }
-
-        // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
-        function aplicar() {
-          // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
-          const tablaDin = document.getElementById('tablaProductos');
-          
-          // Si no se encuentra la tabla, no se aplica el filtro
-          if (!tablaDin){
+          // Si no se encuentran los elementos necesarios, no se aplica el filtro
+          if (!input || !estado || !orden || !tabla) {
             return;
           }
 
-          // Obtiene el cuerpo de la tabla y las filas
-          const tbody = tablaDin.querySelector('tbody');
-          const filas = Array.from(tbody.querySelectorAll('tr'));
+          // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
+          function aplicar() {
+            // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
+            const tablaDin = document.getElementById('tablaProductos');
 
-          // Evita que se ejecute el filtro más de una vez
-          clearTimeout(window.adminFiltroTimeout);
-          window.adminFiltroTimeout = setTimeout(async () => {
-            const inputBusqueda = (input.value || '').trim();
-            const estadoSeleccionado = (estado.value || '').trim();
-            const ordenar = orden.value || 'fecha_desc';
-            
-            // Obtiene los parámetros de la URL
-            const params = new URLSearchParams(window.location.search);
-            
-            // Filtra según la busqueda
-            if(inputBusqueda){
-              params.set('search', inputBusqueda);
-            } else {
-              params.delete('search');
-            }
-
-            // Filtra según el estado
-            if(estadoSeleccionado){
-              params.set('estado', estadoSeleccionado);
-            } else {
-              params.delete('estado');
-            }
-
-            // Filtra según el orden
-            if(ordenar && ordenar !== 'fecha_desc'){
-              params.set('orden', ordenar);
-            } else {
-              params.delete('orden');
-            }
-            
-            // Reinicia a la primera página al buscar
-            params.delete('productos_page');
-
-            // Construye la URL con los parámetros del filtro
-            const url = window.location.pathname + '?' + params.toString();
-            
-            // Actualiza la URL en el historial del navegador
-            window.history.pushState({}, '', url);
-
-            // Obtiene el contenedor de productos
-            const contenedor = document.getElementById('contenedorProductos');
-            
-            // Si no se encuentra el contenedor, no se aplica el filtro
-            if (!contenedor){
+            // Si no se encuentra la tabla, no se aplica el filtro
+            if (!tablaDin) {
               return;
             }
 
-            // Aplica un estilo de carga al contenedor
-            contenedor.style.opacity = '0.6';
-            contenedor.style.pointerEvents = 'none';
+            // Obtiene el cuerpo de la tabla y las filas
+            const tbody = tablaDin.querySelector('tbody');
+            const filas = Array.from(tbody.querySelectorAll('tr'));
 
-            // Realiza la petición AJAX para obtener los resultados del filtro
-            try {
-              const res = await fetch(url, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-              });
-              const html = await res.text();
-              const doc = new DOMParser().parseFromString(html, 'text/html');
-              const nuevoC = doc.getElementById('contenedorProductos');
-              if (nuevoC) {
-                contenedor.innerHTML = nuevoC.innerHTML;
+            // Evita que se ejecute el filtro más de una vez
+            clearTimeout(window.adminFiltroTimeout);
+            window.adminFiltroTimeout = setTimeout(async () => {
+              const inputBusqueda = (input.value || '').trim();
+              const estadoSeleccionado = (estado.value || '').trim();
+              const ordenar = orden.value || 'fecha_desc';
+
+              // Obtiene los parámetros de la URL
+              const params = new URLSearchParams(window.location.search);
+
+              // Filtra según la busqueda
+              if (inputBusqueda) {
+                params.set('search', inputBusqueda);
+              } else {
+                params.delete('search');
               }
-            } catch (e) {
-              console.error('No se pudo cargar el filtro', e);
-            } finally {
-              contenedor.style.opacity = '1';
-              contenedor.style.pointerEvents = 'all';
+
+              // Filtra según el estado
+              if (estadoSeleccionado) {
+                params.set('estado', estadoSeleccionado);
+              } else {
+                params.delete('estado');
+              }
+
+              // Filtra según el orden
+              if (ordenar && ordenar !== 'fecha_desc') {
+                params.set('orden', ordenar);
+              } else {
+                params.delete('orden');
+              }
+
+              // Reinicia a la primera página al buscar
+              params.delete('productos_page');
+
+              // Construye la URL con los parámetros del filtro
+              const url = window.location.pathname + '?' + params.toString();
+
+              // Actualiza la URL en el historial del navegador
+              window.history.pushState({}, '', url);
+
+              // Obtiene el contenedor de productos
+              const contenedor = document.getElementById('contenedorProductos');
+
+              // Si no se encuentra el contenedor, no se aplica el filtro
+              if (!contenedor) {
+                return;
+              }
+
+              // Aplica un estilo de carga al contenedor
+              contenedor.style.opacity = '0.6';
+              contenedor.style.pointerEvents = 'none';
+
+              // Realiza la petición AJAX para obtener los resultados del filtro
+              try {
+                const res = await fetch(url, {
+                  headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const html = await res.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const nuevoC = doc.getElementById('contenedorProductos');
+                if (nuevoC) {
+                  contenedor.innerHTML = nuevoC.innerHTML;
+                }
+              } catch (e) {
+                console.error('No se pudo cargar el filtro', e);
+              } finally {
+                contenedor.style.opacity = '1';
+                contenedor.style.pointerEvents = 'all';
+              }
+            }, 300); // 300ms de debounce para no saturar al tipear
+          }
+
+          // Recuperar valores iniciales de la URL
+          const queryParams = new URLSearchParams(window.location.search);
+
+          // Si se encuentra el parámetro 'search', se establece el valor del input
+          if (queryParams.has('search')) {
+            input.value = queryParams.get('search');
+          }
+
+          // Si se encuentra el parámetro 'estado', se establece el valor del select
+          if (queryParams.has('estado')) {
+            estado.value = queryParams.get('estado').charAt(0).toUpperCase() + queryParams.get('estado').slice(1).toLowerCase();
+          }
+
+          // Si se encuentra el parámetro 'orden', se establece el valor del select
+          if (queryParams.has('orden')) {
+            orden.value = queryParams.get('orden');
+          }
+
+          // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
+          input.addEventListener('input', aplicar);
+          estado.addEventListener('change', aplicar);
+          orden.addEventListener('change', aplicar);
+        });
+
+
+        // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
+        document.addEventListener('click', async (e) => {
+
+          // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
+          const link = e.target.closest('.js-paginacion-admin .pagination a');
+
+          // si no se encuentra un enlace válido, no se hace nada
+          if (!link) {
+            return;
+          }
+
+          e.preventDefault();
+
+          // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
+          const contenedor = link.closest('.js-paginacion-admin');
+
+          // si no se encuentra el contenedor, no se hace nada
+          if (!contenedor) {
+            return;
+          }
+
+          // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
+          contenedor.style.opacity = '0.6';
+          contenedor.style.pointerEvents = 'none';
+
+          // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
+          try {
+            const res = await fetch(link.href, {
+              headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+
+            // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
+            const html = await res.text();
+
+            // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+
+            // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
+            const id = contenedor.id;
+
+            // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
+            const nuevoContenedor = doc.querySelector(`#${id}`);
+
+            // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
+            if (nuevoContenedor) {
+
+              // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
+              contenedor.replaceWith(nuevoContenedor);
+
+              // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
+              history.pushState({}, '', link.href);
             }
-          }, 300); // 300ms de debounce para no saturar al tipear
-        }
 
-        // Recuperar valores iniciales de la URL
-        const queryParams = new URLSearchParams(window.location.search);
-        
-        // Si se encuentra el parámetro 'search', se establece el valor del input
-        if (queryParams.has('search')){
-          input.value = queryParams.get('search');
-        }
+            // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
+          } catch (err) {
+            window.location.href = link.href;
+          } finally {
 
-        // Si se encuentra el parámetro 'estado', se establece el valor del select
-        if (queryParams.has('estado')){
-          estado.value = queryParams.get('estado').charAt(0).toUpperCase() + queryParams.get('estado').slice(1).toLowerCase();
-        }
+            // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
+            const actual = document.getElementById(contenedor.id);
 
-        // Si se encuentra el parámetro 'orden', se establece el valor del select
-        if (queryParams.has('orden')){
-          orden.value = queryParams.get('orden');
-        }
-
-        // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
-        input.addEventListener('input', aplicar);
-        estado.addEventListener('change', aplicar);
-        orden.addEventListener('change', aplicar);
-      });
-
-
-      // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
-      document.addEventListener('click', async (e) => {
-
-        // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
-        const link = e.target.closest('.js-paginacion-admin .pagination a');
-
-        // si no se encuentra un enlace válido, no se hace nada
-        if (!link){
-          return;
-        } 
-
-        e.preventDefault();
-
-        // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
-        const contenedor = link.closest('.js-paginacion-admin');
-
-        // si no se encuentra el contenedor, no se hace nada
-        if (!contenedor){
-          return;
-        } 
-
-        // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
-        contenedor.style.opacity = '0.6';
-        contenedor.style.pointerEvents = 'none';
-
-        // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
-        try {
-          const res = await fetch(link.href, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          });
-
-          // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
-          const html = await res.text();
-
-          // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-
-          // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
-          const id = contenedor.id;
-
-          // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
-          const nuevoContenedor = doc.querySelector(`#${id}`);
-
-          // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
-          if (nuevoContenedor) {
-
-            // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
-            contenedor.replaceWith(nuevoContenedor);
-
-            // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
-            history.pushState({}, '', link.href);
+            // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
+            if (actual) {
+              actual.style.opacity = '';
+              actual.style.pointerEvents = '';
+            }
           }
+        });
 
-          // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
-        } catch (err) {
-          window.location.href = link.href;
-        } finally {
-
-          // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
-          const actual = document.getElementById(contenedor.id);
-          
-          // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
-          if (actual) {
-            actual.style.opacity = '';
-            actual.style.pointerEvents = '';
-          }
-        }
-      });
-
-    </script>
-  @endpush
+      </script>
+    @endpush
 
 @endsection
