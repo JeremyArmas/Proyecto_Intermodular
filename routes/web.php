@@ -82,6 +82,8 @@ Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function ()
     Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');
     Route::get('/mis-pedidos/{id}/descargar', [ProfileController::class, 'downloadOrderPdf'])->name('orders.download'); //Descargar la factura en pdf
+    Route::get('/mi-biblioteca', [ProfileController::class,'biblioteca'])->name('biblioteca'); //Ruta a la biblioteca
+    Route::post('/mis-pedidos/{id}/confirmar', [ProfileController::class, 'confirmDelivery'])->name('orders.confirm'); //Confirmar la entrega del pedido
 });
 
 // Rutas de Juegos y Catálogo

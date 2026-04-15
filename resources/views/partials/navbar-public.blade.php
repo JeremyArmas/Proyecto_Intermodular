@@ -206,11 +206,17 @@
                   <i class="bi bi-person me-2 text-sun"></i> Mi Perfil
                 </a>
               </li>
+              @if($isAdmin || $isUser) 
+
+              <!-- Si es admin o usuario normal, se muestra la biblioteca. Esto lo hacemos para que a las empresas
+              no les aparezca la biblioteca ya que ellos no pueden descargar juegos -->
+
               <li>
-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}"> <!-- Ruta a biblioteca -->
+                <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.biblioteca') }}"> <!-- Ruta a biblioteca -->
                   <i class="bi bi-collection-play me-2 text-sun"></i> Mi Biblioteca
                 </a>
               </li>
+              @endif
               <li>
                 <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.orders') }}">
                   <i class="bi bi-bag-check me-2 text-sun"></i> Mis Pedidos

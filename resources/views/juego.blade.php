@@ -79,6 +79,7 @@
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Estado</span>
+                        @if(auth()->check() && (auth()->user()->isCompany() || auth()->user()->isAdmin())) <!-- Si el usuario está autenticado y es una empresa o administrador, se muestran los estados de stock físico. -->
                         @if($isUpcoming)
                             <strong class="text-sun h5"><i class="bi bi-calendar-check me-2"></i>Próximamente</strong>
                         @elseif($game->stock > 0)
@@ -86,6 +87,10 @@
                         @else
                             <strong class="text-danger h5"><i class="bi bi-x-circle me-2"></i>Agotado</strong>
                         @endif
+                        @else
+                        <!-- Al ser un cliente normal, se le oculta el stock físico y se simula stock infinito (siempre disponible) mediante el letrero de 'Versión Digital'. -->
+                            <strong class="text-mint h5"><i class="bi bi-cloud-arrow-down me-2"></i>Versión Digital</strong>
+                        @endif 
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Precio Habitual</span>
@@ -119,8 +124,8 @@
                 @if(auth()->check())
                     <form action="{{ route('carrito.add') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="game_id" value="{{ $game->id }}">
-                        
+                        <input type="hidden" name="game_id" value="{{ $game->id }}"> <!-- Enviamos el ID del juego al carrito de forma invisible, y si el usuario está conectado y es una Empresa, le mostramos el desplegable para que elija cuántas cajas físicas quiere comprar (hasta un máximo de 10). -->
+                        @if(auth()->check() && auth()->user()->role()->isCompany())
                         <div class="mb-3">
                             <label class="form-label small text-white opacity-75">Seleccionar Cantidad</label>
                             <select name="quantity" class="form-select bg-dark text-white border-secondary mb-3" {{ $game->stock <= 0 ? 'disabled' : '' }}>
@@ -129,15 +134,21 @@
                                 @endfor
                             </select>
                         </div>
+                        @else 
+                            <input type="hidden" name="quantity" value="1"> <!-- Si es un usuario normal (digital), le enviamos la cantidad = 1 al carrito en secreto, ya que no necesita ver el seleccionador de cajas arriba. -->
+                        @endif 
 
                         @if($isUpcoming)
                             <button type="submit" class="btn jg-btn jg-btn-primary w-100 btn-lg mb-3 shadow rounded-pill">
                                 <i class="bi bi-calendar-check me-2"></i> Reservar Juego
                             </button>
                         @else
-                            <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg mb-3 shadow {{ $game->stock <= 0 ? 'disabled' : '' }}">
-                                <i class="bi bi-cart-plus-fill me-2"></i> Añadir al Carrito
-                            </button>
+                        @php //Sirve para bloquear el botón de compra a las Empresas cuando el stock físico llega a cero, pero permitiendo que los usuarios normales sigan comprando la versión digital sin importar el stock.
+                        $ifDisabledForCompany = auth()->check() && auth()->user()->isCompany() && $game->stock <= 0;
+                        @endphp 
+                            <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg mb-3 shadow {{ $ifDisabledForCompany ? 'disabled' : '' }}">
+                                <i class="bi bi-cart-plus-fill me-2"></i> {{ auth()->check() && auth()->user()->isCompany() ? 'Compra las copias físicas' : 'Compra la versión digital' }}
+                            </button> <!-- Botón que cambia de nombre dependiendo de si eres empresa o usuario normal, y que se bloquea automáticamente si las empresas intentan comprar sin stock. -->
                         @endif
                     </form>
                 @else

@@ -12,7 +12,13 @@ class Order extends Model
         'total_amount', 
         'shipping_address', 
         'order_type',
-        'stripe_session_id'
+        'stripe_session_id',
+        'tracking_status',
+        'delivered_confirmed_at',
+    ];
+
+    protected $casts = [ //Aseguramos que la fecha se almacene como datetime. Sin el cast, Laravel lo guardaría como string y no podríamos usar funciones de fecha.
+        'delivered_confirmed_at' => 'datetime',
     ];
 
     public function user()

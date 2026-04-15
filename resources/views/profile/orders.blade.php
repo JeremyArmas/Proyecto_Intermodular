@@ -103,6 +103,46 @@
                                                 </div>
                                             </div>
                                         @endif
+                                        <!--Apartado para el rastreo de los pedidos (Solo para las empresas)-->
+                                        @if($order->order_type == 'b2b')
+                                            <div class="border-top border-secondary border-opacity-25 pt-3 d-flex align-items-center"> <!--Apartado para el rastreo de los pedidos (Solo para las empresas)-->
+                                                <div class="bg-dark p-2 rounded-circle me-3 border border-secondary border-opacity-25 shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                                    <i class="bi bi-truck text-sun" style="font-size: 0.9rem;"></i> Rastreo del pedido 
+                                                </div>
+
+                                                <div class="table-responsive bg-dark rounded border border-secondary mb-3"> 
+                                                    <table class="table table-dark table-borderless mb-0"><!--Tabla para mostrar el rastreo del pedido-->
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="{{ $order->tracking_status == 'in_warehouse' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">En el almacén</td> <!--Estado del pedido , en el almacén-->
+                                                                <td class="{{ $order->tracking_status == 'shipped_out' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Salió del almacén</td> <!--Estado del pedido , salió del almacén-->
+                                                                <td class="{{ $order->tracking_status == 'with_courier' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Lo acaba de recibir la empresa de reparto local</td> <!--Estado del peido , lo acaba de recibir la empresa de reparto local-->
+                                                                <td class="{{ $order->tracking_status == 'on_the_way' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">En camino hacia el cliente</td> <!--Estado del pedido , en camino hacia el cliente-->
+                                                                <td class="{{ $order->tracking_status == 'delivered' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Entregado</td> <!--Estado del pedido , entregado-->
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="border-top border-secondary border-opacity-25 pt-3 d-flex align-items-center"> <!--Apartado para confirmar la entrega-->
+                                                    <div>
+                                                        @if($order->delivered_confirmed_at) <!--Si el pedido ha sido entregado-->
+                                                            <span class="text-white opacity-50 small text-uppercase" style="letter-spacing: 1px;">Entregado el:</span> 
+                                                            <span class="text-white small ms-2 fw-bold opacity-75">{{ $order->delivered_confirmed_at->format('d/m/Y H:i:s') }}</span> <!--Fecha en la que el usuario confirma la entrega-->
+                                                        @else
+                                                        <form action="{{ route('profile.orders.confirm', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-primary jg-btn jg-btn-sun" {{ $order->tracking_status != 'delivered' ? 'disabled' : '' }}>Confirmar entrega</button> <!--Botón para confirmar la entrega-->
+                                                        </form>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="small text-white opacity-50 ms-2 fw-bold">
+                                                        ¿Tienes problemas con tu pedido? <a href="{{ route('contacto') }}" class='text-sun'>Contacta con soporte.</a> <!--Apartado para contactar con soporte-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

@@ -57,12 +57,19 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,paid,shipped,cancelled',
+            'status' => 'required|in:pending,paid,shipped,cancelled', // Estados del pedido
+            'tracking_status' => 'nullable|in:in_warehouse,shipped_out,with_courier,on_the_way,delivered', // Estados de seguimiento del pedido
         ]);
 
-        $order->update($validated);
+        $order->status = $request->status; // Actualizamos el estado del pedido
+        
+        if ($request->has('tracking_status')) { // Si el pedido tiene un estado de seguimiento (Solo para empresas)
+            $order->tracking_status = $request->tracking_status; // Actualizamos el estado de seguimiento del pedido
+        }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Estado del pedido actualizado correctamente.');
+        $order->save(); // Guardamos el pedido
+
+        return redirect()->route('admin.orders.index')->with('success', 'Estado del pedido actualizado correctamente.'); // Redirigimos a la lista de pedidos con un mensaje de éxito
     }
 
     /**

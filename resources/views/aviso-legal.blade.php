@@ -101,6 +101,22 @@
                 </p>
             </div>
 
+            <!--Aviso a las empresas-->
+            <div class="mb-4">
+                <h4 class="fw-bold">Aviso a las empresas</h4>
+                <p class="opacity-75">
+                Si eres una empresa y no quieres que tu juego aparezca en nuestra página web, por favor, ponte en contacto con nosotros a través de nuestro correo electrónico <strong>jedigasupport@gmail.com</strong> y lo retiraremos lo antes posible.
+                </p>
+            </div>
+
+            <!--Aviso a las empresas sobre los pedidos-->
+            <div class="mb-4">
+                <h4 class="fw-bold">Aviso a las empresas sobre los pedidos</h4>
+                <p class="opacity-75">
+                    Desde el momento que una empresa haya solicitado un pedido, no se podrá cancelar el pedido. Puede solicitar no recibir el producto sin embargo , el dinero no serña devuelto.
+                </p>
+            </div>
+
         </div>
     </div>
 </div>

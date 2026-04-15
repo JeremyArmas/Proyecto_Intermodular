@@ -68,4 +68,40 @@ class ProfileController extends Controller
         return redirect()->route('profile.show')->with('success', 'Perfil actualizado correctamente');
     }
 
+    // Mostrar la biblioteca del usuario. SOLO puede acceder a ellas los usuarios normales (Y los admin pero eso es cosa aparte).
+    public function biblioteca() 
+    {
+        $user = auth()->user();
+
+        // Si el usuario es una empresa, no puede acceder a la biblioteca. Lo ponemos como metodo de seguridad ya que si una empresa
+        // intenta escribir por ejemplo /biblioteca en la url, no podra acceder.
+
+        if ($user->isCompany()) { 
+            return redirect()->route('profile.show')->with('error', 'No tienes permiso para acceder a la biblioteca. Esta es solo para usuarios normales.');
+        }
+
+        $items = \App\Models\OrderItem::whereHas('order', function($query) use ($user) {
+            $query->where('user_id', $user->id)->
+            where('status', 'paid')->
+            where('order_type', 'b2c');
+        })->with('game') //Carga todos los juegos que ha comprado el usuario
+        ->get(); 
+
+        return view('profile.biblioteca', compact('items'));
+    }
+
+    public function confirmDelivery($id) // Confirmar la entrega del pedido
+    {
+        $user = auth()->user(); // Obtenemos el usuario logueado
+        $order = \App\Models\Order::where('user_id', $user->id)->findOrFail($id); // Buscamos el pedido por id
+
+        if ($order->order_type !== 'b2b' || $order->tracking_status !== 'delivered') { // Si el pedido no es de tipo b2b o si no esta entregado, no se puede confirmar la entrega
+            return redirect()->route('profile.orders')->with('error', 'No puedes confirmar la entrega de este pedido.');
+        }
+
+        $order->delivered_confirmed_at = now(); // Actualizamos la fecha de confirmación de entrega
+        $order->save(); // Guardamos el pedido
+        return redirect()->route('profile.orders')->with('success', 'Entrega confirmada correctamente'); // Redirigimos al perfil con un mensaje de éxito
+    }
+
 }
