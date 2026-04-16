@@ -105,9 +105,10 @@
                                         @endif
                                         <!--Apartado para el rastreo de los pedidos (Solo para las empresas)-->
                                         @if($order->order_type == 'b2b')
-                                            <div class="border-top border-secondary border-opacity-25 pt-3 d-flex align-items-center"> <!--Apartado para el rastreo de los pedidos (Solo para las empresas)-->
-                                                <div class="bg-dark p-2 rounded-circle me-3 border border-secondary border-opacity-25 shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                                    <i class="bi bi-truck text-sun" style="font-size: 0.9rem;"></i> Rastreo del pedido 
+                                            <div class="border-top border-secondary border-opacity-25 pt-3 d-flex flex-column gap-3"> <!--Apartado para el rastreo de los pedidos (Solo para las empresas)-->
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi bi-truck text-sun fs-5"></i>
+                                                    <span class="text-white fw-bold small text-uppercase" style="letter-spacing: 1px;">Rastreo del pedido</span>
                                                 </div>
 
                                                 <div class="table-responsive bg-dark rounded border border-secondary mb-3"> 
@@ -115,9 +116,17 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td class="{{ $order->tracking_status == 'in_warehouse' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">En el almacén</td> <!--Estado del pedido , en el almacén-->
+                                                            </tr>
+                                                            <tr>
                                                                 <td class="{{ $order->tracking_status == 'shipped_out' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Salió del almacén</td> <!--Estado del pedido , salió del almacén-->
+                                                            </tr>
+                                                            <tr>
                                                                 <td class="{{ $order->tracking_status == 'with_courier' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Lo acaba de recibir la empresa de reparto local</td> <!--Estado del peido , lo acaba de recibir la empresa de reparto local-->
+                                                            </tr>
+                                                            <tr>
                                                                 <td class="{{ $order->tracking_status == 'on_the_way' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">En camino hacia el cliente</td> <!--Estado del pedido , en camino hacia el cliente-->
+                                                            </tr>
+                                                            <tr>
                                                                 <td class="{{ $order->tracking_status == 'delivered' ? 'text-sun fw-bold' : 'text-white opacity-50' }}">Entregado</td> <!--Estado del pedido , entregado-->
                                                             </tr>
                                                         </tbody>

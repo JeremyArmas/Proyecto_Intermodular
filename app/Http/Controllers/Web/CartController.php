@@ -44,6 +44,9 @@ class CartController extends Controller
         $cartItem = $cart->items()->where('game_id', $game->id)->first();
         $currentQuantity = $cartItem ? $cartItem->quantity : 0;
         $totalRequested = $currentQuantity + $quantityToAdd;
+        if (auth()->user()->isClient() && $cartItem) {
+            return back()->with('error', "Ya tienes este juego en el carrito.");
+        }
 
         // 3. Validar Stock
         if (auth()->user()->isCompany() && $game->stock < $totalRequested) {

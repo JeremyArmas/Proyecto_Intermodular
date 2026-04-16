@@ -68,6 +68,12 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger bg-dark text-danger border-danger mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="row g-4">
         @forelse($games as $game)
         <div class="col-md-6 col-lg-4 col-xl-3">

@@ -45,6 +45,7 @@
                             <!-- Botón de Descarga "Fake" (Abre un modal en lugar de descargar) -->
                             <button type="button" class="btn jg-btn-primary w-100 py-3 fw-bold fw-bold rounded-3" 
                                     data-bs-toggle="modal" data-bs-target="#descargaModal{{ $item->id }}"
+                                    data-item-id="{{ $item->id }}" data-game-title="{{ $game->title }}"
                                     style="letter-spacing: 1px; text-transform: uppercase;">
                                 <i class="bi bi-cloud-arrow-down-fill me-2 fs-5"></i> Descargar Juego
                             </button>
@@ -66,14 +67,13 @@
                                 <h3 class="fw-bold mb-3 text-white">Iniciando descarga...</h3>
                                 <p class="text-white opacity-75 mb-4">
                                     Preparando los archivos para <strong>{{ $game->title }}</strong>.<br>
-                                    <span class="small">(Esta es una simulación visual. No se está descargando ningún archivo real).</span>
                                 </p>
                                 
                                 <!-- Barra de progreso animada -->
                                 <div class="progress mb-3" style="height: 15px; border-radius: 10px; background-color: rgba(255,255,255,0.1);">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" id="barra-{{ $item->id }}" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-                                <span class="small text-muted">Conectando al servidor seguro...</span>
+                                <span class="small text-muted" id="estado-{{ $item->id }}">Conectando al servidor seguro...</span>
 
                                 <div class="mt-4">
                                     <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cerrar</button>
@@ -95,5 +95,71 @@
             </a>
         </div>
     @endif
+
+    <!-- MODAL DE DESCARGA -->
+     @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleccionar todos los botones de descarga
+            const downloadButtons = document.querySelectorAll('[data-item-id]');
+            
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-item-id');
+                    const gameTitle = this.getAttribute('data-game-title');
+                    
+                    // Actualizar el título del modal con el nombre del juego
+                    const modalTitle = document.querySelector(`#descargaModal${itemId} h3`);
+                    if (modalTitle) {
+                        modalTitle.innerHTML = `Iniciando descarga de <strong>${gameTitle}</strong>...`;
+                    }
+                    
+                    // Resetear la barra de progreso
+                    const progressBar = document.getElementById(`barra-${itemId}`);
+                    const statusText = document.getElementById(`estado-${itemId}`);
+                    
+                    if (progressBar && statusText) {
+                        progressBar.style.width = '0%';
+                        progressBar.setAttribute('aria-valuenow', '0');
+                        statusText.textContent = 'Conectando al servidor seguro...';
+                        
+                        // Simular la descarga con un temporizador
+                        let progress = 0;
+                        const interval = setInterval(() => {
+                            progress += 10;
+                            progressBar.style.width = progress + '%';
+                            progressBar.setAttribute('aria-valuenow', progress);
+                            
+                            if (progress === 30) {
+                                statusText.textContent = 'Verificando integridad de archivos...';
+                            } else if (progress === 60) {
+                                statusText.textContent = 'Descargando paquetes de datos...';
+                            } else if (progress === 90) {
+                                statusText.textContent = 'Finalizando instalación...';
+                            } else if (progress >= 100) {
+                                clearInterval(interval);
+                                statusText.textContent = '¡Descarga completada! Ya puedes jugar.';
+
+                                const a = document.createElement('a');
+                                a.href = 'data:text/plain,Gracias por jugar a ' + gameTitle;
+                                a.download = gameTitle + '.txt';
+                                a.click();
+
+                                // Opcional: Cerrar el modal después de unos segundos
+                                setTimeout(() => {
+                                    const modal = bootstrap.Modal.getInstance(document.getElementById(`descargaModal${itemId}`));
+                                    if (modal) {
+                                        modal.hide();
+                                    }
+                                }, 2000);
+                            }
+                        }, 300); // Aumentar el tiempo para una simulación más lenta
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
+
 </div>
 @endsection
