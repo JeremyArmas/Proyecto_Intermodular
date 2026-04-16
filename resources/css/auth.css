@@ -20,11 +20,11 @@
 
 .login-modal .modal-content{
   max-height: 80vh;
-  border-radius: 26px;
-  background: rgba(14, 12, 24, .78);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 30px 120px rgba(0,0,0,.65);
-  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--jg-radius-lg);
+  background: var(--jg-glass-bg);
+  backdrop-filter: blur(var(--jg-glass-blur));
+  box-shadow: var(--jg-shadow-xl);
+  border: 1px solid var(--jg-glass-border);
   overflow: hidden;
 }
 
@@ -38,7 +38,7 @@
   background:
     radial-gradient(1200px 700px at 10% 20%, rgba(124,58,237,.70), transparent 55%),
     radial-gradient(900px 600px at 90% 80%, rgba(251,191,36,.22), transparent 60%),
-    linear-gradient(135deg, rgba(18,16,30,.95), rgba(10,8,20,.95));
+    linear-gradient(135deg, var(--jg-bg2), var(--jg-bg));
 }
 .login-modal__left::after{
   content:"";
@@ -89,30 +89,22 @@
 }
 .login-modal .form-label{ opacity: .85; }
 
-/* Inputs y focus */
-.login-modal .form-control{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  color: #fff;
-  border-radius: 14px;
+/* Inputs y focus (Ahora se heredan globalmente de jg-input-base en general.css) */
+.login-modal .input-group {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--jg-radius-md);
+    overflow: hidden;
+    padding: 0;
+    transition: all 0.2s ease;
 }
-.login-modal .form-control::placeholder{ color: rgba(255,255,255,.45); }
-.login-modal .form-control:focus{
-  border-color: rgba(124,58,237,.55);
-  box-shadow: 0 0 0 .25rem rgba(124,58,237,.18);
-}
-.login-modal .input-group{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 14px;
-  overflow: hidden;
-}
+
 .login-modal .input-group .form-control,
-.login-modal .input-group .btn{
+.login-modal .input-group .btn {
   border: 0 !important;
-  background: transparent;
+  background: transparent !important;
   box-shadow: none !important;
 }
+
 .login-modal .input-group .btn {
   color: rgba(255, 255, 255, 0.65);
 }
@@ -135,8 +127,8 @@
   border: 0;
   color: #0b0814;
   font-weight: 700;
-  border-radius: 14px;
-  background: linear-gradient(90deg, rgba(124,58,237,1), rgba(251,191,36,.95));
+  border-radius: var(--jg-radius-md);
+  background: var(--jg-gradient-primary);
   box-shadow: 0 16px 45px rgba(124,58,237,.22);
 }
 .btn-jediga:hover{ filter: brightness(1.04); }

@@ -32,8 +32,8 @@
 
           <!-- Mega dropdown personalizado -->
           <div class="dropdown-menu megamenu p-0">
-            <div class="p-3">
-              <div class="row g-3">
+            <div class="p-4">
+              <div class="row g-4">
                 <div class="col-md-6">
 
                   <!-- Plataformas -->
@@ -89,16 +89,22 @@
                     <span><i class="bi bi-clock-history me-2"></i> Próximamente</span>
                     <span class="badge badge-soft">Soon</span>
                   </a>
+                </div>
 
-                  <!-- Separador -->
-                  <div class="mt-3 p-3 rounded-4" style="border:1px solid var(--jg-border); background: rgba(255,255,255,.03);">
-                  
-                    <!-- Catálogo completo -->
-                    <div class="fw-bold">Catálogo completo</div>
-                    <div class="small jg-muted mb-2">Ver todos los juegos en la vista de catálogo.</div>
-                    <a class="btn jg-btn jg-btn-primary w-100" href="{{ url('/catalogo') }}">
-                      Ver todos <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                <!-- Bloque inferior: Catálogo completo (Ancho completo para equilibrar el espacio) -->
+                <div class="col-12 mt-2">
+                  <div class="mm-featured-box mt-2">
+                    <div class="row align-items-center">
+                      <div class="col-sm-7 col-md-8">
+                        <div class="fw-bold text-white small mb-1">Catálogo completo</div>
+                        <div class="jg-muted x-small mb-2 mb-sm-0">Explora todos los títulos disponibles en nuestra tienda.</div>
+                      </div>
+                      <div class="col-sm-5 col-md-4">
+                        <a class="btn jg-btn jg-btn-outline w-100 btn-sm py-2" href="{{ url('/catalogo') }}">
+                          Ver todo el catálogo <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -118,27 +124,40 @@
       <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
         
         <!-- Carrito -->
-        @auth
+        @if($isWebActive)
           <a href="{{ route('carrito.index') }}" class="btn jg-btn jg-btn-outline position-relative" title="Ver Carrito">
         @else
           <a href="#" class="btn jg-btn jg-btn-outline position-relative" data-bs-toggle="modal" data-bs-target="#loginModal" title="Inicia sesión para ver el carrito">
-        @endauth
+        @endif
           <i class="bi bi-cart3"></i>
-          @php
-              $cartCount = 0;
-              if (auth()->check()) {
-                  $cart = auth()->user()->cart;
-                  if ($cart) {
-                      $cartCount = $cart->items()->sum('quantity');
-                  }
-              }
-          @endphp
-          @if($cartCount > 0)
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill shadow-sm" style="background-color: #ffcc00 !important; color: #000 !important; font-size: 0.75rem; font-weight: 900; border: 1px solid rgba(255,255,255,0.2);">
-              {{ $cartCount }}
-            </span>
-          @endif
-        </a>
+        @php
+            $cartCount = 0;
+            if ($isWebActive && $user) {
+                $cart = $user->cart;
+                if ($cart) {
+                    $cartCount = $cart->items()->sum('quantity');
+                }
+            }
+        @endphp
+        @if($cartCount > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill shadow-sm" style="background-color: #ffcc00 !important; color: #000 !important; font-size: 0.75rem; font-weight: 900; border: 1px solid rgba(255,255,255,0.2);">
+            {{ $cartCount }}
+          </span>
+        @endif
+      </a>
+
+        <!-- Selector de Moneda -->
+        <div class="dropdown">
+          <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false" title="Cambiar Moneda">
+            <span>{{ \App\Services\CurrencyService::getSymbol() }}</span>
+            <span class="small opacity-50">{{ \App\Services\CurrencyService::getCurrent() }}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end jg-dd">
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'EUR') }}">Euro (€)</a></li>
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'USD') }}">Dólar ($)</a></li>
+            <li><a class="dropdown-item" href="{{ route('currency.switch', 'GBP') }}">Libra (£)</a></li>
+          </ul>
+        </div>
 
         <div class="dropdown">
           <button class="btn jg-btn jg-btn-outline" data-bs-toggle="dropdown" aria-expanded="false" title="Idioma">
@@ -153,46 +172,45 @@
           </ul>
         </div>
 
-        <!-- Verificar roles para mostrar opciones específicas -->
+        <!-- Verificar roles (variables ya definidas en app.blade.php) -->
         @php
-          $isAdmin = auth()->check() && auth()->user()->isAdmin();
-          $isCompany = auth()->check() && auth()->user()->isCompany();
-          $isUser = auth()->check() && auth()->user()->isClient();
+          $isCompany = $isWebActive && $user && $user->isCompany();
+          $isUser = $isWebActive && $user && $user->isClient();
         @endphp
 
         <!-- NO logueado -->
-        @guest
+        @if(!$anyAuth)
           <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="#">
             Iniciar sesión
           </a>
           <a class="btn jg-btn jg-btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" href="#">
             Crear cuenta
           </a>
-        @endguest
+        @endif
 
         <!-- Logueado -->
-        @auth
+        @if($anyAuth && $user)
           <div class="dropdown">
             <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-2 p-1 pe-3 rounded-pill" 
                     type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 
-              @if(auth()->user()->avatar)
-              <img src="{{ asset('avatars/' . auth()->user()->avatar) }}" class="rounded-circle"
+              @if($user->avatar)
+              <img src="{{ asset('avatars/' . $user->avatar) }}" class="rounded-circle"
                         style="width:32px; height:32px; object-fit:cover; border: 1px solid #ffcc00;">
               @else
               <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
                    style="width: 32px; height: 32px; background-color: #ffcc00 !important; color: #000 !important; font-weight: 900; font-size: 1rem; font-family: var(--jg-font-title);">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                {{ strtoupper(substr($user->name, 0, 1)) }}
               </div>
               @endif
 
-              <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', auth()->user()->name)[0] }}</span>
+              <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', $user->name)[0] }}</span>
               <i class="bi bi-chevron-down small opacity-50"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary mt-2 p-2 jg-panel" aria-labelledby="userDropdown" style="min-width: 200px;">
               <li class="px-3 py-2 border-bottom border-secondary mb-2">
                 <div class="small text-white">Sesión de:</div>
-                <div class="text-white text-truncate">{{ auth()->user()->name }}</div>
+                <div class="text-white text-truncate">{{ $user->name }}</div>
               </li>
               @if($isAdmin)
                 <li>
@@ -206,9 +224,22 @@
                   <i class="bi bi-person me-2 text-sun"></i> Mi Perfil
                 </a>
               </li>
+              @if(!$user->isCompany())
               <li>
-                <a class="dropdown-item py-2 rounded-3" href="{{ url('/biblioteca') }}"> <!-- Ruta a biblioteca -->
+                <a class="dropdown-item py-2 rounded-3" href="{{ route('profile.biblioteca') }}"> <!-- Ruta a biblioteca -->
                   <i class="bi bi-collection-play me-2 text-sun"></i> Mi Biblioteca
+                </a>
+              </li>
+              @endif
+              <li>
+                @php
+                  $wishlistCount = auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->where('is_read', false)->count() : 0;
+                @endphp
+                <a class="dropdown-item py-2 rounded-3 d-flex align-items-center justify-content-between" href="{{ route('wishlist.index') }}">
+                  <span><i class="bi bi-heart me-2 text-sun"></i> Mi Lista de Deseados</span>
+                  <span id="wishlist-count-badge" class="badge rounded-pill jg-badge-notify ms-2 {{ $wishlistCount > 0 ? '' : 'd-none' }}">
+                    {{ $wishlistCount }}
+                  </span>
                 </a>
               </li>
               <li>
@@ -227,7 +258,7 @@
               </li>
             </ul>
           </div>
-        @endauth
+        @endif
 
       </div>
     </div>

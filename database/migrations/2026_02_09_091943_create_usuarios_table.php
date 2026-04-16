@@ -14,8 +14,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            // Aquí definimos si es admin, cliente o empresa
-            $table->enum('role', ['admin', 'client', 'company'])->default('client');
+            // Aquí definimos si es cliente o empresa
+            $table->enum('role', ['client', 'company'])->default('client');
+            
+            // Campos de Perfil
+            $table->string('avatar')->nullable();
+            $table->string('country')->nullable();
+            $table->date('birth_date')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

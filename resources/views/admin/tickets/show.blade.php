@@ -42,23 +42,33 @@
                 <h4 class="mb-3">Responder por Correo Oficial</h4>
 
                 @if($ticket->status === 'pendiente')
-                    <!-- FÍJATE AQUÍ: Usamos update, que es la ruta correcta -->
-                    <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                    @php
+                        $canRespond = auth('admin')->user()->hasPermission('tickets.update');
+                    @endphp
+                    
+                    @if($canRespond)
+                        <!-- FÍJATE AQUÍ: Usamos update, que es la ruta correcta -->
+                        <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
 
-                        <div class="mb-3">
-                            <label class="form-label jg-muted">Tu respuesta, la cual se enviará desde
-                                <b>jedigasupport@gmail.com</b> directamente al cliente:</label>
-                            <textarea name="respuesta_email" class="form-control" rows="6"
-                                placeholder="Hola, {{ $ticket->name }}. Hemos revisado tu consulta y..." required
-                                style="background: rgba(255,255,255,0.06); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                            <div class="mb-3">
+                                <label class="form-label jg-muted">Tu respuesta, la cual se enviará desde
+                                    <b>jedigasupport@gmail.com</b> directamente al cliente:</label>
+                                <textarea name="respuesta_email" class="form-control" rows="6"
+                                    placeholder="Hola, {{ $ticket->name }}. Hemos revisado tu consulta y..." required
+                                    style="background: rgba(255,255,255,0.06); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn jg-btn jg-btn-primary w-100">
+                                <i class="bi bi-send me-2"></i> Enviar respuesta oficial por correo
+                            </button>
+                        </form>
+                    @else
+                        <div class="alert alert-info" style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); color: #fff;">
+                            <i class="bi bi-info-circle me-2"></i> No tienes permisos para responder tickets de soporte. Contacta con un super-administrador si crees que es un error.
                         </div>
-
-                        <button type="submit" class="btn jg-btn jg-btn-primary w-100">
-                            <i class="bi bi-send me-2"></i> Enviar respuesta oficial por correo
-                        </button>
-                    </form>
+                    @endif
                 @else
                     <div class="text-center py-4">
                         <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>

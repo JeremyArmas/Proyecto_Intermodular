@@ -16,7 +16,7 @@
         <div class="bg-dark p-3 rounded mb-4 text-start">
             <div class="d-flex justify-content-between mb-2">
                 <span class="text-white opacity-75">Total Pagado:</span>
-                <strong class="text-white">{{ number_format($order->total_amount, 2) }}€</strong>
+                <strong class="text-white">{{ \App\Services\CurrencyService::format($order->total_amount) }}</strong>
             </div>
             <div class="d-flex justify-content-between">
                 <span class="text-white opacity-75">Estado:</span>

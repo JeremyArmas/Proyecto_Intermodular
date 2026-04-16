@@ -44,9 +44,12 @@ class CartController extends Controller
         $cartItem = $cart->items()->where('game_id', $game->id)->first();
         $currentQuantity = $cartItem ? $cartItem->quantity : 0;
         $totalRequested = $currentQuantity + $quantityToAdd;
+        if (auth()->user()->isClient() && $cartItem) {
+            return back()->with('error', "Ya tienes este juego en el carrito.");
+        }
 
         // 3. Validar Stock
-        if ($game->stock < $totalRequested) {
+        if (auth()->user()->isCompany() && $game->stock < $totalRequested) {
             \Log::warning('Intento de añadir al carrito fallido por stock insuficiente', ['game_id' => $game->id, 'requested' => $totalRequested, 'stock' => $game->stock]);
             return back()->with('error', "No hay suficiente stock disponible para {$game->title}. Máximo disponible: {$game->stock}");
         }
@@ -75,7 +78,7 @@ class CartController extends Controller
         $game = $cartItem->game;
 
         // Validar Stock
-        if ($game->stock < $request->quantity) {
+        if (auth()->user()->isCompany() && $game->stock < $request->quantity) {
             return redirect()->route('carrito.index')->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
         }
 

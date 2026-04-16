@@ -82,7 +82,7 @@
                   <td><span class="badge badge-soft">{{ $g->platform->name ?? 'N/A' }}</span></td>
                   
                   <!-- Muestra el precio formateado a 2 decimales -->
-                  <td class="text-end">{{ number_format($g->price, 2) }} €</td>
+                  <td class="text-end">{{ \App\Services\CurrencyService::format($g->price) }}</td>
                   
                   <!-- Muestra el stock con un badge (etiqueta) que cambia de color según la cantidad -->
                   <td class="text-end">

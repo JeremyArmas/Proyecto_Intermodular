@@ -100,7 +100,7 @@
                   <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1);">{{ strtoupper($o->order_type) }}</span></td>
                   
                   <!-- Mostramos el total del pedido formateado a 2 decimales y alineado a la derecha -->
-                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ number_format($o->total_amount, 2) }} €</td>
+                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ \App\Services\CurrencyService::format($o->total_amount) }}</td>
                   
                   <!-- Mostramos el estado del pedido con un badge de color según el estado -->
                   <td class="text-center">
@@ -123,6 +123,10 @@
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
                     </form>
+
+                    <!-- Descargar PDF -->
+                    <a href="{{ route('admin.orders.download', $o->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar factura en PDF"><i class="bi bi-download"></i></a>
+                    <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
                   </td>
                 </tr>
               @empty

@@ -4,8 +4,7 @@
 
 @section('content')
   @php
-    // $fmt sirve para formatear precios, se puede seguir usando.
-    $fmt = fn($n) => number_format($n, 2, ',', '.');
+    // Usamos App\Services\CurrencyService::format($n) para formatear los precios
   @endphp
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -36,11 +35,13 @@
           </div>
 
           <!-- Botones de acción rápida -->
+          @if(auth('admin')->user()->hasPermission('games.create'))
           <div class="ms-auto">
             <a href="{{ route('admin.games.create') }}" class="btn jg-btn jg-btn-primary">
               <i class="bi bi-plus-circle me-1"></i> Añadir Juego
             </a>
           </div>
+          @endif
 
         </div>
       </div>
@@ -145,20 +146,43 @@
         </li>
 
         <!-- Pestaña de pedidos -->
+        @if(auth('admin')->user()->hasPermission('orders.view'))
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-pedidos" data-bs-toggle="tab" data-bs-target="#pedidos" type="button"
             role="tab">
             <i class="bi bi-receipt me-1"></i> Pedidos
           </button>
         </li>
+        @endif
 
         <!-- Pestaña de tickets -->
+        @if(auth('admin')->user()->hasPermission('tickets.view'))
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets" type="button"
             role="tab">
             <i class="bi bi-ticket me-1"></i> Tickets
           </button>
         </li>
+        @endif
+
+        <!-- Pestaña de noticias -->
+        @if(auth('admin')->user()->hasPermission('news.view'))
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-noticias" data-bs-toggle="tab" data-bs-target="#noticias" type="button"
+            role="tab">
+            <i class="bi bi-newspaper me-1"></i> Noticias
+          </button>
+        </li>
+        @endif
+
+        <!-- Pestaña de administradores (Solo Super Admin) -->
+        @if(Auth::guard('admin')->user()->is_super_admin)
+        <li class="nav-item" role="presentation">
+           <a class="nav-link" href="{{ route('admin.administrators.index') }}" style="color: var(--jg-sun);">
+            <i class="bi bi-shield-lock me-1"></i> Administradores
+          </a>
+        </li>
+        @endif
       </ul>
 
 
@@ -212,15 +236,6 @@
                 </select>
               </div>
 
-              <!-- Botones de acción rápida (placeholder) -->
-              <div class="col-12 col-lg-4 d-flex gap-2 justify-content-lg-end">
-                <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
-                  <i class="bi bi-download me-1"></i> Exportar
-                </button>
-                <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
-                  <i class="bi bi-funnel me-1"></i> Filtro avanzado
-                </button>
-              </div>
             </div>
           </div>
 
@@ -290,7 +305,7 @@
                         <td><span class="badge badge-soft">{{ $p->platform->name ?? 'N/A' }}</span></td>
 
                         <!-- Precio formateado del producto -->
-                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->price) }} €</td>
+                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ \App\Services\CurrencyService::format($p->price) }}</td>
 
                         <!-- Stock del producto con etiqueta de advertencia si es bajo o agotado -->
                         <td class="text-end">
@@ -307,8 +322,11 @@
 
                         <!-- Botones de acción para editar o eliminar el producto -->
                         <td class="text-end jg-actions">
+                          @if(auth('admin')->user()->hasPermission('games.update'))
                           <a href="{{ route('admin.games.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('games.delete'))
                           <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                             @csrf
@@ -316,6 +334,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
                     @endforeach
@@ -357,9 +376,11 @@
                 <a href="{{ route('admin.categories.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todas las categorías
                 </a>
+                @if(auth('admin')->user()->hasPermission('categories.create'))
                 <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
                   <i class="bi bi-plus-circle me-1"></i> Añadir categoría
                 </a>
+                @endif
               </div>
 
             </div>
@@ -404,8 +425,11 @@
 
                         <!-- Botones de acción para editar o eliminar la categoría -->
                         <td class="text-end">
+                          @if(auth('admin')->user()->hasPermission('categories.update'))
                           <a href="{{ route('admin.categories.edit', $c) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('categories.delete'))
                           <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
                             @csrf
@@ -413,6 +437,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
 
@@ -461,9 +486,11 @@
                 <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todos los usuarios
                 </a>
+                @if(auth('admin')->user()->hasPermission('users.create'))
                 <a href="{{ route('admin.users.create') }}" class="btn jg-btn jg-btn-primary">
                   <i class="bi bi-plus-circle me-1"></i> Invitar
                 </a>
+                @endif
               </div>
             </div>
           </div>
@@ -513,8 +540,11 @@
 
                         <!-- Botones de acción para editar o eliminar el usuario -->
                         <td class="text-end">
+                          @if(auth('admin')->user()->hasPermission('users.update'))
                           <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('users.delete'))
                           <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
                             @csrf
@@ -522,6 +552,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
 
@@ -553,6 +584,7 @@
 
 
         <!-- Pestaña de pedidos -->
+        @if(auth('admin')->user()->hasPermission('orders.view'))
         <div class="tab-pane fade" id="pedidos" role="tabpanel" aria-labelledby="tab-pedidos">
           <div class="jg-card p-3 mb-3">
             <div class="d-flex justify-content-between align-items-center">
@@ -568,7 +600,7 @@
                 <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todos los pedidos
                 </a>
-                <a href="{{ route('admin.panel') }}" class="btn jg-btn jg-btn-sun disabled">
+                <a href="{{ route('admin.orders.download-all') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-download me-1"></i> Exportar
                 </a>
               </div>
@@ -618,7 +650,7 @@
                         <td><span class="badge badge-soft">{{ strtoupper($p->order_type) }}</span></td>
 
                         <!-- Total cobrado por el pedido, formateado como precio -->
-                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->total_amount) }} €</td>
+                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ \App\Services\CurrencyService::format($p->total_amount) }}</td>
 
                         <!-- Estado del envío del pedido con etiqueta visual -->
                         <td><span class="badge {{ $bOrder }}">{{ $st[$p->status] ?? $p->status }}</span></td>
@@ -626,10 +658,15 @@
                         <!-- Fecha y hora de creación del pedido -->
                         <td class="text-nowrap">{{ $p->created_at->format('Y-m-d H:i') }}</td>
 
-                        <!-- Botones de acción para auditar el pedido o eliminarlo -->
+                        <!-- Botones de acción para auditar el pedido , eliminarlo, editarlo y descargar la factura -->
                         <td class="text-end">
                           <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-eye"></i></a>
+                          @if(auth('admin')->user()->hasPermission('orders.update'))
+                          <a href="{{ route('admin.orders.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
+                              class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('orders.delete'))
                           <form action="{{ route('admin.orders.destroy', $p) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
                             @csrf
@@ -637,6 +674,10 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
+                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar">
+                            <i class="bi bi-download"></i> <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
+                          </a>
                         </td>
                       </tr>
 
@@ -667,8 +708,11 @@
             </div>
           </div>
         </div>
+        @endif
+
 
         <!-- Pestaña de tickets -->
+        @if(auth('admin')->user()->hasPermission('tickets.view'))
         <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tab-tickets">
         <div class="jg-card p-3 mb-3">
         <div id="contenedorTickets" class="js-paginacion-admin">
@@ -701,9 +745,15 @@
                     </td>
                     <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
                     <td class="text-end">
+                      @if(auth('admin')->user()->hasPermission('tickets.update'))
                       <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
                         <i class="bi bi-envelope-open"></i> Responder
                       </a>
+                      @else
+                      <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
+                        <i class="bi bi-eye"></i> Ver
+                      </a>
+                      @endif
                     </td>
                   </tr>
                 @empty
@@ -713,20 +763,112 @@
                 @endforelse
               </tbody>
             </table>
+            <!-- Paginación de tickets -->
+            <div class="d-flex justify-content-end mt-2">
+              {{ $tickets->links() }}
+            </div>
           </div>
-        </div>
-      </div>
-
-        <!-- Paginación de tickets -->
-        <div class="d-flex justify-content-end mt-2">
-          {{ $tickets->links() }}
-        </div>
-
-        </div>
         </div>
       </div>
     </div>
   </div>
+  @endif
+
+      <!-- Pestaña de noticias -->
+      
+      <div class="tab-pane fade" id="noticias" role="tabpanel" aria-labelledby="tab-noticias">
+          <div class="jg-card p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+
+              <!-- Título de la sección de noticias y descripción breve -->
+              <div>
+                <div class="h4 mb-1">Noticias</div>
+                <div class="jg-muted">Gestión de las noticias y las novedades.</div>
+              </div>
+
+              @if(auth('admin')->user()->hasPermission('news.create'))
+              <a href="{{ route('admin.news.create') }}" class="btn btn-sm jg-btn jg-btn-outline"> <!--Enlace para crear una nueva noticia-->
+                <i class="bi bi-plus-circle"></i> Crear noticia
+              </a>
+              @endif
+            </div>
+        </div>
+
+        <div id="contenedorNoticias" class="js-paginacion-admin">
+          <div class="jg-card p-3 mb-3">
+            <div class="jg-table-wrap">
+              <div class="table-responsive">
+                <table class="table jg-table align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Imagen para la portada</th>
+                      <th>Título</th>
+                      <th>Fecha</th>
+                      <th>Estado de la noticia</th>
+                      <th class="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($noticias as $n)
+                      <tr>
+                        <td>
+                          {{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}
+                        </td> <!--ID de la noticia-->
+                        <td>
+                          <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" class="img-fluid" style="width: 100px;">
+                        </td> <!--Imagen para la portada-->
+                        <td class="fw-bold">
+                          {{ $n->title }}
+                        </td> <!--Título de la noticia-->
+                        <td>
+                          {{ $n->created_at->format('Y-m-d') }}
+                        </td> <!--Fecha de la noticia-->
+                        <td>
+                          @if($n->is_published)
+                            <span class="badge badge-mint">Publicada</span>
+                          @else
+                            <span class="badge badge-sun">Borrador</span>
+                          @endif
+                        </td> <!--Estado de la noticia-->
+                        <td class="text-end">
+                          <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Ver noticia">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          @if(auth('admin')->user()->hasPermission('news.update'))
+                          <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline" title="Editar noticia">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('news.delete'))
+                          <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta noticia?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm jg-btn jg-btn-outline" title="Eliminar noticia">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                          @endif
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+                <!-- Paginación de noticias -->
+                <div class="d-flex justify-content-end mt-2">
+                  {{ $noticias->links() }}
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Script para el filtro básico de productos en la pestaña de productos -->
   @push('scripts')

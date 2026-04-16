@@ -4,25 +4,26 @@
 
 @section('content')
 
-<!-- Vista para editar el estado de un pedido en el panel de administración -->
-<div class="jg-admin jg-admin-wrap">
-  <div class="container" style="max-width: 600px;">
-    <div class="jg-admin-header p-4 mb-4">
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div>
-          <div class="jg-pill mb-2">
-            <span class="jg-dot"></span>
-            <span>Panel de administración</span>
+  <!-- Vista para editar el estado de un pedido en el panel de administración -->
+  <div class="jg-admin jg-admin-wrap">
+    <div class="container" style="max-width: 600px;">
+      <div class="jg-admin-header p-4 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div>
+            <div class="jg-pill mb-2">
+              <span class="jg-dot"></span>
+              <span>Panel de administración</span>
+            </div>
+            <h1 class="jg-section-title h3 mb-0" style="display:block;">Actualizar Pedido
+              #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</h1>
           </div>
-          <h1 class="jg-section-title h3 mb-0" style="display:block;">Actualizar Pedido #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</h1>
-        </div>
-        <div>
-          <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-outline">
-            <i class="bi bi-arrow-left me-1"></i> Volver a pedidos
-          </a>
+          <div>
+            <a href="{{ route('admin.orders.index') }}" class="btn jg-btn jg-btn-outline">
+              <i class="bi bi-arrow-left me-1"></i> Volver a pedidos
+            </a>
+          </div>
         </div>
       </div>
-    </div>
 
     <!-- Mostrar errores de validación si los hay -->
     @if ($errors->any())
@@ -39,7 +40,7 @@
     <div class="jg-card p-4">
       <div class="mb-4">
         <p class="mb-1"><strong>Cliente:</strong> {{ $order->user->name ?? 'Usuario Eliminado' }}</p>
-        <p class="mb-1"><strong>Total:</strong> {{ number_format($order->total_amount, 2) }} €</p>
+        <p class="mb-1"><strong>Total:</strong> {{ \App\Services\CurrencyService::format($order->total_amount) }}</p>
         <p class="mb-0"><strong>Fecha:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
       </div>
     
@@ -50,10 +51,14 @@
         <!-- Usamos el método PUT para actualizar el pedido -->
         @method('PUT')
 
+        @php
+          $canUpdate = auth('admin')->user()->hasPermission('orders.update');
+        @endphp
+
         <!-- Campo para seleccionar el nuevo estado del pedido -->
         <div class="mb-4">
           <label for="status" class="form-label text-white">Estado del pedido</label>
-          <select class="form-select" id="status" name="status" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
+          <select class="form-select" id="status" name="status" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;" {{ !$canUpdate ? 'disabled' : '' }}>
             <option value="pending" {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>Pendiente</option>
             <option value="paid" {{ old('status', $order->status) == 'paid' ? 'selected' : '' }}>Pagado</option>
             <option value="shipped" {{ old('status', $order->status) == 'shipped' ? 'selected' : '' }}>Enviado</option>
@@ -64,13 +69,45 @@
           </div>
         </div>
 
+        <!-- Campo para el rastreo (solo para las empresas) -->
+        @if($order->order_type === 'b2b')
+          <div class="mb-4">
+            <label for="tracking_status" class="form-label text-white">Estado del seguimiento</label>
+            <select class="form-select" id="tracking_status" name="tracking_status" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;" {{ ($order->delivered_confirmed_at || !$canUpdate) ? 'disabled' : '' }}>
+              <option value="in_warehouse" {{ old('tracking_status', $order->tracking_status) == 'in_warehouse' ? 'selected' : '' }}>En el almacén</option>
+              <option value="shipped_out" {{ old('tracking_status', $order->tracking_status) == 'shipped_out' ? 'selected' : '' }}>Salió del almacén</option>
+              <option value="with_courier" {{ old('tracking_status', $order->tracking_status) == 'with_courier' ? 'selected' : '' }}>En la empresa de reparto</option>
+              <option value="on_the_way" {{ old('tracking_status', $order->tracking_status) == 'on_the_way' ? 'selected' : '' }}>En camino al cliente</option>
+              <option value="delivered" {{ old('tracking_status', $order->tracking_status) == 'delivered' ? 'selected' : '' }}>Entregado</option>
+            </select>
+            <div class="form-text jg-muted mt-2">
+              @if($order->delivered_confirmed_at)
+                El pedido ha sido entregado y confirmado por el cliente. No se puede cambiar el estado del seguimiento.
+              @else
+                El cambio de estado se reflejará instantáneamente en el panel del administrador y del cliente.
+              @endif
+            </div>
+          </div>
+          @if($order->delivered_confirmed_at)
+            <div class="alert alert-success d-flex align-items-center mt-3" style="background: rgba(0, 255, 157, 0.1); border-color: var(--jg-mint); color: #fff;">
+              <i class="bi bi-check-circle me-2"></i>
+              El pedido <strong>ha sido entregado</strong> y confirmado por el cliente. <br> La empresa confirmó la recepción el {{ $order->delivered_confirmed_at->format('d/m/Y \a \l\a\s H:i') }}.
+            </div> 
+          @endif
+        @endif
+
+        @if($canUpdate)
         <!-- Botón para guardar los cambios -->
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn jg-btn jg-btn-primary w-100">
             Guardar cambios
           </button>
         </div>
+        @endif
+
       </form>
+    </div>
+      </div>
     </div>
   </div>
 </div>

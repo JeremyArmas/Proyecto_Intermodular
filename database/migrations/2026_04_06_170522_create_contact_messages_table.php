@@ -16,9 +16,10 @@ return new class extends Migration {
             $table->string('email');
             $table->string('subject');
             $table->text('message');
-            $table->foreignId('admin_id')->nullable()->constrained('users'); // Admin que atiende el ticket
+            $table->foreignId('admin_id')->nullable()->constrained('administrators'); // Admin que atiende el ticket
             $table->timestamp('locked_at')->nullable(); // Para bloquear el ticket mientras un admin lo atiende
             $table->enum('status', ['pendiente', 'en_proceso', 'finalizado'])->default('pendiente'); // Estado del ticket
+            $table->text('respuesta_email')->nullable(); // Respuesta del administrador
             $table->timestamps(); // created_at = fecha de envío del mensaje, updated_at = fecha de última actualización del ticket (ej: respuesta del admin)
         });
     }

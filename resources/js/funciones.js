@@ -462,40 +462,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function register(form, contenedorErrores) {
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
-  
   try {
     const res = await fetch(form.action, {
       method: 'POST',
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
       body: new FormData(form),
     });
-    
-    if(res.status === 419) { 
-      window.location.reload(); return; 
-    }
-    
+    if (res.status === 419) { window.location.reload(); return; }
     const data = await res.json().catch(() => ({}));
-    
-    if(res.ok && data.success) {
-      window.location.href = data.redirect || '/'; return; 
-    }
-    
+    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
     let msg = 'Error al crear la cuenta';
-    
-    if(data && data.message){
-      msg = data.message;
-    }else if (data && data.errors){
-      msg = Object.values(data.errors)[0][0];
-    }
-    
-    if(contenedorErrores) {
+    if (data && data.message) msg = data.message;
+    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
+    if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
     } else alert(msg);
     document.getElementById('reloadCaptchaRegistro')?.click();
   } catch {
     const msg = 'Error de red. Inténtalo de nuevo.';
-    
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');

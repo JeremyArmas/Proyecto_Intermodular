@@ -12,7 +12,7 @@
   --jg-bg:#131224;
   --jg-bg2:#0b0b14;
   --jg-text:#ffffff;
-  --jg-muted:#ffffff;
+  --jg-muted:rgba(255,255,255,.70);
 
   --jg-purple:#7c3aed;
   --jg-purple2:#a855f7;
@@ -25,9 +25,23 @@
   --jg-border:rgba(255,255,255,.14);
   --jg-card:rgba(255,255,255,.06);
   --jg-card2:rgba(255,255,255,.09);
-  --jg-radius:18px;
+  
+  /* Sistema de Radios */
+  --jg-radius-sm:12px;
+  --jg-radius-md:14px;
+  --jg-radius-lg:18px;
+  --jg-radius:var(--jg-radius-lg);
 
+  /* Glassmorphism Tokens */
+  --jg-glass-bg: rgba(14, 12, 24, 0.78);
+  --jg-glass-blur: 14px;
+  --jg-glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Sombras y Gradientes */
   --jg-shadow: 0 20px 70px rgba(0,0,0,.40);
+  --jg-shadow-xl: 0 30px 120px rgba(0,0,0,.65);
+  --jg-gradient-primary: linear-gradient(90deg, #7c3aed, #fbd257);
+  --jg-gradient-sun: linear-gradient(135deg, var(--jg-sun), var(--jg-sun2));
 
   --jg-font-title: "Jersey 10", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   --jg-font-body:  "Jersey 25", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -175,6 +189,35 @@ body::after{
    5) COMPONENTES UI
    - Paneles, pill, indicador (dot).
    ========================================================= */
+/* Utilidades base para inputs y efecto cristal (CSS Estándar para máxima compatibilidad) */
+.jg-glass {
+  backdrop-filter: blur(var(--jg-glass-blur));
+  background: var(--jg-glass-bg);
+  border: 1px solid var(--jg-glass-border);
+}
+
+.jg-input-base, .form-control, .form-select, select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  border-radius: var(--jg-radius-md) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.jg-input-base:focus, .form-control:focus, .form-select:focus {
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.15) !important;
+  outline: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.jg-badge-hover:hover {
+    background-color: var(--sun) !important;
+    color: var(--dark) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(254, 192, 45, 0.3);
+}
+
 .jg-panel{
   border-radius: calc(var(--jg-radius) + 6px);
   border: 1px solid var(--jg-border);
@@ -624,19 +667,23 @@ iframe.jg-hero-vid {
 
 /* =========================================================
    11) SELECTS / INPUTS (GLOBAL)
-   - Colores y fondo para selects y options en tema oscuro.
+   - Colores y fondo para selects y inputs en tema oscuro.
    ========================================================= */
-select, .form-select{
+/* (Los estilos base de inputs se definieron arriba en la sección 5 para reutilización) */
+.form-control, .form-select, select {
   color-scheme: dark;
-  background-color: rgba(255,255,255,.06) !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
-  color: #fff !important;
 }
 
 select option,
 .form-select option{
-  background-color: #0f0f1b !important;
+  background-color: var(--jg-bg2) !important;
   color: #fff !important;
+}
+
+/* Placeholders consistentes */
+::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+  opacity: 1 !important;
 }
 
 
@@ -737,4 +784,99 @@ input[type="number"]::-webkit-outer-spin-button {
 .btn-outline-sun:hover {
   background-color: var(--jg-sun);
   color: #000;
+}
+
+/* =========================================================
+   17) JEDIGA — SISTEMA DE DISEÑO / UTILIDADES REUTILIZABLES
+   - Clases globales para títulos de página, estados y efectos.
+   ========================================================= */
+
+/* Títulos y Encabezados de Página */
+.jg-page-title { font-family: var(--jg-font-title) !important; letter-spacing: 1px !important; }
+.jg-bg-sun-alpha { background: rgba(255, 204, 0, 0.1) !important; }
+.jg-lead-light { font-weight: 300 !important; }
+.jg-tracking-1 { letter-spacing: 1px !important; }
+.jg-fs-5 { font-size: 1.25rem !important; }
+
+
+/* =========================================================
+   18) ESTILOS PARA EXPORTACIÓN PDF (Facturas)
+   - Estilos simplificados para compatibilidad con DomPDF.
+   ========================================================= */
+body.pdf-body {
+    background: #fff !important;
+    color: #000 !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+
+.pdf-body h1 { color: #333; margin-bottom: 5px; }
+.pdf-body .header-info { margin-bottom: 30px; color: #555; }
+.pdf-body table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.pdf-body th, .pdf-body td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; color: #000 !important; }
+.pdf-body th { background: #f8f9fa; font-weight: bold; }
+.pdf-body .game-title { margin: 0 0 5px 0; font-size: 16px; color: #111; }
+.pdf-body .game-desc { font-size: 11px; color: #666; line-height: 1.4; margin: 0; }
+.pdf-body .total-box { margin-top: 30px; text-align: right; font-size: 18px; }
+
+/* =========================================================
+   19) ACORDEONES (Fixes para tema oscuro)
+   ========================================================= */
+.accordion-button::after { 
+    filter: invert(1); 
+}
+.accordion-item:first-of-type, 
+.accordion-item:last-of-type { 
+    border-radius: 1rem !important; 
+}
+
+/* Badges de Estado (Utilizados en Pedidos y otros listados) */
+.jg-badge-status { font-size: 0.85rem !important; letter-spacing: 0.5px !important; border-radius: 8px; }
+.jg-badge-paid { background: rgba(0, 255, 157, 0.15) !important; color: #00ff9d !important; border: 1px solid rgba(0, 255, 157, 0.3) !important; }
+.jg-badge-pending { background: rgba(255, 204, 0, 0.15) !important; color: #ffcc00 !important; border: 1px solid rgba(255, 204, 0, 0.3) !important; }
+.jg-badge-shipped { background: rgba(0, 195, 255, 0.15) !important; color: #00c3ff !important; border: 1px solid rgba(0, 195, 255, 0.3) !important; }
+.jg-badge-cancelled { background: rgba(255, 71, 87, 0.15) !important; color: #ff4757 !important; border: 1px solid rgba(255, 71, 87, 0.3) !important; }
+
+/* Layout y Posicionamiento */
+.jg-mt-n4-overlap { margin-top: -3.5rem !important; position: relative; z-index: 5; }
+.jg-sticky-offset { position: sticky !important; top: 100px !important; z-index: 10; }
+
+@media (max-width: 991px) {
+    .jg-mt-n4-overlap { margin-top: -1.5rem !important; }
+}
+
+/* Imágenes y Portadas (Common Patterns) */
+.jg-wishlist-cover { width: 70px; height: 95px; object-fit: cover !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+.jg-cart-thumb-mini { width: 40px; height: 50px; object-fit: cover !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+.jg-badge-mini { font-size: 0.6rem !important; z-index: 2; }
+.jg-icon-xl { font-size: 5rem !important; }
+
+/* Notificaciones (Badges amarillos tipo Sol) */
+.jg-badge-notify {
+    background-color: #ffcc00 !important;
+    color: #000 !important;
+    font-size: 0.65rem !important;
+    font-weight: 900 !important;
+    padding: 0.22rem 0.5rem !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+}
+
+/* Efectos y Transiciones */
+.transition-all { transition: all 0.3s ease !important; }
+.transition-colors { transition: color 0.2s ease !important; }
+.hover-bg-sun-5:hover { background: rgba(214, 154, 34, 0.03) !important; }
+.hover-text-danger:hover { color: #ff4d4d !important; }
+.hover-text-sun-color:hover { color: var(--jg-sun) !important; }
+.border-white-10 { border-color: rgba(255,255,255,0.08) !important; }
+.bg-darker-30 { background: rgba(0,0,0,0.3) !important; }
+
+/* Animaciones */
+.scale-in {
+    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }

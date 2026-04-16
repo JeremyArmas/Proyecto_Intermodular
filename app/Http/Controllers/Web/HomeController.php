@@ -10,8 +10,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Convierte un modelo Game al formato de array que usa la vista
+        // Función auxiliar para mapear juegos al formato de la vista
         $mapGame = fn($game) => [
+            'id' => $game->id,
             'title' => $game->title,
             'desc' => Str::limit($game->description, 70),
             'tag' => $game->platform->name ?? 'Multi',

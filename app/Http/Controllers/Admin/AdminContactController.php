@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ContactMessage;
 
 /*Controlador para que los admins puedan ver y responder los mensajes de contacto (Tickets) enviados por los clientes desde la web*/
 
@@ -11,7 +12,7 @@ class AdminContactController extends Controller
 {
     public function index()
     {
-        $tickets = \App\Models\ContactMessage::orderBy("created_at","desc")->paginate(10); // Se obtienen los tickets de contacto ordenados por fecha de creación (los más recientes primero) y se paginan de 10 en 10 para no saturar la vista.
+        $tickets = ContactMessage::orderBy("created_at","desc")->paginate(10); // Se obtienen los tickets de contacto ordenados por fecha de creación (los más recientes primero) y se paginan de 10 en 10 para no saturar la vista.
 
         return view('admin.tickets.index', compact('tickets'));
     }
@@ -24,8 +25,8 @@ class AdminContactController extends Controller
         // bloquea el ticket para ese admin (se asigna su ID al campo admin_id y se establece la fecha/hora actual en locked_at) y se
         // muestra la vista con los detalles del ticket para que el admin pueda responderlo.
 
-        $ticket = \App\Models\ContactMessage::findOrFail($id);
-        if ($ticket->locked_at && $ticket->admin_id !==auth()->id()) {
+        $ticket = ContactMessage::findOrFail($id);
+        if ($ticket->locked_at && $ticket->admin_id !== auth()->guard('admin')->id()) {
 
             $minutesBloqueado = $ticket->locked_at->diffInMinutes(now());
 
@@ -34,7 +35,7 @@ class AdminContactController extends Controller
             }
         }
 
-        $ticket->admin_id = auth()->id(); // Se asigna el ID del admin que atiende el ticket para bloquearlo
+        $ticket->admin_id = auth()->guard('admin')->id(); // Se asigna el ID del admin que atiende el ticket para bloquearlo
         $ticket->locked_at = now();
         $ticket->save();
 
@@ -52,13 +53,13 @@ class AdminContactController extends Controller
         // se envió con éxito al cliente y que el ticket se cerró.
 
         $request->validate(['respuesta_email' => 'required']);
-        $ticket = \App\Models\ContactMessage::findOrFail($id);
+        $ticket = ContactMessage::findOrFail($id);
         if ($ticket->status !== 'pendiente') {
             return redirect()->route('admin.panel')->with('error', 'Este ticket ya ha sido respondido por otro compañero.');
         }
         \Illuminate\Support\Facades\Mail::to($ticket->email)->send(new \App\Mail\RespondTicketMail($request->respuesta_email));
         $ticket->status = 'finalizado';
-        $ticket->admin_id = auth()->id();
+        $ticket->admin_id = auth()->guard('admin')->id();
         $ticket->respuesta_email = $request->respuesta_email;
         $ticket->locked_at = null;
         $ticket->save();

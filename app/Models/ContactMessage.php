@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use App\Models\Administrator;
 
 class ContactMessage extends Model
 
@@ -31,6 +31,6 @@ class ContactMessage extends Model
     // Relación con el admin que atiende el ticket (opcional, puede ser null si aún no lo ha atendido ningún admin)
     public function admin()
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->belongsTo(Administrator::class, 'admin_id');
     }
 }

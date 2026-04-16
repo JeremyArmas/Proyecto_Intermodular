@@ -49,7 +49,6 @@
           <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff;">
             <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>Cliente</option>
             <option value="company" {{ old('role') == 'company' ? 'selected' : '' }}>Empresa</option>
-            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
           </select>
           @error('role')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
@@ -70,10 +69,6 @@
         </div>
 
         <!-- Botón para enviar el formulario y guardar el nuevo usuario -->
-         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn jg-btn jg-btn-primary">
-            Guardar usuario
-          </button>
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn jg-btn jg-btn-primary">
             Guardar usuario

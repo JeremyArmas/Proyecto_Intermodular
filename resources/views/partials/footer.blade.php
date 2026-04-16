@@ -18,7 +18,7 @@
 
       <!-- Enlaces legales -->
       <div class="col-md-4">
-        <div class="ft-title">Apartado legal</div>
+        <div class="ft-title">Apartados legales</div>
         <div class="mt-3 d-flex flex-wrap gap-3 small">
           <a class="jg-link-muted" href="{{ url('/aviso-legal') }}">Aviso legal</a>
           <a class="jg-link-muted" href="{{ url('/terminos') }}">Términos y condiciones</a>

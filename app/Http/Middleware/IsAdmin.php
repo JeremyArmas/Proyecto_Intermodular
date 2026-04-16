@@ -16,12 +16,12 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Verifica si el usuario está autenticado y tiene rol de administrador
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        // Verifica si hay un administrador autenticado usando el guard 'admin'
+        if (Auth::guard('admin')->check()) {
             return $next($request);
         }
 
-        // Si no es admin, redirige al inicio con un error
+        // Si no está autenticado como admin, redirige al inicio con un error
         return redirect('/')->with('error', 'Acceso denegado. Se requieren permisos de administrador.');
     }
 }

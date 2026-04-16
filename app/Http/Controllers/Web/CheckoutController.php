@@ -13,6 +13,7 @@ use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmedMail;
+use App\Services\CurrencyService;
 
 class CheckoutController extends Controller
 {
@@ -29,16 +30,49 @@ class CheckoutController extends Controller
             return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
         }
 
+        /* Validaciones según el tipo de usuario.
+        * Un usuario normal solo puede comprar versiones digitales del juego , por lo que no resta del stock.
+        * Un usuario empresa solo puede comprar versiones físicas del juego , por lo que resta del stock.
+        * El administrador es tiene derecho a todo en general , de eso no nos preocupamos.
+        */ 
+
+        foreach ($cart->items as $item) {
+            $game = $item->game;
+            
+            if ($user->isClient()) { //Los usuarios normales no pueden comprar más de una vez el mismo juego.
+
+                $yaComprado = \App\Models\OrderItem::whereHas('order', function ($q) use ($user) { 
+                    $q->where('user_id', $user->id)->where('status', 'paid'); //Comprueba si el usuario ya ha comprado el juego.
+                })->where('game_id', $game->id)->exists(); //Comprueba si el juego ya ha sido comprado.
+
+                if ($yaComprado) { //Si el usuario ya ha comprado el juego, no puede comprarlo de nuevo.
+                    return redirect()->route('carrito.index')->with('error', 'Ya has comprado este juego. Ve a tu biblioteca para descargarlo y disfrutar de él. Si crees que es un error, contacta con soporte.');
+                }
+            }
+
+            if ($user->isCompany()) { //Las empresas solo pueden comprar versiones físicas del juego.
+                if ($game->stock < $item->quantity) { //Si la empresa no tiene suficiente stock para la compra, no puede comprarlo.
+                    return redirect()->route('carrito.index')->with('error', 'No hay suficiente stock para esta compra. Contacta con soporte para más información.');
+                }
+            }
+        }
+
         // Configura la clave secreta de Stripe
         Stripe::setApiKey(config('services.stripe.secret'));
 
         // Construye los line_items para Stripe
         $lineItems = [];
+        $selectedCurrency = strtolower(CurrencyService::getCurrent());
+
         foreach ($cart->items as $item) {
             $game = $item->game;
             
-            // Stripe espera el precio en céntimos
-            $priceInCents = (int) ($game->getPriceForUser($user) * 100);
+            // Precio base en EUR para el usuario (con descuento empresa si aplica)
+            $priceInEur = $game->getPriceForUser($user);
+
+            // Convertimos a la moneda seleccionada por el usuario y redondeamos a céntimos
+            $priceConverted = CurrencyService::convert($priceInEur);
+            $priceInCents = (int) round($priceConverted * 100);
 
             // Prepara la imagen absoluta si existe
             $images = [];
@@ -51,7 +85,7 @@ class CheckoutController extends Controller
 
             $lineItems[] = [
                 'price_data' => [
-                    'currency' => 'eur',
+                    'currency' => $selectedCurrency,
                     'product_data' => [
                         'name' => $game->title,
                         'images' => $images,
@@ -162,6 +196,7 @@ class CheckoutController extends Controller
                 'shipping_address' => $shippingAddress, 
                 'order_type' => $user->isCompany() ? 'b2b' : 'b2c',
                 'stripe_session_id' => $sessionId,
+                'tracking_status' => $user->isCompany() ? 'in_warehouse' : null, //Pedido en almacén
             ]);
 
             // 2. Crear los OrderItems y actualizar Stock
@@ -175,8 +210,10 @@ class CheckoutController extends Controller
                     'price_at_purchase' => $game->getPriceForUser($user),
                 ]);
 
-                // Descontar stock
-                $game->decrement('stock', $item->quantity);
+                // Descuento de stock si es empresa
+                if ($user->isCompany()) {
+                    $game->decrement('stock', $item->quantity);
+                }
             }
 
             // 3. Vaciar el Carrito

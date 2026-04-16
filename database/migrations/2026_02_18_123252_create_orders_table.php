@@ -18,6 +18,7 @@ return new class extends Migration
         
         // Estado del pedido: Pendiente, Pagado, Enviado, Cancelado
         $table->enum('status', ['pending', 'paid', 'shipped', 'cancelled'])->default('pending');
+        $table->string('stripe_session_id')->nullable(); // ID de sesión de Stripe para pagos
         
         // Total dinero del pedido
         $table->decimal('total_amount', 10, 2);
@@ -51,6 +52,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
     }
 };
