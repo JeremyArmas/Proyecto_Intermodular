@@ -34,11 +34,17 @@ class CheckoutController extends Controller
 
         // Construye los line_items para Stripe
         $lineItems = [];
+        $selectedCurrency = strtolower(\App\Services\CurrencyService::getCurrent());
+
         foreach ($cart->items as $item) {
             $game = $item->game;
             
-            // Stripe espera el precio en céntimos
-            $priceInCents = (int) ($game->getPriceForUser($user) * 100);
+            // Precio base en EUR para el usuario (con descuento empresa si aplica)
+            $priceInEur = $game->getPriceForUser($user);
+
+            // Convertimos a la moneda seleccionada por el usuario y redondeamos a céntimos
+            $priceConverted = \App\Services\CurrencyService::convert($priceInEur);
+            $priceInCents = (int) round($priceConverted * 100);
 
             // Prepara la imagen absoluta si existe
             $images = [];
@@ -51,7 +57,7 @@ class CheckoutController extends Controller
 
             $lineItems[] = [
                 'price_data' => [
-                    'currency' => 'eur',
+                    'currency' => $selectedCurrency,
                     'product_data' => [
                         'name' => $game->title,
                         'images' => $images,
