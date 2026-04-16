@@ -22,10 +22,8 @@ class AdminController extends Controller
         $productos = Game::with(['categories', 'platform'])->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'productos_page')->withQueryString();
         $categorias = Category::withCount('games')->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'categorias_page')->withQueryString();
         $usuarios = User::orderBy('created_at', 'desc')->paginate(10, ['*'], 'usuarios_page')->withQueryString();
-        $tickets = \App\Models\ContactMessage::orderBy('created_at', 'asc')->paginate(10, ['*'], 'tickets_page')->withQueryString();
+        $tickets = ContactMessage::orderBy('created_at', 'asc')->paginate(10, ['*'], 'tickets_page')->withQueryString();
         $pedidos = Order::with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'pedidos_page')->withQueryString();
-        
-        $tickets = ContactMessage::orderBy('created_at', 'desc')->paginate(10, ['*'], 'tickets_page')->withQueryString();
         
         // Estadísticas generales para mostrar en el panel
         $totalProductos = Game::count();

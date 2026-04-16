@@ -45,18 +45,6 @@ class DatabaseSeeder extends Seeder
         }
 
         // 3. CREAR USUARIOS
-        User::firstOrCreate(['email' => 'admin@gamezone.com'], [
-            'name' => 'Administrador',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
-        User::firstOrCreate(['email' => 'jediga.s.a@gmail.com'], [
-            'name' => 'Administrador Jediga',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
         User::firstOrCreate(['email' => 'cliente@gmail.com'], [
             'name' => 'Juan Cliente',
             'password' => Hash::make('password'),
@@ -75,7 +63,9 @@ class DatabaseSeeder extends Seeder
             'phone' => '+34 912 345 678',
             'address' => 'Calle Industria 45, Madrid',
         ]);
-        // 4. CREAR JUEGOS (Catálogo Premium de Jere)
+
+
+        // 4. CREAR JUEGOS 
         $games = [
             [
                 'title' => 'Magrunner: Dark Pulse',
@@ -98,7 +88,7 @@ class DatabaseSeeder extends Seeder
                 'b2b_price' => 0,
                 'stock' => 120,
                 'cover_image' => 'games/hypercharge-cover.jpg',
-                'trailer_url' => 'https://www.youtube.com/watch?v=Yp69I5yWp0Y',
+                'trailer_url' => 'https://www.youtube.com/watch?v=zcjUWKOcbto',
                 'developer' => 'Digital Cybercherries',
                 'platform_id' => $platModels['xbox-series-x']->id,
                 'categories' => ['Acción', 'Shooter', 'Multijugador', 'Cooperativo'],

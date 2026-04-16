@@ -90,7 +90,7 @@ Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function
 Route::get('/moneda/{code}', [CurrencyController::class, 'switch'])->name('currency.switch');
 
 // Rutas del Perfil de Usuario
-Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
+Route::middleware('auth:web,admin')->prefix('perfil')->name('profile.')->group(function () {
     Route::get('/', [ProfileController::class, 'show'])->name('show');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::get('/mis-pedidos', [ProfileController::class, 'orders'])->name('orders');

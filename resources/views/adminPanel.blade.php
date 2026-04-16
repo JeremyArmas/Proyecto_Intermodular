@@ -43,11 +43,6 @@
           </div>
           @endif
 
-          <!-- Nota aclaratoria (solo UI) -->
-          <div class="jg-admin-note mt-3 small">
-            Nota: esto es <strong>solo UI</strong>. Los botones están como “placeholder” para cuando conectéis BD +
-            controladores.
-          </div>
         </div>
       </div>
 
@@ -776,6 +771,7 @@
             </div>
           </div>
         </div>
+      </div>
         @endif
 
         <!-- Pestaña de noticias -->
@@ -853,8 +849,6 @@
         </div>
         @endif
 
-      </div> <!-- tab-content -->
-    </div> <!-- container -->
   </div> <!-- jg-admin-wrap -->
 </div>
 
