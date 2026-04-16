@@ -334,5 +334,8 @@
   }
 </script>
 
+<!-- Script para la accesibilidad -->
+<script src="https://cdn.jsdelivr.net/npm/accessibility-widgets@latest/widget.js"></script>
+
 
 </html>
