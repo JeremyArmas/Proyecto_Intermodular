@@ -18,7 +18,7 @@ class CartTest extends TestCase
      */
     public function test_user_can_add_game_to_cart(): void
     {
-        $user = User::factory()->create(['role' => 'client']);
+        $user = User::factory()->create(['role' => 'company']); // Usamos empresa para probar cantidad > 1
         $game = Game::factory()->create(['stock' => 10]);
 
         $response = $this->actingAs($user)->post(route('carrito.add'), [
@@ -42,7 +42,7 @@ class CartTest extends TestCase
      */
     public function test_add_to_cart_fails_if_insufficient_stock(): void
     {
-        $user = User::factory()->create(['role' => 'client']);
+        $user = User::factory()->create(['role' => 'company']); // Solo las empresas validan stock físico
         $game = Game::factory()->create(['stock' => 5]);
 
         $response = $this->actingAs($user)->post(route('carrito.add'), [
@@ -59,7 +59,7 @@ class CartTest extends TestCase
      */
     public function test_user_can_update_cart_item_quantity(): void
     {
-        $user = User::factory()->create(['role' => 'client']);
+        $user = User::factory()->create(['role' => 'company']); // Usamos empresa para actualizar a > 1
         $game = Game::factory()->create(['stock' => 10]);
         $cart = Cart::create(['user_id' => $user->id]);
         $cartItem = $cart->items()->create(['game_id' => $game->id, 'quantity' => 1]);
@@ -112,7 +112,7 @@ class CartTest extends TestCase
      */
     public function test_adding_same_game_twice_increments_quantity(): void
     {
-        $user = User::factory()->create(['role' => 'client']);
+        $user = User::factory()->create(['role' => 'company']); // Solo las empresas acumulan cantidad
         $game = Game::factory()->create(['stock' => 10]);
 
         $this->actingAs($user)->post(route('carrito.add'), ['game_id' => $game->id, 'quantity' => 1]);

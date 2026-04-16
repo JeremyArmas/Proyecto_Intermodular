@@ -1,0 +1,353 @@
+﻿
+   PASS  Tests\Unit\ExampleTest
+  Ô£ô that true is true
+´╗┐´╗┐
+   PASS  Tests\Feature\AdminAdministratorCrudTest
+  Ô£ô super admin can view administrators index                                                                    0.34s  
+  Ô£ô normal admin cannot view administrators index                                                                0.02s  
+  Ô£ô super admin can view create administrator form                                                               0.02s  
+  Ô£ô super admin can create administrator                                                                         0.03s  
+  Ô£ô super admin can edit administrator                                                                           0.02s  
+  Ô£ô super admin can delete another administrator                                                                 0.02s  
+  Ô£ô create administrator requires email                                                                          0.02s  
+  Ô£ô normal admin cannot delete administrators                                                                    0.02s  
+  Ô£ô client cannot access administrators crud                                                                     0.02s  
+
+   PASS  Tests\Feature\AdminCategoryCrudTest
+  Ô£ô admin can view categories index                                                                              0.03s  
+  Ô£ô admin can view create category form                                                                          0.02s  
+  Ô£ô admin can update category                                                                                    0.02s  
+  Ô£ô admin can delete category                                                                                    0.02s  
+  Ô£ô create category requires name                                                                                0.02s  
+  Ô£ô create category requires slug                                                                                0.02s  
+  Ô£ô create category fails with duplicate slug                                                                    0.02s  
+  Ô£ô client cannot create category                                                                                0.02s  
+
+   FAIL  Tests\Feature\AdminCrudTest
+  Ô£ô admin can access panel                                                                                       0.03s  
+  Ô£ô normal user cannot access panel                                                                              0.02s  
+  Ô£ô unauthenticated user cannot access panel                                                                     0.02s  
+  Ô£ô admin can create game                                                                                        0.02s  
+  Ô£ô admin can update game                                                                                        0.02s  
+  Ô£ô admin can delete game                                                                                        0.02s  
+  Ô£ô admin can create category                                                                                    0.02s  
+  Ô£ô admin can create user                                                                                        0.02s  
+  Ô¿» admin can update order status                                                                                0.02s  
+
+   PASS  Tests\Feature\AdminGameCrudExtendedTest
+  Ô£ô admin can view games index                                                                                   0.03s  
+  Ô£ô admin can view create game form                                                                              0.02s  
+  Ô£ô create game requires title                                                                                   0.02s  
+  Ô£ô create game requires price                                                                                   0.02s  
+  Ô£ô client cannot create game                                                                                    0.02s  
+  Ô£ô client cannot delete game                                                                                    0.02s  
+  Ô£ô unauthenticated user cannot access games crud                                                                0.02s  
+
+   FAIL  Tests\Feature\AdminOrderCrudTest
+  Ô¿» admin can view orders index                                                                                  0.02s  
+  Ô¿» admin can change order status to paid                                                                        0.02s  
+  Ô¿» admin can change order status to shipped                                                                     0.02s  
+  Ô¿» admin can change order status to cancelled                                                                   0.02s  
+  Ô¿» admin cannot set invalid order status                                                                        0.02s  
+  Ô¿» admin can delete order                                                                                       0.02s  
+  Ô¿» manual order creation is disabled                                                                            0.02s  
+  Ô£ô client cannot access orders crud                                                                             0.06s  
+  Ô£ô unauthenticated user cannot access orders                                                                    0.02s  
+
+   PASS  Tests\Feature\AdminPlatformCrudTest
+  Ô£ô admin can view platforms index                                                                               0.02s  
+  Ô£ô admin can view create platform form                                                                          0.02s  
+  Ô£ô admin can create platform                                                                                    0.02s  
+  Ô£ô admin can update platform                                                                                    0.02s  
+  Ô£ô admin can delete platform                                                                                    0.02s  
+  Ô£ô create platform requires name                                                                                0.02s  
+  Ô£ô create platform fails with duplicate slug                                                                    0.02s  
+  Ô£ô client cannot access platforms crud                                                                          0.02s  
+
+   PASS  Tests\Feature\AdminTicketTest
+  Ô£ô admin can view tickets index                                                                                 0.03s  
+  Ô£ô admin viewing ticket locks it                                                                                0.02s  
+  Ô£ô another admin cannot view recently locked ticket                                                             0.02s  
+  Ô£ô admin can respond to ticket                                                                                  0.02s  
+
+   PASS  Tests\Feature\AdminUserCrudTest
+  Ô£ô admin can view users index                                                                                   0.02s  
+  Ô£ô admin can view create user form                                                                              0.02s  
+  Ô£ô admin can update user                                                                                        0.02s  
+  Ô£ô admin can change user role                                                                                   0.02s  
+  Ô£ô admin can delete user                                                                                        0.02s  
+  Ô£ô create user requires email                                                                                   0.02s  
+  Ô£ô create user fails with duplicate email                                                                       0.02s  
+  Ô£ô create user fails with short password                                                                        0.02s  
+  Ô£ô create user fails with password mismatch                                                                     0.02s  
+  Ô£ô create user fails with invalid role                                                                          0.02s  
+  Ô£ô client cannot access users crud                                                                              0.02s  
+
+   PASS  Tests\Feature\AuthTest
+  Ô£ô login with valid credentials succeeds                                                                        0.03s  
+  Ô£ô login with wrong password fails                                                                              0.43s  
+  Ô£ô login with nonexistent email fails                                                                           0.42s  
+  Ô£ô login requires email                                                                                         0.01s  
+  Ô£ô login requires password                                                                                      0.02s  
+  Ô£ô admin login redirects to admin panel                                                                         0.22s  
+  Ô£ô logout works correctly                                                                                       0.02s  
+  Ô£ô get login route redirects to home                                                                            0.01s  
+
+   FAIL  Tests\Feature\CartTest
+  Ô£ô user can add game to cart                                                                                    0.03s  
+  Ô¿» add to cart fails if insufficient stock                                                                      0.02s  
+  Ô£ô user can update cart item quantity                                                                           0.02s  
+  Ô£ô user can remove item from cart                                                                               0.02s  
+  Ô£ô user can clear cart                                                                                          0.02s  
+  Ô¿» adding same game twice increments quantity                                                                   0.02s  
+
+   PASS  Tests\Feature\CheckoutTest
+  Ô£ô unauthenticated user cannot checkout                                                                         0.02s  
+  Ô£ô user with empty cart is redirected back                                                                      0.02s  
+  Ô£ô success page displays correctly with session                                                                 0.63s  
+  Ô£ô cancel page is accessible                                                                                    0.03s  
+
+   PASS  Tests\Feature\CurrencyTest
+  Ô£ô middleware sets default currency                                                                             0.03s  
+  Ô£ô can switch currency                                                                                          0.02s  
+  Ô£ô cannot switch to unsupported currency                                                                        0.02s  
+  Ô£ô currency formatting                                                                                          0.02s  
+  Ô£ô reverse conversion to eur                                                                                    0.02s  
+  Ô£ô catalog price filter with usd                                                                                0.03s  
+  Ô£ô views display converted prices                                                                               0.03s  
+
+   PASS  Tests\Feature\ExampleTest
+  Ô£ô the application returns a successful response                                                                0.03s  
+
+   PASS  Tests\Feature\PublicPagesTest
+  Ô£ô home page is accessible                                                                                      0.02s  
+  Ô£ô sobre nosotros page is accessible                                                                            0.02s  
+  Ô£ô noticias page is accessible                                                                                  0.02s  
+  Ô£ô soporte page is accessible                                                                                   0.02s  
+  Ô£ô faq page is accessible                                                                                       0.02s  
+  Ô£ô contacto page is accessible                                                                                  0.02s  
+  Ô£ô login route redirects to home                                                                                0.01s  
+
+   FAIL  Tests\Feature\UserProfileTest
+  Ô£ô user can view profile                                                                                        0.02s  
+  Ô£ô user can update profile                                                                                      0.02s  
+  Ô¿» user can view order history                                                                                  0.02s  
+
+   PASS  Tests\Feature\Web\CatalogTest
+  Ô£ô catalog displays active games                                                                                0.02s  
+  Ô£ô catalog can be searched by name                                                                              0.02s  
+  Ô£ô catalog can filter by platform                                                                               0.02s  
+  Ô£ô catalog can filter by category                                                                               0.03s  
+  Ô£ô can view individual active game page                                                                         0.03s  
+  Ô£ô cannot view inactive game page                                                                               0.02s  
+
+   PASS  Tests\Feature\Web\ContactFormTest
+  Ô£ô contact form requires all fields                                                                             0.02s  
+  Ô£ô contact form success stores in database                                                                      0.02s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCrudTest > admin can update order status                         BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can view orders index                      BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to paid            BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to shipped         BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to cancelled       BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin cannot set invalid order status            BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can delete order                           BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > manual order creation is disabled                RouteNotFoundException   
+  Route [admin.orders.create] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:526
+    522Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    523Ôûò             return $url;
+    524Ôûò         }
+    525Ôûò 
+  Ô×£ 526Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    527Ôûò     }
+    528Ôûò 
+    529Ôûò     /**
+    530Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:526
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:871
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\CartTest > add to cart fails if insufficient stock                                             
+  Session is missing expected key [error].
+Failed asserting that false is true.
+
+  at tests\Feature\CartTest.php:53
+     49Ôûò             'game_id' => $game->id,
+     50Ôûò             'quantity' => 6,
+     51Ôûò         ]);
+     52Ôûò 
+  Ô×£  53Ôûò         $response->assertSessionHas('error');
+     54Ôûò         $this->assertDatabaseMissing('cart_items', ['game_id' => $game->id]);
+     55Ôûò     }
+     56Ôûò 
+     57Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\CartTest > adding same game twice increments quantity                                          
+  Failed asserting that a row in the table [cart_items] matches the attributes {
+    "game_id": 1,
+    "quantity": 3
+}.
+
+Found similar results: [
+    {
+        "game_id": 1,
+        "quantity": 1
+    }
+].
+
+  at tests\Feature\CartTest.php:121
+    117Ôûò 
+    118Ôûò         $this->actingAs($user)->post(route('carrito.add'), ['game_id' => $game->id, 'quantity' => 1]);
+    119Ôûò         $this->actingAs($user)->post(route('carrito.add'), ['game_id' => $game->id, 'quantity' => 2]);
+    120Ôûò 
+  Ô×£ 121Ôûò         $this->assertDatabaseHas('cart_items', [
+    122Ôûò             'game_id' => $game->id,
+    123Ôûò             'quantity' => 3,
+    124Ôûò         ]);
+    125Ôûò     }
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\UserProfileTest > user can view order history                         BadMethodCallException   
+  Call to undefined method App\Models\Order::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63Ôûò      * @throws \BadMethodCallException
+     64Ôûò      */
+     65Ôûò     protected static function throwBadMethodCallException($method)
+     66Ôûò     {
+  Ô×£  67Ôûò         throw new BadMethodCallException(sprintf(
+     68Ôûò             'Call to undefined method %s::%s()', static::class, $method
+     69Ôûò         ));
+     70Ôûò     }
+     71Ôûò }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+
+  Tests:    11 failed, 99 passed (227 assertions)
+  Duration: 4.44s
+

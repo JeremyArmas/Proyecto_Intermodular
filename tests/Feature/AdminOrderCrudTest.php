@@ -109,10 +109,11 @@ class AdminOrderCrudTest extends TestCase
     public function test_manual_order_creation_is_disabled(): void
     {
         $this->loginAsAdmin();
-
-        $response = $this->get(route('admin.orders.create'));
-
-        $response->assertRedirect(route('admin.orders.index'));
+ 
+        // Intentamos acceder a una ruta que no existe por diseño
+        $response = $this->get('/admin/orders/create');
+ 
+        $response->assertStatus(404);
     }
 
     /**

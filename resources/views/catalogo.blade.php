@@ -103,12 +103,16 @@
 
                              @if($isUpcoming)
                                 <span class="badge text-sun border-sun small" style="border: 1px solid var(--jg-sun);">Reserva</span>
-                            @elseif($game->stock > 0)
-                                <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
-                            @elseif($game->stock === 0 && $game->platform && str_contains(strtolower($game->platform->name), 'pc'))
-                                <span class="badge text-mint border-mint small"><i class="bi bi-cloud-down"></i> Versión digital</span>
+                            @elseif(auth()->guard('admin')->check() || (auth()->check() && auth()->user()->isCompany()))
+                                {{-- Solo Admin y Empresas ven el stock físico --}}
+                                @if($game->stock > 0)
+                                    <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
+                                @else
+                                    <span class="badge text-danger border-danger small">Agotado</span>
+                                @endif
                             @else
-                                <span class="badge text-danger border-danger small">Agotado</span>
+                                {{-- El resto ve disponibilidad digital --}}
+                                <span class="badge text-mint border-mint small"><i class="bi bi-cloud-down"></i> Versión digital</span>
                             @endif
 
                         </div>
