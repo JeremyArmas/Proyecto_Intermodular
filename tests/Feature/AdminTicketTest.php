@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RespondTicketMail;
@@ -18,10 +19,10 @@ class AdminTicketTest extends TestCase
      */
     public function test_admin_can_view_tickets_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         ContactMessage::factory()->count(3)->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.tickets.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.tickets.index'));
 
         $response->assertStatus(200);
         $response->assertViewHas('tickets');
@@ -32,10 +33,10 @@ class AdminTicketTest extends TestCase
      */
     public function test_admin_viewing_ticket_locks_it(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $ticket = ContactMessage::factory()->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.tickets.show', $ticket->id));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.tickets.show', $ticket->id));
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('contact_messages', [
@@ -50,14 +51,14 @@ class AdminTicketTest extends TestCase
      */
     public function test_another_admin_cannot_view_recently_locked_ticket(): void
     {
-        $admin1 = User::factory()->create(['role' => 'admin']);
-        $admin2 = User::factory()->create(['role' => 'admin']);
+        $admin1 = Administrator::factory()->create();
+        $admin2 = Administrator::factory()->create();
         $ticket = ContactMessage::factory()->create([
             'admin_id' => $admin1->id,
             'locked_at' => now(),
         ]);
 
-        $response = $this->actingAs($admin2)->get(route('admin.tickets.show', $ticket->id));
+        $response = $this->actingAs($admin2, 'admin')->get(route('admin.tickets.show', $ticket->id));
 
         $response->assertRedirect(route('admin.tickets.index'));
         $response->assertSessionHas('error');
@@ -70,10 +71,10 @@ class AdminTicketTest extends TestCase
     {
         Mail::fake();
 
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $ticket = ContactMessage::factory()->create(['status' => 'pendiente']);
 
-        $response = $this->actingAs($admin)->put(route('admin.tickets.update', $ticket->id), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.tickets.update', $ticket->id), [
             'respuesta_email' => 'Esta es una respuesta de prueba.',
         ]);
 

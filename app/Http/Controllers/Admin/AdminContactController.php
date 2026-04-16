@@ -34,7 +34,7 @@ class AdminContactController extends Controller
             }
         }
 
-        $ticket->admin_id = auth()->id(); // Se asigna el ID del admin que atiende el ticket para bloquearlo
+        $ticket->admin_id = auth()->guard('admin')->id(); // Se asigna el ID del admin que atiende el ticket para bloquearlo
         $ticket->locked_at = now();
         $ticket->save();
 
@@ -58,7 +58,7 @@ class AdminContactController extends Controller
         }
         \Illuminate\Support\Facades\Mail::to($ticket->email)->send(new \App\Mail\RespondTicketMail($request->respuesta_email));
         $ticket->status = 'finalizado';
-        $ticket->admin_id = auth()->id();
+        $ticket->admin_id = auth()->guard('admin')->id();
         $ticket->respuesta_email = $request->respuesta_email;
         $ticket->locked_at = null;
         $ticket->save();

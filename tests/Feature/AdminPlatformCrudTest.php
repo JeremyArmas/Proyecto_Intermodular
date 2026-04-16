@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 use App\Models\Platform;
 
 class AdminPlatformCrudTest extends TestCase
@@ -16,10 +17,10 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_admin_can_view_platforms_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Platform::factory()->count(3)->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.platforms.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.platforms.index'));
 
         $response->assertStatus(200);
     }
@@ -29,9 +30,9 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_admin_can_view_create_platform_form(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->get(route('admin.platforms.create'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.platforms.create'));
 
         $response->assertStatus(200);
     }
@@ -41,9 +42,9 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_admin_can_create_platform(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.platforms.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.platforms.store'), [
             'name' => 'PlayStation 5',
             'slug' => 'playstation-5',
         ]);
@@ -57,10 +58,10 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_admin_can_update_platform(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $platform = Platform::factory()->create(['name' => 'PS4', 'slug' => 'ps4']);
 
-        $response = $this->actingAs($admin)->put(route('admin.platforms.update', $platform), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.platforms.update', $platform), [
             'name' => 'PlayStation 4',
             'slug' => 'playstation-4',
         ]);
@@ -75,10 +76,10 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_admin_can_delete_platform(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $platform = Platform::factory()->create();
 
-        $response = $this->actingAs($admin)->delete(route('admin.platforms.destroy', $platform));
+        $response = $this->actingAs($admin, 'admin')->delete(route('admin.platforms.destroy', $platform));
 
         $response->assertRedirect(route('admin.platforms.index'));
         $this->assertDatabaseMissing('platforms', ['id' => $platform->id]);
@@ -89,9 +90,9 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_create_platform_requires_name(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.platforms.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.platforms.store'), [
             'name' => '',
             'slug' => 'test-slug',
         ]);
@@ -104,10 +105,10 @@ class AdminPlatformCrudTest extends TestCase
      */
     public function test_create_platform_fails_with_duplicate_slug(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Platform::factory()->create(['slug' => 'pc']);
 
-        $response = $this->actingAs($admin)->post(route('admin.platforms.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.platforms.store'), [
             'name' => 'PC Duplicado',
             'slug' => 'pc',
         ]);
@@ -124,6 +125,6 @@ class AdminPlatformCrudTest extends TestCase
 
         $response = $this->actingAs($client)->get(route('admin.platforms.index'));
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

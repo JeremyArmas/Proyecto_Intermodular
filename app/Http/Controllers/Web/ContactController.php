@@ -25,9 +25,10 @@ class ContactController extends Controller
 
     $datosValidados = $request->validate([ // Validación de los datos enviados por el cliente
         'name' => 'required|string|max:100',
-        'email' => 'required|email:rfc,dns|max:100',
+        'email' => 'required|email|max:100',
         'subject' => 'required|string|max:100',
         'message' => 'required|string|min:10|max:500',
+        'captcha' => 'required|captcha',
     ]);
 
     ContactMessage::create($datosValidados); // Se guarda el mensaje en la base de datos

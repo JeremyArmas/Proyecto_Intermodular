@@ -103,7 +103,6 @@
                     <a href="{{ route('admin.games.edit', $g) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
                     <form action="{{ route('admin.games.destroy', $g) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este juego?');">
                       @csrf
-                      
                       <!-- Usamos el método DELETE para eliminar el juego -->
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>

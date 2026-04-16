@@ -164,6 +164,15 @@
             <i class="bi bi-ticket me-1"></i> Tickets
           </button>
         </li>
+
+        <!-- Pestaña de administradores (Solo Super Admin) -->
+        @if(Auth::guard('admin')->user()->is_super_admin)
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" href="{{ route('admin.administrators.index') }}" style="color: var(--jg-sun);">
+            <i class="bi bi-shield-lock me-1"></i> Administradores
+          </a>
+        </li>
+        @endif
       </ul>
 
 
@@ -314,8 +323,7 @@
                         <td class="text-end jg-actions">
                           <a href="{{ route('admin.games.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
-                          <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                          <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
@@ -411,8 +419,7 @@
                         <td class="text-end">
                           <a href="{{ route('admin.categories.edit', $c) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
-                          <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
+                          <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
@@ -520,8 +527,7 @@
                         <td class="text-end">
                           <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
-                          <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                          <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
@@ -635,8 +641,7 @@
                         <td class="text-end">
                           <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-eye"></i></a>
-                          <form action="{{ route('admin.orders.destroy', $p) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                          <form action="{{ route('admin.orders.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i

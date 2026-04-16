@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 
 class AuthTest extends TestCase
 {
@@ -96,10 +97,9 @@ class AuthTest extends TestCase
      */
     public function test_admin_login_redirects_to_admin_panel(): void
     {
-        User::factory()->create([
+        Administrator::factory()->create([
             'email' => 'admin@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'admin',
         ]);
 
         $response = $this->post(route('login.submit'), [

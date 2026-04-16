@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 use App\Models\Category;
 
 class AdminCategoryCrudTest extends TestCase
@@ -16,10 +17,10 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_admin_can_view_categories_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Category::factory()->count(3)->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.categories.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.categories.index'));
 
         $response->assertStatus(200);
     }
@@ -29,9 +30,9 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_admin_can_view_create_category_form(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->get(route('admin.categories.create'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.categories.create'));
 
         $response->assertStatus(200);
     }
@@ -41,10 +42,10 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_admin_can_update_category(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $category = Category::factory()->create(['name' => 'Acción', 'slug' => 'accion']);
 
-        $response = $this->actingAs($admin)->put(route('admin.categories.update', $category), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.categories.update', $category), [
             'name' => 'Aventura',
             'slug' => 'aventura',
         ]);
@@ -59,10 +60,10 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_admin_can_delete_category(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($admin)->delete(route('admin.categories.destroy', $category));
+        $response = $this->actingAs($admin, 'admin')->delete(route('admin.categories.destroy', $category));
 
         $response->assertRedirect(route('admin.categories.index'));
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
@@ -73,9 +74,9 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_create_category_requires_name(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.categories.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.categories.store'), [
             'name' => '',
             'slug' => 'test-slug',
         ]);
@@ -88,9 +89,9 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_create_category_requires_slug(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.categories.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.categories.store'), [
             'name' => 'Test Category',
             'slug' => '',
         ]);
@@ -103,10 +104,10 @@ class AdminCategoryCrudTest extends TestCase
      */
     public function test_create_category_fails_with_duplicate_slug(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Category::factory()->create(['slug' => 'accion']);
 
-        $response = $this->actingAs($admin)->post(route('admin.categories.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.categories.store'), [
             'name' => 'Acción Duplicada',
             'slug' => 'accion',
         ]);
@@ -126,6 +127,6 @@ class AdminCategoryCrudTest extends TestCase
             'slug' => 'hack',
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

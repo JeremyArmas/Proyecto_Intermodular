@@ -1,0 +1,945 @@
+﻿
+   PASS  Tests\Unit\ExampleTest
+  Ô£ô that true is true
+´╗┐´╗┐
+   FAIL  Tests\Feature\AdminCategoryCrudTest
+  Ô¿» admin can view categories index                                                                              0.49s  
+  Ô¿» admin can view create category form                                                                          0.02s  
+  Ô¿» admin can update category                                                                                    0.02s  
+  Ô¿» admin can delete category                                                                                    0.02s  
+  Ô¿» create category requires name                                                                                0.02s  
+  Ô¿» create category requires slug                                                                                0.02s  
+  Ô¿» create category fails with duplicate slug                                                                    0.04s  
+  Ô¿» client cannot create category                                                                                0.03s  
+
+   PASS  Tests\Feature\AdminCrudTest
+  Ô£ô can view all indexes                                                                                         0.14s  
+  Ô£ô can create update delete category                                                                            0.04s  
+  Ô£ô can create update delete platform                                                                            0.03s  
+  Ô£ô can create update delete game                                                                                0.04s  
+
+   FAIL  Tests\Feature\AdminGameCrudExtendedTest
+  Ô¿» admin can view games index                                                                                   0.04s  
+  Ô¿» admin can view create game form                                                                              0.02s  
+  Ô¿» create game requires title                                                                                   0.02s  
+  Ô¿» create game requires price                                                                                   0.03s  
+  Ô¿» client cannot create game                                                                                    0.02s  
+  Ô¿» client cannot delete game                                                                                    0.03s  
+  Ô£ô unauthenticated user cannot access games crud                                                                0.02s  
+
+   FAIL  Tests\Feature\AdminOrderCrudTest
+  Ô¿» admin can view orders index                                                                                  0.04s  
+  Ô¿» admin can change order status to paid                                                                        0.04s  
+  Ô¿» admin can change order status to shipped                                                                     0.03s  
+  Ô¿» admin can change order status to cancelled                                                                   0.03s  
+  Ô¿» admin cannot set invalid order status                                                                        0.03s  
+  Ô¿» admin can delete order                                                                                       0.04s  
+  Ô¿» manual order creation is disabled                                                                            0.03s  
+  Ô¿» client cannot access orders crud                                                                             0.03s  
+  Ô£ô unauthenticated user cannot access orders                                                                    0.03s  
+
+   FAIL  Tests\Feature\AdminPlatformCrudTest
+  Ô¿» admin can view platforms index                                                                               0.09s  
+  Ô¿» admin can view create platform form                                                                          0.05s  
+  Ô¿» admin can create platform                                                                                    0.03s  
+  Ô¿» admin can update platform                                                                                    0.06s  
+  Ô¿» admin can delete platform                                                                                    0.03s  
+  Ô¿» create platform requires name                                                                                0.03s  
+  Ô¿» create platform fails with duplicate slug                                                                    0.03s  
+  Ô¿» client cannot access platforms crud                                                                          0.03s  
+
+   FAIL  Tests\Feature\AdminTicketTest
+  Ô¿» admin can view tickets index                                                                                 0.04s  
+  Ô¿» admin viewing ticket locks it                                                                                0.03s  
+  Ô¿» another admin cannot view recently locked ticket                                                             0.03s  
+  Ô¿» admin can respond to ticket                                                                                  0.03s  
+
+   FAIL  Tests\Feature\AdminUserCrudTest
+  Ô¿» admin can view users index                                                                                   0.03s  
+  Ô¿» admin can view create user form                                                                              0.02s  
+  Ô¿» admin can update user                                                                                        0.03s  
+  Ô¿» admin can change user role                                                                                   0.02s  
+  Ô¿» admin can delete user                                                                                        0.02s  
+  Ô¿» create user requires email                                                                                   0.02s  
+  Ô¿» create user fails with duplicate email                                                                       0.02s  
+  Ô¿» create user fails with short password                                                                        0.02s  
+  Ô¿» create user fails with password mismatch                                                                     0.03s  
+  Ô¿» create user fails with invalid role                                                                          0.02s  
+  Ô¿» client cannot access users crud                                                                              0.02s  
+
+   FAIL  Tests\Feature\AuthTest
+  Ô£ô login with valid credentials succeeds                                                                        0.05s  
+  Ô£ô login with wrong password fails                                                                              0.43s  
+  Ô£ô login with nonexistent email fails                                                                           0.42s  
+  Ô£ô login requires email                                                                                         0.02s  
+  Ô£ô login requires password                                                                                      0.03s  
+  Ô¿» admin login redirects to admin panel                                                                         0.04s  
+  Ô£ô logout works correctly                                                                                       0.03s  
+  Ô£ô get login route redirects to home                                                                            0.03s  
+
+   PASS  Tests\Feature\CartTest
+  Ô£ô user can add game to cart                                                                                    0.06s  
+  Ô£ô add to cart fails if insufficient stock                                                                      0.04s  
+  Ô£ô user can update cart item quantity                                                                           0.04s  
+  Ô£ô user can remove item from cart                                                                               0.03s  
+  Ô£ô user can clear cart                                                                                          0.02s  
+  Ô£ô adding same game twice increments quantity                                                                   0.05s  
+
+   PASS  Tests\Feature\CheckoutTest
+  Ô£ô unauthenticated user cannot checkout                                                                         0.02s  
+  Ô£ô user with empty cart is redirected back                                                                      0.02s  
+  Ô£ô success page displays correctly with session                                                                 0.03s  
+  Ô£ô cancel page is accessible                                                                                    0.03s  
+
+   PASS  Tests\Feature\CurrencyTest
+  Ô£ô middleware sets default currency                                                                             0.03s  
+  Ô£ô can switch currency                                                                                          0.02s  
+  Ô£ô cannot switch to unsupported currency                                                                        0.02s  
+  Ô£ô currency formatting                                                                                          0.02s  
+  Ô£ô reverse conversion to eur                                                                                    0.01s  
+  Ô£ô catalog price filter with usd                                                                                0.04s  
+  Ô£ô views display converted prices                                                                               0.04s  
+
+   PASS  Tests\Feature\ExampleTest
+  Ô£ô the application returns a successful response                                                                0.03s  
+
+   PASS  Tests\Feature\PublicPagesTest
+  Ô£ô home page is accessible                                                                                      0.02s  
+  Ô£ô sobre nosotros page is accessible                                                                            0.02s  
+  Ô£ô noticias page is accessible                                                                                  0.02s  
+  Ô£ô soporte page is accessible                                                                                   0.03s  
+  Ô£ô faq page is accessible                                                                                       0.03s  
+  Ô£ô contacto page is accessible                                                                                  0.03s  
+  Ô£ô login route redirects to home                                                                                0.02s  
+
+   PASS  Tests\Feature\UserProfileTest
+  Ô£ô user can view profile                                                                                        0.04s  
+  Ô£ô user can update profile                                                                                      0.02s  
+  Ô£ô user can view order history                                                                                  0.02s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > admin can view categories index                                        
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminCategoryCrudTest.php:24
+     20Ôûò         Category::factory()->count(3)->create();
+     21Ôûò 
+     22Ôûò         $response = $this->actingAs($admin)->get(route('admin.categories.index'));
+     23Ôûò 
+  Ô×£  24Ôûò         $response->assertStatus(200);
+     25Ôûò     }
+     26Ôûò 
+     27Ôûò     /**
+     28Ôûò      * Test admin puede ver el formulario de crear categor├¡a.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > admin can view create category form                                    
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminCategoryCrudTest.php:36
+     32Ôûò         $admin = User::factory()->create(['role' => 'admin']);
+     33Ôûò 
+     34Ôûò         $response = $this->actingAs($admin)->get(route('admin.categories.create'));
+     35Ôûò 
+  Ô×£  36Ôûò         $response->assertStatus(200);
+     37Ôûò     }
+     38Ôûò 
+     39Ôûò     /**
+     40Ôûò      * Test admin puede actualizar una categor├¡a.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > admin can update category                                              
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/categories'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminCategoryCrudTest.php:52
+     48Ôûò             'name' => 'Aventura',
+     49Ôûò             'slug' => 'aventura',
+     50Ôûò         ]);
+     51Ôûò 
+  Ô×£  52Ôûò         $response->assertRedirect(route('admin.categories.index'));
+     53Ôûò         $this->assertDatabaseHas('categories', ['name' => 'Aventura', 'slug' => 'aventura']);
+     54Ôûò         $this->assertDatabaseMissing('categories', ['name' => 'Acci├│n']);
+     55Ôûò     }
+     56Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > admin can delete category                                              
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/categories'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminCategoryCrudTest.php:67
+     63Ôûò         $category = Category::factory()->create();
+     64Ôûò 
+     65Ôûò         $response = $this->actingAs($admin)->delete(route('admin.categories.destroy', $category));
+     66Ôûò 
+  Ô×£  67Ôûò         $response->assertRedirect(route('admin.categories.index'));
+     68Ôûò         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+     69Ôûò     }
+     70Ôûò 
+     71Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > create category requires name                                          
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminCategoryCrudTest.php:83
+     79Ôûò             'name' => '',
+     80Ôûò             'slug' => 'test-slug',
+     81Ôûò         ]);
+     82Ôûò 
+  Ô×£  83Ôûò         $response->assertSessionHasErrors('name');
+     84Ôûò     }
+     85Ôûò 
+     86Ôûò     /**
+     87Ôûò      * Test crear categor├¡a sin slug falla con error de validaci├│n.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > create category requires slug                                          
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminCategoryCrudTest.php:98
+     94Ôûò             'name' => 'Test Category',
+     95Ôûò             'slug' => '',
+     96Ôûò         ]);
+     97Ôûò 
+  Ô×£  98Ôûò         $response->assertSessionHasErrors('slug');
+     99Ôûò     }
+    100Ôûò 
+    101Ôûò     /**
+    102Ôûò      * Test no se puede crear categor├¡a con slug duplicado.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > create category fails with duplicate slug                              
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminCategoryCrudTest.php:114
+    110Ôûò             'name' => 'Acci├│n Duplicada',
+    111Ôûò             'slug' => 'accion',
+    112Ôûò         ]);
+    113Ôûò 
+  Ô×£ 114Ôûò         $response->assertSessionHasErrors('slug');
+    115Ôûò     }
+    116Ôûò 
+    117Ôûò     /**
+    118Ôûò      * Test un cliente no puede crear categor├¡as.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminCategoryCrudTest > client cannot create category                                          
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminCategoryCrudTest.php:129
+    125Ôûò             'name' => 'Hack',
+    126Ôûò             'slug' => 'hack',
+    127Ôûò         ]);
+    128Ôûò 
+  Ô×£ 129Ôûò         $response->assertRedirect('/');
+    130Ôûò     }
+    131Ôûò }
+    132Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > admin can view games index                                         
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:26
+     22Ôûò         Game::factory()->count(3)->create();
+     23Ôûò 
+     24Ôûò         $response = $this->actingAs($admin)->get(route('admin.games.index'));
+     25Ôûò 
+  Ô×£  26Ôûò         $response->assertStatus(200);
+     27Ôûò     }
+     28Ôûò 
+     29Ôûò     /**
+     30Ôûò      * Test admin puede ver el formulario de crear juego.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > admin can view create game form                                    
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:38
+     34Ôûò         $admin = User::factory()->create(['role' => 'admin']);
+     35Ôûò 
+     36Ôûò         $response = $this->actingAs($admin)->get(route('admin.games.create'));
+     37Ôûò 
+  Ô×£  38Ôûò         $response->assertStatus(200);
+     39Ôûò     }
+     40Ôûò 
+     41Ôûò 
+     42Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > create game requires title                                         
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:59
+     55Ôûò             'platform_id' => $platform->id,
+     56Ôûò             'is_active' => 1,
+     57Ôûò         ]);
+     58Ôûò 
+  Ô×£  59Ôûò         $response->assertSessionHasErrors('title');
+     60Ôûò     }
+     61Ôûò 
+     62Ôûò     /**
+     63Ôûò      * Test crear juego sin precio falla con validaci├│n.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > create game requires price                                         
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:79
+     75Ôûò             'platform_id' => $platform->id,
+     76Ôûò             'is_active' => 1,
+     77Ôûò         ]);
+     78Ôûò 
+  Ô×£  79Ôûò         $response->assertSessionHasErrors('price');
+     80Ôûò     }
+     81Ôûò 
+     82Ôûò     /**
+     83Ôûò      * Test un cliente no puede crear juegos.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > client cannot create game                                          
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:99
+     95Ôûò             'platform_id' => $platform->id,
+     96Ôûò             'is_active' => 1,
+     97Ôûò         ]);
+     98Ôûò 
+  Ô×£  99Ôûò         $response->assertRedirect('/');
+    100Ôûò     }
+    101Ôûò 
+    102Ôûò     /**
+    103Ôûò      * Test un cliente no puede eliminar juegos.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminGameCrudExtendedTest > client cannot delete game                                          
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminGameCrudExtendedTest.php:112
+    108Ôûò         $game = Game::factory()->create();
+    109Ôûò 
+    110Ôûò         $response = $this->actingAs($client)->delete(route('admin.games.destroy', $game));
+    111Ôûò 
+  Ô×£ 112Ôûò         $response->assertRedirect('/');
+    113Ôûò         $this->assertDatabaseHas('games', ['id' => $game->id]);
+    114Ôûò     }
+    115Ôûò 
+    116Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can view orders index                                               
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminOrderCrudTest.php:24
+     20Ôûò         Order::factory()->count(3)->create();
+     21Ôûò 
+     22Ôûò         $response = $this->actingAs($admin)->get(route('admin.orders.index'));
+     23Ôûò 
+  Ô×£  24Ôûò         $response->assertStatus(200);
+     25Ôûò     }
+     26Ôûò 
+     27Ôûò 
+     28Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to paid                                     
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/orders'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:40
+     36Ôûò         $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+     37Ôûò             'status' => 'paid',
+     38Ôûò         ]);
+     39Ôûò 
+  Ô×£  40Ôûò         $response->assertRedirect(route('admin.orders.index'));
+     41Ôûò         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'paid']);
+     42Ôûò     }
+     43Ôûò 
+     44Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to shipped                                  
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/orders'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:56
+     52Ôûò         $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+     53Ôûò             'status' => 'shipped',
+     54Ôûò         ]);
+     55Ôûò 
+  Ô×£  56Ôûò         $response->assertRedirect(route('admin.orders.index'));
+     57Ôûò         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'shipped']);
+     58Ôûò     }
+     59Ôûò 
+     60Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can change order status to cancelled                                
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/orders'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:72
+     68Ôûò         $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+     69Ôûò             'status' => 'cancelled',
+     70Ôûò         ]);
+     71Ôûò 
+  Ô×£  72Ôûò         $response->assertRedirect(route('admin.orders.index'));
+     73Ôûò         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'cancelled']);
+     74Ôûò     }
+     75Ôûò 
+     76Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin cannot set invalid order status                                     
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminOrderCrudTest.php:88
+     84Ôûò         $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+     85Ôûò             'status' => 'invalid_status',
+     86Ôûò         ]);
+     87Ôûò 
+  Ô×£  88Ôûò         $response->assertSessionHasErrors('status');
+     89Ôûò         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'pending']);
+     90Ôûò     }
+     91Ôûò 
+     92Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > admin can delete order                                                    
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/orders'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:102
+     98Ôûò         $order = Order::factory()->create();
+     99Ôûò 
+    100Ôûò         $response = $this->actingAs($admin)->delete(route('admin.orders.destroy', $order));
+    101Ôûò 
+  Ô×£ 102Ôûò         $response->assertRedirect(route('admin.orders.index'));
+    103Ôûò         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+    104Ôûò     }
+    105Ôûò 
+    106Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > manual order creation is disabled                                         
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/orders'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:115
+    111Ôûò         $admin = User::factory()->create(['role' => 'admin']);
+    112Ôûò 
+    113Ôûò         $response = $this->actingAs($admin)->get(route('admin.orders.create'));
+    114Ôûò 
+  Ô×£ 115Ôûò         $response->assertRedirect(route('admin.orders.index'));
+    116Ôûò     }
+    117Ôûò 
+    118Ôûò     /**
+    119Ôûò      * Test un cliente no puede acceder al CRUD de pedidos.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminOrderCrudTest > client cannot access orders crud                                          
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminOrderCrudTest.php:127
+    123Ôûò         $client = User::factory()->create(['role' => 'client']);
+    124Ôûò 
+    125Ôûò         $response = $this->actingAs($client)->get(route('admin.orders.index'));
+    126Ôûò 
+  Ô×£ 127Ôûò         $response->assertRedirect('/');
+    128Ôûò     }
+    129Ôûò 
+    130Ôûò     /**
+    131Ôûò      * Test usuario no autenticado no puede acceder a los pedidos.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > admin can view platforms index                                         
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminPlatformCrudTest.php:24
+     20Ôûò         Platform::factory()->count(3)->create();
+     21Ôûò 
+     22Ôûò         $response = $this->actingAs($admin)->get(route('admin.platforms.index'));
+     23Ôûò 
+  Ô×£  24Ôûò         $response->assertStatus(200);
+     25Ôûò     }
+     26Ôûò 
+     27Ôûò     /**
+     28Ôûò      * Test admin puede ver el formulario de crear plataforma.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > admin can view create platform form                                    
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminPlatformCrudTest.php:36
+     32Ôûò         $admin = User::factory()->create(['role' => 'admin']);
+     33Ôûò 
+     34Ôûò         $response = $this->actingAs($admin)->get(route('admin.platforms.create'));
+     35Ôûò 
+  Ô×£  36Ôûò         $response->assertStatus(200);
+     37Ôûò     }
+     38Ôûò 
+     39Ôûò     /**
+     40Ôûò      * Test admin puede crear una plataforma.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > admin can create platform                                              
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/platforms'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminPlatformCrudTest.php:51
+     47Ôûò             'name' => 'PlayStation 5',
+     48Ôûò             'slug' => 'playstation-5',
+     49Ôûò         ]);
+     50Ôûò 
+  Ô×£  51Ôûò         $response->assertRedirect(route('admin.platforms.index'));
+     52Ôûò         $this->assertDatabaseHas('platforms', ['name' => 'PlayStation 5', 'slug' => 'playstation-5']);
+     53Ôûò     }
+     54Ôûò 
+     55Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > admin can update platform                                              
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/platforms'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminPlatformCrudTest.php:68
+     64Ôûò             'name' => 'PlayStation 4',
+     65Ôûò             'slug' => 'playstation-4',
+     66Ôûò         ]);
+     67Ôûò 
+  Ô×£  68Ôûò         $response->assertRedirect(route('admin.platforms.index'));
+     69Ôûò         $this->assertDatabaseHas('platforms', ['name' => 'PlayStation 4', 'slug' => 'playstation-4']);
+     70Ôûò         $this->assertDatabaseMissing('platforms', ['name' => 'PS4']);
+     71Ôûò     }
+     72Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > admin can delete platform                                              
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/platforms'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminPlatformCrudTest.php:83
+     79Ôûò         $platform = Platform::factory()->create();
+     80Ôûò 
+     81Ôûò         $response = $this->actingAs($admin)->delete(route('admin.platforms.destroy', $platform));
+     82Ôûò 
+  Ô×£  83Ôûò         $response->assertRedirect(route('admin.platforms.index'));
+     84Ôûò         $this->assertDatabaseMissing('platforms', ['id' => $platform->id]);
+     85Ôûò     }
+     86Ôûò 
+     87Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > create platform requires name                                          
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminPlatformCrudTest.php:99
+     95Ôûò             'name' => '',
+     96Ôûò             'slug' => 'test-slug',
+     97Ôûò         ]);
+     98Ôûò 
+  Ô×£  99Ôûò         $response->assertSessionHasErrors('name');
+    100Ôûò     }
+    101Ôûò 
+    102Ôûò     /**
+    103Ôûò      * Test crear plataforma con slug duplicado falla.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > create platform fails with duplicate slug                              
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminPlatformCrudTest.php:115
+    111Ôûò             'name' => 'PC Duplicado',
+    112Ôûò             'slug' => 'pc',
+    113Ôûò         ]);
+    114Ôûò 
+  Ô×£ 115Ôûò         $response->assertSessionHasErrors('slug');
+    116Ôûò     }
+    117Ôûò 
+    118Ôûò     /**
+    119Ôûò      * Test un cliente no puede acceder al CRUD de plataformas.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminPlatformCrudTest > client cannot access platforms crud                                    
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminPlatformCrudTest.php:127
+    123Ôûò         $client = User::factory()->create(['role' => 'client']);
+    124Ôûò 
+    125Ôûò         $response = $this->actingAs($client)->get(route('admin.platforms.index'));
+    126Ôûò 
+  Ô×£ 127Ôûò         $response->assertRedirect('/');
+    128Ôûò     }
+    129Ôûò }
+    130Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTicketTest > admin can view tickets index                                                 
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminTicketTest.php:26
+     22Ôûò         ContactMessage::factory()->count(3)->create();
+     23Ôûò 
+     24Ôûò         $response = $this->actingAs($admin)->get(route('admin.tickets.index'));
+     25Ôûò 
+  Ô×£  26Ôûò         $response->assertStatus(200);
+     27Ôûò         $response->assertViewHas('tickets');
+     28Ôûò     }
+     29Ôûò 
+     30Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTicketTest > admin viewing ticket locks it                                                
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminTicketTest.php:40
+     36Ôûò         $ticket = ContactMessage::factory()->create();
+     37Ôûò 
+     38Ôûò         $response = $this->actingAs($admin)->get(route('admin.tickets.show', $ticket->id));
+     39Ôûò 
+  Ô×£  40Ôûò         $response->assertStatus(200);
+     41Ôûò         $this->assertDatabaseHas('contact_messages', [
+     42Ôûò             'id' => $ticket->id,
+     43Ôûò             'admin_id' => $admin->id,
+     44Ôûò         ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTicketTest > another admin cannot view recently locked ticket                             
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/tickets'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminTicketTest.php:62
+     58Ôûò         ]);
+     59Ôûò 
+     60Ôûò         $response = $this->actingAs($admin2)->get(route('admin.tickets.show', $ticket->id));
+     61Ôûò 
+  Ô×£  62Ôûò         $response->assertRedirect(route('admin.tickets.index'));
+     63Ôûò         $response->assertSessionHas('error');
+     64Ôûò     }
+     65Ôûò 
+     66Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTicketTest > admin can respond to ticket                                                  
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminTicketTest.php:80
+     76Ôûò         $response = $this->actingAs($admin)->put(route('admin.tickets.update', $ticket->id), [
+     77Ôûò             'respuesta_email' => 'Esta es una respuesta de prueba.',
+     78Ôûò         ]);
+     79Ôûò 
+  Ô×£  80Ôûò         $response->assertRedirect(route('admin.panel'));
+     81Ôûò         $response->assertSessionHas('success');
+     82Ôûò 
+     83Ôûò         $this->assertDatabaseHas('contact_messages', [
+     84Ôûò             'id' => $ticket->id,
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > admin can view users index                                                 
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminUserCrudTest.php:23
+     19Ôûò         User::factory()->count(3)->create(['role' => 'client']);
+     20Ôûò 
+     21Ôûò         $response = $this->actingAs($admin)->get(route('admin.users.index'));
+     22Ôûò 
+  Ô×£  23Ôûò         $response->assertStatus(200);
+     24Ôûò     }
+     25Ôûò 
+     26Ôûò     /**
+     27Ôûò      * Test admin puede ver el formulario de crear usuario.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > admin can view create user form                                            
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\AdminUserCrudTest.php:35
+     31Ôûò         $admin = User::factory()->create(['role' => 'admin']);
+     32Ôûò 
+     33Ôûò         $response = $this->actingAs($admin)->get(route('admin.users.create'));
+     34Ôûò 
+  Ô×£  35Ôûò         $response->assertStatus(200);
+     36Ôûò     }
+     37Ôûò 
+     38Ôûò     /**
+     39Ôûò      * Test admin puede actualizar un usuario.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > admin can update user                                                      
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/users'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminUserCrudTest.php:56
+     52Ôûò             'email' => 'updated@example.com',
+     53Ôûò             'role' => 'client',
+     54Ôûò         ]);
+     55Ôûò 
+  Ô×£  56Ôûò         $response->assertRedirect(route('admin.users.index'));
+     57Ôûò         $this->assertDatabaseHas('users', [
+     58Ôûò             'id' => $user->id,
+     59Ôûò             'name' => 'Updated Name',
+     60Ôûò             'email' => 'updated@example.com',
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > admin can change user role                                                 
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/users'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminUserCrudTest.php:78
+     74Ôûò             'email' => $user->email,
+     75Ôûò             'role' => 'company',
+     76Ôûò         ]);
+     77Ôûò 
+  Ô×£  78Ôûò         $response->assertRedirect(route('admin.users.index'));
+     79Ôûò         $this->assertDatabaseHas('users', ['id' => $user->id, 'role' => 'company']);
+     80Ôûò     }
+     81Ôûò 
+     82Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > admin can delete user                                                      
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test/admin/users'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminUserCrudTest.php:92
+     88Ôûò         $user = User::factory()->create(['role' => 'client']);
+     89Ôûò 
+     90Ôûò         $response = $this->actingAs($admin)->delete(route('admin.users.destroy', $user->id));
+     91Ôûò 
+  Ô×£  92Ôûò         $response->assertRedirect(route('admin.users.index'));
+     93Ôûò         $this->assertDatabaseMissing('users', ['id' => $user->id]);
+     94Ôûò     }
+     95Ôûò 
+     96Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > create user requires email                                                 
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminUserCrudTest.php:111
+    107Ôûò             'password_confirmation' => 'password123',
+    108Ôûò             'role' => 'client',
+    109Ôûò         ]);
+    110Ôûò 
+  Ô×£ 111Ôûò         $response->assertSessionHasErrors('email');
+    112Ôûò     }
+    113Ôûò 
+    114Ôûò     /**
+    115Ôûò      * Test crear usuario con email duplicado falla.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > create user fails with duplicate email                                     
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminUserCrudTest.php:130
+    126Ôûò             'password_confirmation' => 'password123',
+    127Ôûò             'role' => 'client',
+    128Ôûò         ]);
+    129Ôûò 
+  Ô×£ 130Ôûò         $response->assertSessionHasErrors('email');
+    131Ôûò     }
+    132Ôûò 
+    133Ôûò     /**
+    134Ôûò      * Test crear usuario con contrase├▒a corta falla.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > create user fails with short password                                      
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminUserCrudTest.php:148
+    144Ôûò             'password_confirmation' => '123',
+    145Ôûò             'role' => 'client',
+    146Ôûò         ]);
+    147Ôûò 
+  Ô×£ 148Ôûò         $response->assertSessionHasErrors('password');
+    149Ôûò     }
+    150Ôûò 
+    151Ôûò     /**
+    152Ôûò      * Test crear usuario con contrase├▒as que no coinciden falla.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > create user fails with password mismatch                                   
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminUserCrudTest.php:166
+    162Ôûò             'password_confirmation' => 'different456',
+    163Ôûò             'role' => 'client',
+    164Ôûò         ]);
+    165Ôûò 
+  Ô×£ 166Ôûò         $response->assertSessionHasErrors('password');
+    167Ôûò     }
+    168Ôûò 
+    169Ôûò     /**
+    170Ôûò      * Test crear usuario con rol inv├ílido falla.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > create user fails with invalid role                                        
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AdminUserCrudTest.php:184
+    180Ôûò             'password_confirmation' => 'password123',
+    181Ôûò             'role' => 'superadmin',
+    182Ôûò         ]);
+    183Ôûò 
+  Ô×£ 184Ôûò         $response->assertSessionHasErrors('role');
+    185Ôûò     }
+    186Ôûò 
+    187Ôûò     /**
+    188Ôûò      * Test un cliente no puede acceder al CRUD de usuarios.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminUserCrudTest > client cannot access users crud                                            
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'http://proyecto_intermodular.test'
++'http://proyecto_intermodular.test/login'
+
+  at tests\Feature\AdminUserCrudTest.php:196
+    192Ôûò         $client = User::factory()->create(['role' => 'client']);
+    193Ôûò 
+    194Ôûò         $response = $this->actingAs($client)->get(route('admin.users.index'));
+    195Ôûò 
+  Ô×£ 196Ôûò         $response->assertRedirect('/');
+    197Ôûò     }
+    198Ôûò }
+    199Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AuthTest > admin login redirects to admin panel                                                
+  Unable to find JSON fragment: 
+
+[{"redirect":"http:\/\/proyecto_intermodular.test\/admin"}]
+
+within
+
+[{"redirect":"http:\/\/proyecto_intermodular.test","success":true}].
+Failed asserting that false is true.
+
+  at tests\Feature\AuthTest.php:112
+    108Ôûò         ]);
+    109Ôûò 
+    110Ôûò         $response->assertStatus(200);
+    111Ôûò         $response->assertJson(['success' => true]);
+  Ô×£ 112Ôûò         $response->assertJsonFragment(['redirect' => route('admin.panel')]);
+    113Ôûò     }
+    114Ôûò 
+    115Ôûò     /**
+    116Ôûò      * Test logout cierra la sesi├│n correctamente.
+
+
+  Tests:    46 failed, 42 passed (181 assertions)
+  Duration: 4.23s
+

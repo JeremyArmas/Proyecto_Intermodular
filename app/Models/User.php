@@ -32,21 +32,15 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // Funciones de ayuda para vistas
+    public function isAdmin() { return false; }
+    public function isCompany() { return $this->role === 'company'; }
+    public function isClient() { return $this->role === 'client'; }
+
     // Relación con el perfil de empresa
     public function companyProfile()
     {
         return $this->hasOne(CompanyProfile::class);
-    }
-
-    // Funciones de ayuda
-    public function isAdmin() { 
-        return $this->role === 'admin'; 
-    }
-    public function isCompany() { 
-        return $this->role === 'company'; 
-    }
-    public function isClient() { 
-        return $this->role === 'client'; 
     }
 
     // Relación con Pedidos
@@ -61,5 +55,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cart::class);
     }
-    
 }

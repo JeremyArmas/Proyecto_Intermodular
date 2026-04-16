@@ -118,27 +118,27 @@
       <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
         
         <!-- Carrito -->
-        @auth
+        @if($isWebActive)
           <a href="{{ route('carrito.index') }}" class="btn jg-btn jg-btn-outline position-relative" title="Ver Carrito">
         @else
           <a href="#" class="btn jg-btn jg-btn-outline position-relative" data-bs-toggle="modal" data-bs-target="#loginModal" title="Inicia sesión para ver el carrito">
-        @endauth
+        @endif
           <i class="bi bi-cart3"></i>
-          @php
-              $cartCount = 0;
-              if (auth()->check()) {
-                  $cart = auth()->user()->cart;
-                  if ($cart) {
-                      $cartCount = $cart->items()->sum('quantity');
-                  }
-              }
-          @endphp
-          @if($cartCount > 0)
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill shadow-sm" style="background-color: #ffcc00 !important; color: #000 !important; font-size: 0.75rem; font-weight: 900; border: 1px solid rgba(255,255,255,0.2);">
-              {{ $cartCount }}
-            </span>
-          @endif
-        </a>
+        @php
+            $cartCount = 0;
+            if ($isWebActive && $user) {
+                $cart = $user->cart;
+                if ($cart) {
+                    $cartCount = $cart->items()->sum('quantity');
+                }
+            }
+        @endphp
+        @if($cartCount > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill shadow-sm" style="background-color: #ffcc00 !important; color: #000 !important; font-size: 0.75rem; font-weight: 900; border: 1px solid rgba(255,255,255,0.2);">
+            {{ $cartCount }}
+          </span>
+        @endif
+      </a>
 
         <!-- Selector de Moneda -->
         <div class="dropdown">
@@ -166,46 +166,45 @@
           </ul>
         </div>
 
-        <!-- Verificar roles para mostrar opciones específicas -->
+        <!-- Verificar roles (variables ya definidas en app.blade.php) -->
         @php
-          $isAdmin = auth()->check() && auth()->user()->isAdmin();
-          $isCompany = auth()->check() && auth()->user()->isCompany();
-          $isUser = auth()->check() && auth()->user()->isClient();
+          $isCompany = $isWebActive && $user && $user->isCompany();
+          $isUser = $isWebActive && $user && $user->isClient();
         @endphp
 
         <!-- NO logueado -->
-        @guest
+        @if(!$anyAuth)
           <a class="btn jg-btn jg-btn-sun" data-bs-toggle="modal" data-bs-target="#loginModal" href="#">
             Iniciar sesión
           </a>
           <a class="btn jg-btn jg-btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" href="#">
             Crear cuenta
           </a>
-        @endguest
+        @endif
 
         <!-- Logueado -->
-        @auth
+        @if($anyAuth && $user)
           <div class="dropdown">
             <button class="btn jg-btn jg-btn-outline d-flex align-items-center gap-2 p-1 pe-3 rounded-pill" 
                     type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 
-              @if(auth()->user()->avatar)
-              <img src="{{ asset('avatars/' . auth()->user()->avatar) }}" class="rounded-circle"
+              @if($user->avatar)
+              <img src="{{ asset('avatars/' . $user->avatar) }}" class="rounded-circle"
                         style="width:32px; height:32px; object-fit:cover; border: 1px solid #ffcc00;">
               @else
               <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
                    style="width: 32px; height: 32px; background-color: #ffcc00 !important; color: #000 !important; font-weight: 900; font-size: 1rem; font-family: var(--jg-font-title);">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                {{ strtoupper(substr($user->name, 0, 1)) }}
               </div>
               @endif
 
-              <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', auth()->user()->name)[0] }}</span>
+              <span class="d-none d-sm-inline small text-white fw-bold">{{ explode(' ', $user->name)[0] }}</span>
               <i class="bi bi-chevron-down small opacity-50"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary mt-2 p-2 jg-panel" aria-labelledby="userDropdown" style="min-width: 200px;">
               <li class="px-3 py-2 border-bottom border-secondary mb-2">
                 <div class="small text-white">Sesión de:</div>
-                <div class="text-white text-truncate">{{ auth()->user()->name }}</div>
+                <div class="text-white text-truncate">{{ $user->name }}</div>
               </li>
               @if($isAdmin)
                 <li>
@@ -240,7 +239,7 @@
               </li>
             </ul>
           </div>
-        @endauth
+        @endif
 
       </div>
     </div>

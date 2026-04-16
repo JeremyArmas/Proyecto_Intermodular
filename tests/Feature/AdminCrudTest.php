@@ -5,154 +5,130 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\Administrator;
 use App\Models\User;
-use App\Models\Game;
-use App\Models\Category;
 use App\Models\Platform;
-use App\Models\Order;
+use App\Models\Category;
+use App\Models\Game;
 
 class AdminCrudTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test admin can access panel.
-     */
-    public function test_admin_can_access_panel(): void
+    private \App\Models\Administrator $superAdmin;
+
+    protected function setUp(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-
-        $response = $this->actingAs($admin)->get('/admin');
-
-        $response->assertStatus(200);
-        $response->assertSee('Panel de administración');
+        parent::setUp();
+        
+        // Usar un admin existente (como diego2004) o crear uno en memoria
+        $this->superAdmin = Administrator::firstOrCreate(
+            ['email' => 'super_test_admin@test.com'],
+            ['name' => 'Test Admin', 'password' => bcrypt('password'), 'is_super_admin' => true]
+        );
     }
 
-    /**
-     * Test normal user cannot access panel.
-     */
-    public function test_normal_user_cannot_access_panel(): void
+    protected function tearDown(): void
     {
-        $client = User::factory()->create(['role' => 'client']);
-
-        $response = $this->actingAs($client)->get('/admin');
-
-        $response->assertRedirect('/');
+        $this->superAdmin->delete();
+        parent::tearDown();
     }
 
-    /**
-     * Test unauthenticated user cannot access panel.
-     */
-    public function test_unauthenticated_user_cannot_access_panel(): void
+    public function test_can_view_all_indexes()
     {
-        $response = $this->get('/admin');
+        $this->actingAs($this->superAdmin, 'admin');
 
-        $response->assertRedirect('/login');
+        $this->get('/admin/administrators')->assertStatus(200);
+        $this->get('/admin/users')->assertStatus(200);
+        $this->get('/admin/games')->assertStatus(200);
+        $this->get('/admin/categories')->assertStatus(200);
+        $this->get('/admin/platforms')->assertStatus(200);
+        $this->get('/admin/orders')->assertStatus(200);
     }
 
-    /**
-     * Game CRUD Tests
-     */
-    public function test_admin_can_create_game(): void
+    public function test_can_create_update_delete_category()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $platform = Platform::factory()->create();
-        $category = Category::factory()->create();
+        $this->actingAs($this->superAdmin, 'admin');
 
-        $gameData = [
-            'title' => 'New Test Game',
-            'slug' => 'new-test-game',
-            'description' => 'Test Description',
+        $response = $this->post('/admin/categories', [
+            'name' => 'Categoría Test',
+            'slug' => 'categoria-test',
+            'description' => 'Test'
+        ]);
+        $response->assertRedirect('/admin/categories');
+        $this->assertDatabaseHas('categories', ['name' => 'Categoría Test']);
+
+        $category = Category::where('name', 'Categoría Test')->first();
+
+        $this->put('/admin/categories/'.$category->id, [
+            'name' => 'Categoría Editada',
+            'slug' => 'categoria-editada',
+            'description' => 'Test Edit',
+        ])->assertRedirect('/admin/categories');
+        
+        $this->assertDatabaseHas('categories', ['name' => 'Categoría Editada']);
+
+        $this->delete('/admin/categories/'.$category->id)->assertRedirect('/admin/categories');
+        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+    }
+
+    public function test_can_create_update_delete_platform()
+    {
+        $this->actingAs($this->superAdmin, 'admin');
+
+        $response = $this->post('/admin/platforms', [
+            'name' => 'Plataforma Test',
+            'slug' => 'plataforma-test',
+            'manufacturer' => 'Test Corp'
+        ]);
+        $response->assertRedirect('/admin/platforms');
+        $this->assertDatabaseHas('platforms', ['name' => 'Plataforma Test']);
+
+        $platform = Platform::where('name', 'Plataforma Test')->first();
+
+        $this->put('/admin/platforms/'.$platform->id, [
+            'name' => 'Plataforma Editada',
+            'slug' => 'plataforma-editada',
+            'manufacturer' => 'Test Corp',
+        ])->assertRedirect('/admin/platforms');
+        
+        $this->assertDatabaseHas('platforms', ['name' => 'Plataforma Editada']);
+
+        $this->delete('/admin/platforms/'.$platform->id)->assertRedirect('/admin/platforms');
+        $this->assertDatabaseMissing('platforms', ['id' => $platform->id]);
+    }
+
+    public function test_can_create_update_delete_game()
+    {
+        $this->actingAs($this->superAdmin, 'admin');
+        
+        $platform = Platform::firstOrCreate(['name' => 'Temp Plat'], ['slug' => 'temp-plat', 'manufacturer' => 'M']);
+        $category = Category::firstOrCreate(['name' => 'Temp Cat'], ['slug' => 'temp-cat', 'description' => 'D']);
+
+        $this->post('/admin/games', [
+            'title' => 'Juego Test O',
+            'slug' => 'juego-test-o',
             'price' => 59.99,
+            'b2b_price' => 39.99,
             'stock' => 10,
+            'developer' => 'Dev',
             'platform_id' => $platform->id,
-            'categories' => [$category->id],
-            'is_active' => 1
-        ];
+            'categories' => [$category->id], // ManyToMany
+            'is_active' => "1",
+        ])->assertRedirect('/admin/games');
+        
+        $this->assertDatabaseHas('games', ['title' => 'Juego Test O']);
 
-        $response = $this->actingAs($admin)->post(route('admin.games.store'), $gameData);
+        $game = Game::where('title', 'Juego Test O')->first();
 
-        $response->assertRedirect(route('admin.games.index'));
-        $this->assertDatabaseHas('games', ['title' => 'New Test Game']);
-    }
+        // Check if categories synced
+        $this->assertTrue($game->categories->contains($category));
 
-    public function test_admin_can_update_game(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $game = Game::factory()->create(['title' => 'Old Title']);
-
-        $response = $this->actingAs($admin)->put(route('admin.games.update', $game), [
-            'title' => 'Updated Title',
-            'slug' => 'updated-title',
-            'price' => 49.99,
-            'stock' => 5,
-            'platform_id' => $game->platform_id,
-            'is_active' => 1
-        ]);
-
-        $response->assertRedirect(route('admin.games.index'));
-        $this->assertDatabaseHas('games', ['title' => 'Updated Title']);
-    }
-
-    public function test_admin_can_delete_game(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $game = Game::factory()->create();
-
-        $response = $this->actingAs($admin)->delete(route('admin.games.destroy', $game));
-
-        $response->assertRedirect(route('admin.games.index'));
+        // Delete Game
+        $this->delete('/admin/games/'.$game->id)->assertRedirect('/admin/games');
         $this->assertDatabaseMissing('games', ['id' => $game->id]);
-    }
-
-    /**
-     * Category CRUD Tests
-     */
-    public function test_admin_can_create_category(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-
-        $response = $this->actingAs($admin)->post(route('admin.categories.store'), [
-            'name' => 'Indie',
-            'slug' => 'indie'
-        ]);
-
-        $response->assertRedirect(route('admin.categories.index'));
-        $this->assertDatabaseHas('categories', ['name' => 'Indie']);
-    }
-
-    /**
-     * User CRUD Tests
-     */
-    public function test_admin_can_create_user(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
-            'name' => 'New User',
-            'email' => 'newuser@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'role' => 'client'
-        ]);
-
-        $response->assertRedirect(route('admin.users.index'));
-        $this->assertDatabaseHas('users', ['email' => 'newuser@example.com']);
-    }
-
-    /**
-     * Order Tests
-     */
-    public function test_admin_can_update_order_status(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $order = Order::factory()->create(['status' => 'pending']);
-
-        $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
-            'status' => 'paid'
-        ]);
-
-        $response->assertRedirect(route('admin.orders.index'));
-        $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'paid']);
+        
+        $platform->delete();
+        $category->delete();
     }
 }

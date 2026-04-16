@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 use App\Models\Order;
 
 class AdminOrderCrudTest extends TestCase
@@ -16,10 +17,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_can_view_orders_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Order::factory()->count(3)->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.orders.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.orders.index'));
 
         $response->assertStatus(200);
     }
@@ -30,10 +31,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_can_change_order_status_to_paid(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $order = Order::factory()->create(['status' => 'pending']);
 
-        $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.orders.update', $order), [
             'status' => 'paid',
         ]);
 
@@ -46,10 +47,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_can_change_order_status_to_shipped(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $order = Order::factory()->create(['status' => 'paid']);
 
-        $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.orders.update', $order), [
             'status' => 'shipped',
         ]);
 
@@ -62,10 +63,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_can_change_order_status_to_cancelled(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $order = Order::factory()->create(['status' => 'pending']);
 
-        $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.orders.update', $order), [
             'status' => 'cancelled',
         ]);
 
@@ -78,10 +79,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_cannot_set_invalid_order_status(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $order = Order::factory()->create(['status' => 'pending']);
 
-        $response = $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.orders.update', $order), [
             'status' => 'invalid_status',
         ]);
 
@@ -94,10 +95,10 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_admin_can_delete_order(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $order = Order::factory()->create();
 
-        $response = $this->actingAs($admin)->delete(route('admin.orders.destroy', $order));
+        $response = $this->actingAs($admin, 'admin')->delete(route('admin.orders.destroy', $order));
 
         $response->assertRedirect(route('admin.orders.index'));
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
@@ -108,9 +109,9 @@ class AdminOrderCrudTest extends TestCase
      */
     public function test_manual_order_creation_is_disabled(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->get(route('admin.orders.create'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.orders.create'));
 
         $response->assertRedirect(route('admin.orders.index'));
     }
@@ -124,7 +125,7 @@ class AdminOrderCrudTest extends TestCase
 
         $response = $this->actingAs($client)->get(route('admin.orders.index'));
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 
     /**

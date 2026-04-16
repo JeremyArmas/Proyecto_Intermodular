@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 
 class AdminUserCrudTest extends TestCase
 {
@@ -15,10 +16,10 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_admin_can_view_users_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         User::factory()->count(3)->create(['role' => 'client']);
 
-        $response = $this->actingAs($admin)->get(route('admin.users.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.index'));
 
         $response->assertStatus(200);
     }
@@ -28,9 +29,9 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_admin_can_view_create_user_form(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->get(route('admin.users.create'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.create'));
 
         $response->assertStatus(200);
     }
@@ -40,14 +41,14 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_admin_can_update_user(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $user = User::factory()->create([
             'name' => 'Original Name',
             'email' => 'original@example.com',
             'role' => 'client',
         ]);
 
-        $response = $this->actingAs($admin)->put(route('admin.users.update', $user->id), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.users.update', $user->id), [
             'name' => 'Updated Name',
             'email' => 'updated@example.com',
             'role' => 'client',
@@ -66,10 +67,10 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_admin_can_change_user_role(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $user = User::factory()->create(['role' => 'client']);
 
-        $response = $this->actingAs($admin)->put(route('admin.users.update', $user->id), [
+        $response = $this->actingAs($admin, 'admin')->put(route('admin.users.update', $user->id), [
             'name' => $user->name,
             'email' => $user->email,
             'role' => 'company',
@@ -84,10 +85,10 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_admin_can_delete_user(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $user = User::factory()->create(['role' => 'client']);
 
-        $response = $this->actingAs($admin)->delete(route('admin.users.destroy', $user->id));
+        $response = $this->actingAs($admin, 'admin')->delete(route('admin.users.destroy', $user->id));
 
         $response->assertRedirect(route('admin.users.index'));
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
@@ -98,9 +99,9 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_create_user_requires_email(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.users.store'), [
             'name' => 'Test User',
             'email' => '',
             'password' => 'password123',
@@ -116,10 +117,10 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_create_user_fails_with_duplicate_email(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         User::factory()->create(['email' => 'existing@example.com']);
 
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.users.store'), [
             'name' => 'Test User',
             'email' => 'existing@example.com',
             'password' => 'password123',
@@ -135,9 +136,9 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_create_user_fails_with_short_password(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.users.store'), [
             'name' => 'Test User',
             'email' => 'newuser@example.com',
             'password' => '123',
@@ -153,9 +154,9 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_create_user_fails_with_password_mismatch(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.users.store'), [
             'name' => 'Test User',
             'email' => 'newuser@example.com',
             'password' => 'password123',
@@ -171,9 +172,9 @@ class AdminUserCrudTest extends TestCase
      */
     public function test_create_user_fails_with_invalid_role(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.users.store'), [
             'name' => 'Test User',
             'email' => 'newuser@example.com',
             'password' => 'password123',
@@ -193,6 +194,6 @@ class AdminUserCrudTest extends TestCase
 
         $response = $this->actingAs($client)->get(route('admin.users.index'));
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Administrator;
 use App\Models\Game;
 use App\Models\Platform;
 use App\Models\Category;
@@ -18,10 +19,10 @@ class AdminGameCrudExtendedTest extends TestCase
      */
     public function test_admin_can_view_games_index(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         Game::factory()->count(3)->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.games.index'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.games.index'));
 
         $response->assertStatus(200);
     }
@@ -31,9 +32,9 @@ class AdminGameCrudExtendedTest extends TestCase
      */
     public function test_admin_can_view_create_game_form(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
 
-        $response = $this->actingAs($admin)->get(route('admin.games.create'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.games.create'));
 
         $response->assertStatus(200);
     }
@@ -44,10 +45,10 @@ class AdminGameCrudExtendedTest extends TestCase
      */
     public function test_create_game_requires_title(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $platform = Platform::factory()->create();
 
-        $response = $this->actingAs($admin)->post(route('admin.games.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.games.store'), [
             'title' => '',
             'slug' => 'test-game',
             'price' => 59.99,
@@ -64,10 +65,10 @@ class AdminGameCrudExtendedTest extends TestCase
      */
     public function test_create_game_requires_price(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = Administrator::factory()->create(['is_super_admin' => true]);
         $platform = Platform::factory()->create();
 
-        $response = $this->actingAs($admin)->post(route('admin.games.store'), [
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.games.store'), [
             'title' => 'Test Game',
             'slug' => 'test-game',
             'price' => '',
@@ -96,7 +97,7 @@ class AdminGameCrudExtendedTest extends TestCase
             'is_active' => 1,
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 
     /**
@@ -109,7 +110,7 @@ class AdminGameCrudExtendedTest extends TestCase
 
         $response = $this->actingAs($client)->delete(route('admin.games.destroy', $game));
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
         $this->assertDatabaseHas('games', ['id' => $game->id]);
     }
 
