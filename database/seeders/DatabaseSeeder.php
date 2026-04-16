@@ -44,7 +44,19 @@ class DatabaseSeeder extends Seeder
             $platModels[$plat['slug']] = Platform::firstOrCreate(['slug' => $plat['slug']], ['name' => $plat['name']]);
         }
 
-        // 4. CREAR USUARIOS (Clientes y Empresas)
+        // 3. CREAR USUARIOS
+        User::firstOrCreate(['email' => 'admin@gamezone.com'], [
+            'name' => 'Administrador',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+
+        User::firstOrCreate(['email' => 'jediga.s.a@gmail.com'], [
+            'name' => 'Administrador Jediga',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+
         User::firstOrCreate(['email' => 'cliente@gmail.com'], [
             'name' => 'Juan Cliente',
             'password' => Hash::make('password'),
@@ -63,7 +75,6 @@ class DatabaseSeeder extends Seeder
             'phone' => '+34 912 345 678',
             'address' => 'Calle Industria 45, Madrid',
         ]);
-
         // 4. CREAR JUEGOS (Catálogo Premium de Jere)
         $games = [
             [
@@ -95,7 +106,7 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Oddworld: Soulstorm',
                 'slug' => 'oddworld-soulstorm-pc',
-                'description' => 'Sumérgete en una aventura de plataformas y acción en 2.5D con una narrativa apasionante y gráficos impresionantes. Abe, un paria Mudokon, se embarca en una misión desesperada para liberar a sus congéneres de la esclavitud en una aventura llena de peligros, acertijos y acción trepidante.',
+                'description' => 'Sumérgete en una aventura de plataformas y acción en 2.5D con una narrativa apasionante y gráficos impresionantes.',
                 'price' => 59.99,
                 'b2b_price' => 42.00,
                 'stock' => 60,
@@ -108,7 +119,7 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Knockout City',
                 'slug' => 'knockout-city-xbox',
-                'description' => 'Un juego de deportes multijugador donde los jugadores compiten en emocionantes partidas de dodgeball con power-ups y habilidades especiales.',
+                'description' => 'Un juego de deportes multijugador donde los jugadores compiten en emocionantes partidas de dodgeball.',
                 'price' => 29.99,
                 'b2b_price' => 20.00,
                 'stock' => 150,
@@ -122,7 +133,7 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Kena: Bridge of Spirits',
                 'slug' => 'kena-bridge-of-spirits-ps5',
-                'description' => 'Una aventura de acción y plataformas en tercera persona donde los jugadores controlan a Kena, una joven guía espiritual que viaja a un mundo abandonado para ayudar a los espíritus atrapados a encontrar la paz.',
+                'description' => 'Una aventura de acción y plataformas en tercera persona donde los jugadores controlan a Kena, una joven guía espiritual.',
                 'price' => 11.99,
                 'b2b_price' => 8.00,
                 'stock' => 80,
@@ -306,7 +317,6 @@ class DatabaseSeeder extends Seeder
         ];
 
         // 5. CREAR NOTICIAS
-
         $noticias = [
             [
             'title' => 'Sección de Noticias',
@@ -330,9 +340,6 @@ class DatabaseSeeder extends Seeder
         });
 
         foreach ($games as $gameData) {
-
-            // updateOrCreate: crea o actualiza el juego según el slug.
-            // Así el trailer_url y release_date siempre se aplican
             $game = Game::updateOrCreate(
                 ['slug' => $gameData['slug']],
                 [
@@ -349,7 +356,6 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            // Asocia las categorías al juego (asegurando que existan)
             $categoryIds = Category::whereIn('name', $gameData['categories'])->pluck('id')->toArray();
             $game->categories()->sync($categoryIds);
         }

@@ -35,61 +35,47 @@
         <div class="swiper jg-hero-swiper">
         <div class="swiper-wrapper">
 
-          <!-- Slide 1 -->  
+          <!-- SLIDES DEL HERO: Cada slide contiene un trailer de YouTube y una imagen de cobertura que se desvanece suavemente -->
           @foreach($heroSlides as $s)
             <div class="hero-video swiper-slide">
-
-              <!-- Contenedor para el efecto Fundido (Fade) de Imagen a Vídeo -->
-              <div class="hero-media-wrapper">
-                <!-- Vídeo de fondo: iframe de YouTube en modo silenciado y sin controles -->
-                @if(!empty($s['youtube_id']))
-                  <iframe
-                    class="jg-hero-vid"
-                    data-src="https://www.youtube.com/embed/{{ $s['youtube_id'] }}?autoplay=1&mute=1&controls=0&rel=0&showinfo=0&modestbranding=1&playsinline=1"
-                    src=""
-                    allow="autoplay; encrypted-media"
-                    style="pointer-events: none; border: none;"
-                    title="Trailer {{ $s['game']['title'] }}"
-                  ></iframe>
-                @else
-                  {{-- Sin trailer: fondo sólido coloreado --}}
-                  <div class="jg-hero-vid" style="background: linear-gradient(135deg, var(--jg-bg2), var(--jg-bg));"></div>
+              
+              <!-- Contenedor de media: Iframe para YouTube + Imagen de portada (Fade Effect) -->
+              <div class="jg-hero-media-wrapper">
+                @if(!empty($s['game']['youtube_id']))
+                  <iframe class="jg-hero-vid" 
+                    data-src="https://www.youtube.com/embed/{{ $s['game']['youtube_id'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['game']['youtube_id'] }}&rel=0&modestbranding=1" 
+                    frameborder="0" allow="autoplay; encrypted-media" 
+                    allowfullscreen></iframe>
                 @endif
-                
-                <!-- La imagen de cubierta (encima, que luego desaparece con fadeImageToVideo) -->
+
                 @if(!empty($s['game']['cover_image']))
-                  <img class="jg-hero-img" src="{{ asset('storage/' . $s['game']['cover_image']) }}" alt="{{ $s['game']['title'] }}">
-                @else
-                  <div class="jg-hero-img" style="background: var(--jg-bg2);"></div>
+                   <img class="jg-hero-img" 
+                     src="{{ asset('storage/' . $s['game']['cover_image']) }}" 
+                     alt="{{ $s['game']['title'] }}">
                 @endif
               </div>
 
-
-              <!-- Contenido encima del video/imagen -->
+              <!-- Contenido informativo del slide -->
               <div class="hero-video-content">
                 <div class="jg-pill mb-3">
                   <span class="jg-dot"></span>
                   <span>{{ $s['pill'] }}</span>
                 </div>
 
-                <!-- Badges (etiquetas) del juego, como el género o el estado (nuevo, exclusivo, etc.) -->
                 <div class="d-flex flex-wrap gap-2 mb-3">
                   <span class="badge badge-soft">{{ $s['game']['tag'] }}</span>
                   <span class="badge {{ $s['badgeClass'] }}">{{ $s['badgeText'] }}</span>
                 </div>
 
-                <!-- Título del juego destacado -->
                 <h1 class="jg-hero-title display-6 mb-2">
                   {{ $s['game']['title'] }}
                 </h1>
 
-                <!-- Descripción del juego destacado, con un texto secundario más pequeño debajo -->
                 <p class="jg-hero-desc mb-4" style="max-width: 62ch;">
                   {{ $s['game']['desc'] }}
                   <span class="jg-hero-desc2 d-block mt-1">{{ $s['desc2'] }}</span>
                 </p>
 
-                <!-- Botones de acción para el juego destacado, como "Ver ficha", "Comprar ahora", etc. -->
                 <div class="d-flex flex-wrap gap-2">
                   <a class="btn jg-btn {{ $s['primary']['class'] }}" href="{{ $s['primary']['href'] }}">
                     {{ $s['primary']['text'] }}
@@ -232,7 +218,7 @@
         </div>
 
         <!-- Enlace a ver todos los juegos de esta sección, con un icono de flecha a la derecha. -->
-        <a class="jg-link-muted" href="{{ url('/catalogo?price_max=0') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
+        <a class="jg-link-muted" href="{{ url('/catalogo?price=free') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
       </div>
 
       <!-- Lista de juegos destacados en esta sección -->
