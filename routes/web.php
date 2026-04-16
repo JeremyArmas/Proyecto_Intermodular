@@ -41,6 +41,12 @@ Route::get('/noticias/{id}', function($id) {
 //Ruta a soporte
 Route::get('/soporte', function() {return view('soporte'); });
 
+//Ruta del gestión de cuentas (accecible desde el soporte)
+Route::get('/soporte/gestion-cuentas', function() {return view('gestion-cuentas'); })-> name('soporte.gestion-cuentas');
+
+//Ruta de Técnico/Juegos (accecible desde el soporte)
+Route::get('/soporte/tecnico-juegos', function() {return view('tecnico-juegos'); })-> name('soporte.tecnico-juegos');
+
 //Ruta a FAQ
 Route::get('/faq', function() {return view('faq'); });
 

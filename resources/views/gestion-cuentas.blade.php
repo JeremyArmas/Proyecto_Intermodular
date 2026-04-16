@@ -5,8 +5,8 @@
 @section('content')
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4">Preguntas <span class="jg-sun">Frecuentes</span></h1>
-        <p class="text-white">Despeja tus dudas sobre compras, devoluciones y soporte.</p>
+        <h1 class="display-4 jg-sun">Gestion de Cuentas</h1>
+        <p class="text-white">Despeja tus dudas sobre como loguearte en la web y todo lo relacionado con tu cuenta.</p>
     </div>
 
     <div class="row justify-content-center">
@@ -14,10 +14,10 @@
             <div class="accordion accordion-dark" id="accordionFAQ">
                 @php
                     $faqs = [
-                        ['q' => '¿Cómo puedo comprar un juego?', 'a' => 'Solo necesitas registrarte, añadir el juego a tu carrito y procesar el pago desde tu perfil.'],
-                        ['q' => '¿Qué métodos de pago aceptáis?', 'a' => 'Aceptamos tarjetas de crédito/débito, PayPal y métodos locales para usuarios en Canarias.'],
-                        ['q' => '¿Tengo soporte técnico garantizado?', 'a' => 'Sí, todos los juegos adquiridos en Jediga cuentan con soporte directo del equipo o del desarrollador.'],
-                        ['q' => '¿Puedo solicitar un reembolso?', 'a' => 'Sí, siempre que no hayas jugado más de 2 horas y la compra sea reciente (menos de 14 días).'],
+                        ['q' => '¿No puedo comprar juegos sin cuenta?', 'a' => 'No, no puedes comprar juegos sin cuenta. Debes registrarte para poder comprar juegos.'],
+                        ['q' => '¿He olvidado mi contraseña?', 'a' => 'Al intentar iniciar sesion, pulsa en "¿Has olvidado tu contraseña?" y sigue los pasos para restablecerla.'],
+                        ['q' => '¿Puedo personalizar mi perfil?', 'a' => 'Sí, puedes personalizar tu perfil desde la sección "Mi Perfil" en tu cuenta.'],
+                        ['q' => '¿Puedo comprar juegos en físicos?', 'a' => 'No, no puedes comprar juegos en físicos. Todos los juegos son digitales ( A menos que seas una empresa , en ese caso , contacta con nosotros).'],
                     ];
                 @endphp
 

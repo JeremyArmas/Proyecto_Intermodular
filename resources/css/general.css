@@ -738,3 +738,16 @@ input[type="number"]::-webkit-outer-spin-button {
   background-color: var(--jg-sun);
   color: #000;
 }
+
+
+/* =========================================================
+   17) ACORDEONES (FAQ / SOPORTE)
+   - Correción de flechas y bordes en los acordeones oscuros.
+   ========================================================= */
+.accordion-button::after { 
+    filter: invert(1); 
+}
+.accordion-item:first-of-type, 
+.accordion-item:last-of-type { 
+    border-radius: 1rem !important; 
+}

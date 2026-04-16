@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'FAQ - Jediga')
+@section('title', 'Técnico/Juegos - Jediga')
 
 @section('content')
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4">Preguntas <span class="jg-sun">Frecuentes</span></h1>
-        <p class="text-white">Despeja tus dudas sobre compras, devoluciones y soporte.</p>
+        <h1 class="display-4 jg-sun">Técnico/Juegos</h1>
+        <p class="text-white">Despeja tus dudas sobre errores de intslación , fallos o problemas de hardware.</p>
     </div>
 
     <div class="row justify-content-center">
@@ -14,10 +14,10 @@
             <div class="accordion accordion-dark" id="accordionFAQ">
                 @php
                     $faqs = [
-                        ['q' => '¿Cómo puedo comprar un juego?', 'a' => 'Solo necesitas registrarte, añadir el juego a tu carrito y procesar el pago desde tu perfil.'],
-                        ['q' => '¿Qué métodos de pago aceptáis?', 'a' => 'Aceptamos tarjetas de crédito/débito, PayPal y métodos locales para usuarios en Canarias.'],
-                        ['q' => '¿Tengo soporte técnico garantizado?', 'a' => 'Sí, todos los juegos adquiridos en Jediga cuentan con soporte directo del equipo o del desarrollador.'],
-                        ['q' => '¿Puedo solicitar un reembolso?', 'a' => 'Sí, siempre que no hayas jugado más de 2 horas y la compra sea reciente (menos de 14 días).'],
+                        ['q' => '¿Por que no se me instala el juego?', 'a' => 'Asegurate de tener espacio suficiente en tu disco duro y de tener una conexión a internet estable.'],
+                        ['q' => '¿Por que me da fallos el juego?', 'a' => 'Asegurate de tener los drivers de tu tarjeta grafica actualizados y de tener una conexión a internet estable.'],
+                        ['q' => 'No se me guardan las partidas', 'a' => 'Comprueba que la carpeta de guardado no este en modo solo lectura.'],
+                        ['q' => 'El juego me va muy lento', 'a' => 'Comprueba que tu tarjeta grafica sea compatible con el juego y que tengas los drivers actualizados.'],
                     ];
                 @endphp
 

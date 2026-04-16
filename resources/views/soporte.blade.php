@@ -15,7 +15,7 @@
                         <i class="bi bi-person-badge text-sun display-6 mb-3"></i>
                         <h5>Gestión de Cuenta</h5>
                         <p class="small">Problemas con el login, recuperación de contraseña o cambio de datos personales.</p>
-                        <a href="#" class="btn btn-outline-light btn-sm">Ver guías</a>
+                        <a href="{{ route('soporte.gestion-cuentas') }}" class="btn btn-outline-light btn-sm">Ver guías</a>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -23,7 +23,7 @@
                         <i class="bi bi-controller text-sun display-6 mb-3"></i>
                         <h5>Técnico / Juegos</h5>
                         <p class="small">Errores de instalación, fallos en partida o configuración de hardware.</p>
-                        <a href="#" class="btn btn-outline-light btn-sm">Ver guías</a>
+                        <a href="{{ route('soporte.tecnico-juegos') }}" class="btn btn-outline-light btn-sm">Ver guías</a>
                     </div>
                 </div>
             </div>
