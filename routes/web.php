@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\Api\AuthController;
 
 
 //Ruta del home principal
@@ -64,7 +65,7 @@ Route::post('/contacto', [ContactController::class, 'store'])->name('contacto.st
 //Rutas del login y logout
 Route::get('/login', function () {return redirect()->route('home');})->name('login');
 Route::post('/login', [WebAuthController::class, 'login'])->name('login.submit');
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar
@@ -189,12 +190,13 @@ Route::middleware(['auth:admin', 'is_admin'])->prefix('admin')->name('admin.')->
     // Noticias con permisos granulares
     Route::middleware('permission:news.view')->group(function() {
         Route::get('news', [NewsController::class, 'index'])->name('news.index');
-        Route::get('news/{news}', [NewsController::class, 'show'])->name('news.show');
+        
     });
     Route::middleware('permission:news.create')->group(function() {
         Route::get('news/create', [NewsController::class, 'create'])->name('news.create');
         Route::post('news', [NewsController::class, 'store'])->name('news.store');
     });
+    Route::middleware('permission:news.view')->get('news/{news}', [NewsController::class, 'show'])->name('news.show');
     Route::middleware('permission:news.update')->group(function() {
         Route::get('news/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
         Route::put('news/{news}', [NewsController::class, 'update'])->name('news.update');

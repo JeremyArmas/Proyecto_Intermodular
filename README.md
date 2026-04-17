@@ -5,6 +5,7 @@ Si clonas el proyecto desde cero en un nuevo entorno:
 
 composer install          # Instala dependencias de PHP
 npm install               # Instala dependencias de JavaScript
+npm audit fix             # Soluciona vulnerabilidades de seguridad
 cp .env.example .env      # Crea tu archivo de entorno
 php artisan key:generate  # Genera la clave de seguridad de la aplicación
 php artisan storage:link  # Crea el enlace simbólico para imágenes
