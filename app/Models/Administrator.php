@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Wishlist;
 
 class Administrator extends Authenticatable
 {
@@ -33,6 +34,14 @@ class Administrator extends Authenticatable
     public function isCompany() { return false; }
     public function isClient() { return false; }
     public function getCartAttribute() { return null; }
+
+    /**
+     * Relación con la wishlist (lista de deseos del administrador).
+     */
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class, 'administrator_id');
+    }
 
     /**
      * Relación con permisos.

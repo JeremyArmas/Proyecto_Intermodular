@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -27,7 +28,7 @@ class CartController extends Controller
      */
     public function add(Request $request)
     {
-        \Log::info('Petición para añadir al carrito:', $request->all());
+        Log::info('Petición para añadir al carrito:', $request->all());
 
         $request->validate([
             'game_id' => 'required|exists:games,id',
@@ -44,13 +45,13 @@ class CartController extends Controller
         $cartItem = $cart->items()->where('game_id', $game->id)->first();
         $currentQuantity = $cartItem ? $cartItem->quantity : 0;
         $totalRequested = $currentQuantity + $quantityToAdd;
-        if (auth()->user()->isClient() && $cartItem) {
+        if ($this->resolveUser()->isClient() && $cartItem) {
             return back()->with('error', "Ya tienes este juego en el carrito.");
         }
 
         // 3. Validar Stock
-        if (auth()->user()->isCompany() && $game->stock < $totalRequested) {
-            \Log::warning('Intento de añadir al carrito fallido por stock insuficiente', ['game_id' => $game->id, 'requested' => $totalRequested, 'stock' => $game->stock]);
+        if ($this->resolveUser()->isCompany() && $game->stock < $totalRequested) {
+            Log::warning('Intento de añadir al carrito fallido por stock insuficiente', ['game_id' => $game->id, 'requested' => $totalRequested, 'stock' => $game->stock]);
             return back()->with('error', "No hay suficiente stock disponible para {$game->title}. Máximo disponible: {$game->stock}");
         }
 
@@ -78,7 +79,7 @@ class CartController extends Controller
         $game = $cartItem->game;
 
         // Validar Stock
-        if (auth()->user()->isCompany() && $game->stock < $request->quantity) {
+        if ($this->resolveUser()->isCompany() && $game->stock < $request->quantity) {
             return redirect()->route('carrito.index')->with('error', "No hay suficiente stock para {$game->title}. Disponible: {$game->stock}");
         }
 
@@ -116,7 +117,7 @@ class CartController extends Controller
      */
     private function getCart()
     {
-        return Cart::where('user_id', auth()->id())->first();
+        return Cart::where('user_id', $this->resolveUser()->id)->first();
     }
 
     /**
@@ -124,6 +125,14 @@ class CartController extends Controller
      */
     private function getOrCreateCart()
     {
-        return Cart::firstOrCreate(['user_id' => auth()->id()]);
+        return Cart::firstOrCreate(['user_id' => $this->resolveUser()->id]);
+    }
+
+    /**
+     * Resuelve el usuario autenticado ya sea por el guard 'web' o 'admin'.
+     */
+    private function resolveUser()
+    {
+        return auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     }
 }

@@ -22,7 +22,7 @@ class CheckoutController extends Controller
      */
     public function createSession(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->resolveUser();
         $cart = Cart::where('user_id', $user->id)->first();
 
         // Verifica que el carrito no esté vacío
@@ -150,7 +150,7 @@ class CheckoutController extends Controller
             }
 
             // Si llegamos aquí: El pago se completó y no existe el order. Procedemos a crearlo.
-            $user = auth()->user();
+            $user = $this->resolveUser();
             $cart = Cart::where('user_id', $user->id)->first();
 
             // Si por alguna razón el carrito ya está vacío, buscamos la orden por sesión
@@ -243,5 +243,12 @@ class CheckoutController extends Controller
     {
         // Simple redirección al carrito con un mensaje
         return view('checkout.cancel');
+    }
+    /**
+     * Resuelve el usuario autenticado ya sea por el guard 'web' o 'admin'.
+     */
+    private function resolveUser()
+    {
+        return auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     }
 }

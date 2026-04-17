@@ -20,7 +20,7 @@ class WishlistController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        $user = $this->resolveUser();
         $isAdmin = $user instanceof Administrator;
         $column = $isAdmin ? 'administrator_id' : 'user_id';
         
@@ -64,7 +64,7 @@ class WishlistController extends Controller
             'game_id' => 'required|exists:games,id',
         ]);
 
-        $user = Auth::user();
+        $user = $this->resolveUser();
         $isAdmin = $user instanceof Administrator;
         $column = $isAdmin ? 'administrator_id' : 'user_id';
         
@@ -117,7 +117,7 @@ class WishlistController extends Controller
      */
     public function destroy(Wishlist $wishlist)
     {
-        $user = Auth::user();
+        $user = $this->resolveUser();
         $isAdmin = $user instanceof Administrator;
         $authorized = $isAdmin ? ($wishlist->administrator_id === $user->id) : ($wishlist->user_id === $user->id);
 
@@ -136,7 +136,7 @@ class WishlistController extends Controller
      */
     public function moveToCart(Wishlist $wishlist)
     {
-        $user = Auth::user();
+        $user = $this->resolveUser();
         
         // Los administradores no tienen carrito en esta implementación
         if ($user instanceof Administrator) {
@@ -173,5 +173,13 @@ class WishlistController extends Controller
 
         return redirect()->route('carrito.index')
             ->with('success', '¡El juego ha sido movido al carrito!');
+    }
+
+    /**
+     * Resuelve el usuario autenticado ya sea por el guard 'web' o 'admin'.
+     */
+    private function resolveUser()
+    {
+        return auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     }
 }

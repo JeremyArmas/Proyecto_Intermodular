@@ -6,6 +6,8 @@
 <div class="container py-5">
     @php
         $isUpcoming = $game->release_date && $game->release_date->isFuture();
+        // Resuelve el usuario autenticado sea cual sea el guard (web o admin)
+        $currentUser = auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     @endphp
     
     <div class="row g-4">
@@ -109,7 +111,7 @@
             <div class="card jg-card p-4 rounded-4 text-white border-0 sticky-top" style="top: 100px;">
                 <div class="mb-4">
                     <h4 class="jg-muted small text-uppercase mb-2">{{ $isUpcoming ? 'Reservar Hoy' : 'Comprar Hoy' }}</h4>
-                    <div class="display-4 fw-bold text-sun mb-1">{{ \App\Services\CurrencyService::format($game->getPriceForUser(auth()->user())) }}</div>
+                    <div class="display-4 fw-bold text-sun mb-1">{{ \App\Services\CurrencyService::format($game->getPriceForUser($currentUser)) }}</div>
                     <div class="text-mint small">
                         @if($isUpcoming)
                             <i class="bi bi-calendar-date me-1"></i> Lanzamiento: {{ $game->release_date->format('d/m/Y') }}
@@ -125,11 +127,11 @@
                     </div>
                 @endif
 
-                @if(auth()->check())
+                @if($currentUser)
                     <form action="{{ route('carrito.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="game_id" value="{{ $game->id }}"> <!-- Enviamos el ID del juego al carrito de forma invisible, y si el usuario está conectado y es una Empresa, le mostramos el desplegable para que elija cuántas cajas físicas quiere comprar (hasta un máximo de 10). -->
-                        @if(auth()->check() && auth()->user()->isCompany())
+                        @if($currentUser->isCompany())
                         <div class="mb-3">
                             <label class="form-label small text-white opacity-75">Seleccionar Cantidad</label>
                             <select name="quantity" class="form-select bg-dark text-white border-secondary mb-3" {{ $game->stock <= 0 ? 'disabled' : '' }}>
@@ -148,10 +150,10 @@
                             </button>
                         @else
                         @php //Sirve para bloquear el botón de compra a las Empresas cuando el stock físico llega a cero, pero permitiendo que los usuarios normales sigan comprando la versión digital sin importar el stock.
-                        $ifDisabledForCompany = auth()->check() && auth()->user()->isCompany() && $game->stock <= 0;
+                        $ifDisabledForCompany = $currentUser->isCompany() && $game->stock <= 0;
                         @endphp 
                             <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg mb-3 shadow {{ $ifDisabledForCompany ? 'disabled' : '' }}">
-                                <i class="bi bi-cart-plus-fill me-2"></i> {{ auth()->check() && auth()->user()->isCompany() ? 'Compra las copias físicas' : 'Compra la versión digital' }}
+                                <i class="bi bi-cart-plus-fill me-2"></i> {{ $currentUser->isCompany() ? 'Compra las copias físicas' : 'Compra la versión digital' }}
                             </button> <!-- Botón que cambia de nombre dependiendo de si eres empresa o usuario normal, y que se bloquea automáticamente si las empresas intentan comprar sin stock. -->
                         @endif
                     </form>
@@ -168,10 +170,10 @@
                 @endif
                 
                 @php
-                    $inWishlist = auth()->check() && auth()->user()->wishlist()->where('game_id', $game->id)->exists();
+                    $inWishlist = $currentUser && $currentUser->wishlist()->where('game_id', $game->id)->exists();
                 @endphp
 
-                @if(auth()->check())
+                @if($currentUser)
                     <form id="wishlistForm" action="{{ route('wishlist.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="game_id" value="{{ $game->id }}">

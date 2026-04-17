@@ -71,7 +71,7 @@ Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 Route::get('/reload-captcha', function () {return response()->json(['captcha' => captcha_img('flat'),]);})->name('captcha.reload');
 
 // Rutas del Carrito (Página completa) - Requiere Autenticación
-Route::middleware('auth')->prefix('carrito')->name('carrito.')->group(function () {
+Route::middleware('auth:web,admin')->prefix('carrito')->name('carrito.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add', [CartController::class, 'add'])->name('add');
     Route::put('/update/{id}', [CartController::class, 'update'])->name('update');
@@ -80,7 +80,7 @@ Route::middleware('auth')->prefix('carrito')->name('carrito.')->group(function (
 });
 
 // Rutas de Checkout (Stripe)
-Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function () {
+Route::middleware('auth:web,admin')->prefix('checkout')->name('checkout.')->group(function () {
     Route::post('/session', [CheckoutController::class, 'createSession'])->name('session');
     Route::get('/success', [CheckoutController::class, 'success'])->name('success');
     Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('cancel');
