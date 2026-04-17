@@ -35,7 +35,7 @@ class RespondTicketMail extends Mailable
     public function content(): Content // Se especifica la vista que se utilizará para el contenido del email y se le pasa la respuesta del admin para que se muestre en el email.
     {
         return new Content(
-            view: 'emails.respuesta-ticket',
+            markdown: 'emails.respuesta-ticket',
             with: [ 'respuesta' => $this->respuesta ],
         );
     }
