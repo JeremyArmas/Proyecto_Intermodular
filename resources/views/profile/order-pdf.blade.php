@@ -11,7 +11,7 @@
     <h1>Comprobante de Pedido #{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}</h1>
     <div class="header-info">
         <p style="margin: 0;"><strong>Fecha:</strong> {{ $order->created_at->format('d/m/Y - H:i') }}</p>
-        <p style="margin: 5px 0 0 0;"><strong>Usuario:</strong> {{ auth()->user()->name }}</p>
+        <p style="margin: 5px 0 0 0;"><strong>Usuario:</strong> {{ $order->user ? $order->user->name : 'Usuario Eliminado' }}</p>
     </div>
 
     <table>

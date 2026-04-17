@@ -174,9 +174,9 @@ Route::middleware(['auth:admin', 'is_admin'])->prefix('admin')->name('admin.')->
     // Pedidos (Órdenes) con permisos granulares
     Route::middleware('permission:orders.view')->group(function() {
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/download-all', [OrderController::class, 'exportAllPdfs'])->name('orders.download-all');
         Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::get('orders/{id}/descargar', [OrderController::class, 'downloadOrderPdf'])->name('orders.download');
-        Route::get('orders/download-all', [OrderController::class, 'exportAllPdfs'])->name('orders.download-all');
     });
 
     Route::middleware('permission:orders.update')->group(function() {
