@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            @auth
+                            @if($anyAuth)
                                 <form action="{{ route('carrito.add') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="game_id" value="{{ $game->id }}">
@@ -142,7 +142,7 @@
                                         <i class="bi bi-cart-plus me-1"></i> Añadir
                                     </button>
                                 @endif
-                            @endauth
+                            @endif
                             <a href="{{ route('juego.show', $game->slug) }}" class="btn jg-btn jg-btn-outline w-100">Ver Ficha</a>
                         </div>
                     </div>

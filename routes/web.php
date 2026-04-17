@@ -25,7 +25,8 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\AdministratorController;
-use App\Http\Controllers\Api\AuthController;
+// use App\Http\Controllers\Api\AuthController; // Eliminado por errores
+
 
 
 //Ruta del home principal
@@ -65,7 +66,7 @@ Route::post('/contacto', [ContactController::class, 'store'])->name('contacto.st
 //Rutas del login y logout
 Route::get('/login', function () {return redirect()->route('home');})->name('login');
 Route::post('/login', [WebAuthController::class, 'login'])->name('login.submit');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [WebAuthController::class, 'register'])->name('register');
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 //Ruta del captcha a la hora de refrescar

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Wishlist;
+use App\Models\Order;
 
 class Administrator extends Authenticatable
 {
@@ -41,6 +42,15 @@ class Administrator extends Authenticatable
     public function wishlist()
     {
         return $this->hasMany(Wishlist::class, 'administrator_id');
+    }
+
+    /**
+     * Relación con los pedidos del administrador.
+     * Los pedidos del admin se guardan en la tabla orders con user_id = id del admin.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
     }
 
     /**

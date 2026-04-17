@@ -51,10 +51,7 @@
 
 <body>
   @php
-    $isAdmin = auth()->guard('admin')->check();
-    $isWebActive = auth()->guard('web')->check();
-    $anyAuth = $isAdmin || $isWebActive;
-    $user = $isAdmin ? auth()->guard('admin')->user() : ($isWebActive ? auth()->guard('web')->user() : null);
+    // Variables de sesión (isAdmin, isWebActive, anyAuth, user) ahora son globales via AppServiceProvider
   @endphp
 
   <!-- Animación del preloader -->

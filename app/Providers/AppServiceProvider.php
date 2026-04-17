@@ -25,6 +25,20 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
+        // Compartir variables de autenticación con todas las vistas
+        view()->composer('*', function ($view) {
+            $isAdmin = auth()->guard('admin')->check();
+            $isWebActive = auth()->guard('web')->check();
+            $user = $isAdmin ? auth()->guard('admin')->user() : ($isWebActive ? auth()->guard('web')->user() : null);
+            
+            $view->with([
+                'isAdmin' => $isAdmin,
+                'isWebActive' => $isWebActive,
+                'anyAuth' => $isAdmin || $isWebActive,
+                'user' => $user
+            ]);
+        });
+
         // Puerta para gestionar administradores (Solo Super Admin)
         Gate::define('manage-administrators', function ($user) {
             // Verificamos si es un administrador y si es super admin

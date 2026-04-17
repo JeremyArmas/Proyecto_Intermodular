@@ -27,26 +27,20 @@ class ProfileController extends Controller
      */
     public function orders()
     {
-        // Los administradores no tienen pedidos propios
-        if ($this->isAdmin()) {
-            $orders = collect();
-            return view('profile.orders', compact('orders'));
-        }
+        // Obtenemos el usuario logueado (sea admin o usuario normal)
+        $user = $this->activeUser();
 
-        // Obtenemos los pedidos del usuario logueado, ordenados por fecha descendente
-        // y cargamos las relaciones necesarias (items y juegos)
-        $orders = auth('web')->user()->orders()->with('items.game')->latest()->get();
+        // Cargamos los pedidos del usuario con sus items y juegos
+        $orders = $user->orders()->with('items.game')->latest()->get();
 
         return view('profile.orders', compact('orders'));
     }
 
     // Descarga la factura en pdf
     public function downloadOrderPdf($id){
-        if ($this->isAdmin()) {
-            return redirect()->route('profile.orders')->with('error', 'Los administradores no tienen facturas propias.');
-        }
+        $user = $this->activeUser();
 
-        $order = auth('web')->user()->orders()->with('items.game')->findOrFail($id); // Buscamos el pedido por id
+        $order = $user->orders()->with('items.game')->findOrFail($id); // Buscamos el pedido por id
 
         $pdf = Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
 
@@ -99,11 +93,6 @@ class ProfileController extends Controller
     public function biblioteca() 
     {
         // Los administradores pueden ver la biblioteca pero no tienen compras propias
-        if ($this->isAdmin()) {
-            $items = collect();
-            return view('profile.biblioteca', compact('items'));
-        }
-
         $user = $this->activeUser();
 
         // Si el usuario es una empresa, no puede acceder a la biblioteca.
