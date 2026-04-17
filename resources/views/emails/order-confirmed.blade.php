@@ -19,9 +19,9 @@ Aquí tienes los detalles de tu adquisición:
 | Artículo       | Cantidad | Precio Unitario | Subtotal |
 | :---           | :---:    | :---:           | :---:    |
 @foreach($order->items as $item)
-| **{{ $item->game->title }}**<br><span style="color: #6c757d; font-size: 0.85em;">{{ $item->game->platform->name ?? 'Varias' }}</span> | {{ $item->quantity }}x | {{ number_format($item->price_at_purchase, 2) }}€ | {{ number_format($item->price_at_purchase * $item->quantity, 2) }}€ |
+| **{{ $item->game->title }}**<br><span style="color: #6c757d; font-size: 0.85em;">{{ $item->game->platform->name ?? 'Varias' }}</span> | {{ $item->quantity }}x | {{ \App\Services\CurrencyService::format($item->price_at_purchase) }} | {{ \App\Services\CurrencyService::format($item->price_at_purchase * $item->quantity) }} |
 @endforeach
-| &nbsp; | &nbsp; | **TOTAL** | **{{ number_format($order->total_amount, 2) }}€** |
+| &nbsp; | &nbsp; | **TOTAL** | **{{ \App\Services\CurrencyService::format($order->total_amount) }}** |
 </x-mail::table>
 
 Si deseas revisar el estado actual de este y otros pedidos, visita tu historial de compras desde tu perfil en la plataforma:

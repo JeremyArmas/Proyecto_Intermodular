@@ -10,7 +10,7 @@ footer{
   margin-top: 46px;
   border-top: 1px solid rgba(246,196,83,.40);
   background: rgba(14,14,26,.62);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(var(--jg-glass-blur));
 }
 
 /* =========================================================
@@ -21,7 +21,7 @@ footer{
   margin-bottom: 10px;
 }
 .jg-link-muted{
-  color: rgba(255,255,255,.75);
+  color: var(--jg-muted);
   text-decoration:none;
 }
 .jg-link-muted:hover{ color: var(--jg-text); }
@@ -34,7 +34,7 @@ footer{
   height: 42px;
   display:inline-grid;
   place-items:center;
-  border-radius: 14px;
+  border-radius: var(--jg-radius-md);
   border: 1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.04);
   color: var(--jg-text);

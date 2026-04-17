@@ -28,7 +28,7 @@
                             @endif
                             <!-- Etiqueta superior -->
                             <div class="position-absolute top-0 start-0 m-3">
-                                <span class="badge jg-bg-sun text-dark px-3 py-2 fs-6 fw-bold shadow">
+                                <span class="badge jg-bg-sun text-white px-3 py-2 fs-6 fw-bold shadow">
                                     <i class="bi bi-controller me-1"></i> {{ $game->platform->name ?? 'Digital' }}
                                 </span>
                             </div>
@@ -87,7 +87,7 @@
     @else
         <!-- Estado Vacío -->
         <div class="text-center py-5 bg-darker rounded-4 border-secondary border-opacity-25" style="box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
-            <i class="bi bi-journal-x text-muted mb-3" style="font-size: 4rem;"></i>
+            <i class="bi bi-journal-x text-white mb-3" style="font-size: 4rem;"></i>
             <h3 class="fw-bold text-white mb-3">Tu biblioteca está vacía</h3>
             <p class="text-white opacity-75 mb-4">Aún no has adquirido ningún juego digital. ¡Explora nuestro catálogo!</p>
             <a href="{{ route('catalogo') }}" class="btn jg-btn-sun btn-lg px-5">

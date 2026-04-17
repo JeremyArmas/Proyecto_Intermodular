@@ -38,10 +38,7 @@ class User extends Authenticatable
         return $this->hasOne(CompanyProfile::class);
     }
 
-    // Funciones de ayuda
-    public function isAdmin() { 
-        return $this->role === 'admin'; 
-    }
+
     public function isCompany() { 
         return $this->role === 'company'; 
     }
@@ -52,6 +49,14 @@ class User extends Authenticatable
     // Relación con Pedidos
     public function orders() {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Lista de deseos del usuario.
+     */
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
     }
 
     /**

@@ -22,8 +22,13 @@ class Game extends Model
      */
     public function getYoutubeIdAttribute(): ?string
     {
-        if (!$this->trailer_url) return null;
 
+        // Si no hay trailer, devolvemos null
+        if (!$this->trailer_url){
+            return null;
+        } 
+
+        // Parseamos la URL
         $url = parse_url($this->trailer_url);
 
         // Formato corto: youtu.be/XXXXXXXXXX
@@ -60,6 +65,14 @@ class Game extends Model
             return $this->b2b_price;
         }
         return $this->price;
+    }
+
+    /**
+     * Un juego puede estar en muchas listas de deseos.
+     */
+    public function wishlistedBy()
+    {
+        return $this->hasMany(Wishlist::class);
     }
 
     /**

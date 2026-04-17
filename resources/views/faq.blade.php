@@ -40,4 +40,8 @@
     </div>
 </div>
 
+<style>
+.accordion-button::after { filter: invert(1); }
+.accordion-item:first-of-type, .accordion-item:last-of-type { border-radius: 1rem !important; }
+</style>
 @endsection

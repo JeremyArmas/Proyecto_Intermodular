@@ -100,7 +100,7 @@
                   <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1);">{{ strtoupper($o->order_type) }}</span></td>
                   
                   <!-- Mostramos el total del pedido formateado a 2 decimales y alineado a la derecha -->
-                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ number_format($o->total_amount, 2) }} €</td>
+                  <td class="text-end fw-bold" style="color: #00ff9d;">{{ \App\Services\CurrencyService::format($o->total_amount) }}</td>
                   
                   <!-- Mostramos el estado del pedido con un badge de color según el estado -->
                   <td class="text-center">

@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('title');
         $table->string('slug')->unique();
-        $table->text('description');
+        $table->text('description')->nullable();
         
         // PRECIOS
         $table->decimal('price', 10, 2); // Precio normal
@@ -48,6 +48,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('category_game');
         Schema::dropIfExists('games');
     }
 };

@@ -7,6 +7,7 @@ use App\Models\Game;
 use App\Models\Platform;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\CurrencyService;
 
 class GameController extends Controller
 {
@@ -65,11 +66,13 @@ class GameController extends Controller
 
         // Rango de precio (min y max)
         if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
+            $priceMin = CurrencyService::convertToEur($request->price_min);
+            $query->where('price', '>=', $priceMin);
         }
 
         if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
+            $priceMax = CurrencyService::convertToEur($request->price_max);
+            $query->where('price', '<=', $priceMax);
         }
 
         // Ordenamiento
@@ -105,7 +108,7 @@ class GameController extends Controller
      */
     public function show($slug)
     {
-        $game = Game::where('slug', $slug)->with(['platform', 'categories'])->firstOrFail();
+        $game = Game::where('slug', $slug)->where('is_active', true)->with(['platform', 'categories'])->firstOrFail();
 
         return view('juego', compact('game'));
     }

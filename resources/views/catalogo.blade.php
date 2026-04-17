@@ -44,10 +44,10 @@
 
                 <!-- Rango de precio (min y max) -->
                 <div class="col-12 col-md-3">
-                    <label class="form-label text-white-50 small mb-1">Precio (€)</label>
+                    <label class="form-label text-white-50 small mb-1">Precio ({{ \App\Services\CurrencyService::getSymbol() }})</label>
                     <div class="input-group input-group-sm">
                         <input type="number" class="form-control bg-transparent text-white border-secondary px-2" name="price_min" placeholder="Rango Mínimo" value="{{ request('price_min') }}" min="0" step="1">
-                        <span class="input-group-text bg-transparent border-secondary text-white-50 px-2">-</span>
+                        <span class="bg-transparent text-white border-secondary px-2">-</span>
                         <input type="number" class="form-control bg-transparent text-white border-secondary px-2" name="price_max" placeholder="Rango Máximo" value="{{ request('price_max') }}" min="0" step="1">
                     </div>
                 </div>
@@ -96,22 +96,25 @@
                     
                     <div class="mt-auto">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h4 text-sun mb-0 fw-bold text-white">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</span>
+                            <span class="h4 text-sun mb-0 fw-bold text-white">{{ \App\Services\CurrencyService::format($game->getPriceForUser(auth()->user())) }}</span>
                             @php
                                 $isUpcoming = $game->release_date && $game->release_date->isFuture();
                             @endphp
 
-                            @if(auth()->check() && (auth()->user()->isCompany() || auth()->user()->isAdmin()))
-                            @if($isUpcoming)
+                             @if($isUpcoming)
                                 <span class="badge text-sun border-sun small" style="border: 1px solid var(--jg-sun);">Reserva</span>
-                            @elseif($game->stock > 0)
-                                <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
+                            @elseif(auth()->guard('admin')->check() || (auth()->check() && auth()->user()->isCompany()))
+                                {{-- Solo Admin y Empresas ven el stock físico --}}
+                                @if($game->stock > 0)
+                                    <span class="badge text-mint border-mint small">Stock: {{ $game->stock }}</span>
+                                @else
+                                    <span class="badge text-danger border-danger small">Agotado</span>
+                                @endif
                             @else
-                                <span class="badge text-danger border-danger small">Agotado</span>
-                            @endif
-                            @else
+                                {{-- El resto ve disponibilidad digital --}}
                                 <span class="badge text-mint border-mint small"><i class="bi bi-cloud-down"></i> Versión digital</span>
                             @endif
+
                         </div>
 
                         <div class="d-grid gap-2">
@@ -119,27 +122,23 @@
                                 <form action="{{ route('carrito.add') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="game_id" value="{{ $game->id }}">
-                                    <input type="hidden" name="quantity" value="1">
                                     @if($isUpcoming)
                                         <button type="submit" class="btn jg-btn jg-btn-primary w-100 rounded-pill">
                                             <i class="bi bi-calendar-check me-1"></i> Reservar
                                         </button>
                                     @else
-                                    @php 
-                                        $isDisabledForCompany = auth()->user()->isCompany() && $game->stock <= 0;
-                                    @endphp
-                                        <button type="submit" class="btn jg-btn jg-btn-sun w-100 {{ $isDisabledForCompany ? 'disabled' : '' }}">
+                                        <button type="submit" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}">
                                             <i class="bi bi-cart-plus me-1"></i> Añadir
                                         </button>
                                     @endif
                                 </form>
                             @else
-                                @if($isUpcoming) <!-- Para usuarios no logueados -->
+                                @if($isUpcoming)
                                     <button type="button" class="btn jg-btn jg-btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal">
                                         <i class="bi bi-calendar-check me-1"></i> Reservar
                                     </button>
                                 @else
-                                    <button type="button" class="btn jg-btn jg-btn-sun w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <button type="button" class="btn jg-btn jg-btn-sun w-100 {{ $game->stock <= 0 ? 'disabled' : '' }}" data-bs-toggle="modal" data-bs-target="#loginModal">
                                         <i class="bi bi-cart-plus me-1"></i> Añadir
                                     </button>
                                 @endif

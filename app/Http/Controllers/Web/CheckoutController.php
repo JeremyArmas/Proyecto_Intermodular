@@ -13,6 +13,7 @@ use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmedMail;
+use App\Services\CurrencyService;
 
 class CheckoutController extends Controller
 {
@@ -21,7 +22,7 @@ class CheckoutController extends Controller
      */
     public function createSession(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->resolveUser();
         $cart = Cart::where('user_id', $user->id)->first();
 
         // Verifica que el carrito no esté vacío
@@ -61,11 +62,17 @@ class CheckoutController extends Controller
 
         // Construye los line_items para Stripe
         $lineItems = [];
+        $selectedCurrency = strtolower(CurrencyService::getCurrent());
+
         foreach ($cart->items as $item) {
             $game = $item->game;
             
-            // Stripe espera el precio en céntimos
-            $priceInCents = (int) ($game->getPriceForUser($user) * 100);
+            // Precio base en EUR para el usuario (con descuento empresa si aplica)
+            $priceInEur = $game->getPriceForUser($user);
+
+            // Convertimos a la moneda seleccionada por el usuario y redondeamos a céntimos
+            $priceConverted = CurrencyService::convert($priceInEur);
+            $priceInCents = (int) round($priceConverted * 100);
 
             // Prepara la imagen absoluta si existe
             $images = [];
@@ -78,7 +85,7 @@ class CheckoutController extends Controller
 
             $lineItems[] = [
                 'price_data' => [
-                    'currency' => 'eur',
+                    'currency' => $selectedCurrency,
                     'product_data' => [
                         'name' => $game->title,
                         'images' => $images,
@@ -123,6 +130,7 @@ class CheckoutController extends Controller
             return redirect()->route('home');
         }
 
+        // Configura la clave secreta de Stripe
         Stripe::setApiKey(config('services.stripe.secret'));
 
         try {
@@ -142,7 +150,7 @@ class CheckoutController extends Controller
             }
 
             // Si llegamos aquí: El pago se completó y no existe el order. Procedemos a crearlo.
-            $user = auth()->user();
+            $user = $this->resolveUser();
             $cart = Cart::where('user_id', $user->id)->first();
 
             // Si por alguna razón el carrito ya está vacío, buscamos la orden por sesión
@@ -235,5 +243,12 @@ class CheckoutController extends Controller
     {
         // Simple redirección al carrito con un mensaje
         return view('checkout.cancel');
+    }
+    /**
+     * Resuelve el usuario autenticado ya sea por el guard 'web' o 'admin'.
+     */
+    private function resolveUser()
+    {
+        return auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     }
 }

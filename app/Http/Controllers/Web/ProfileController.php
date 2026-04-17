@@ -4,37 +4,65 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Order;
+use App\Models\OrderItem;
 
 class ProfileController extends Controller
 {
+    /**
+     * Devuelve el usuario autenticado independientemente del guard (web o admin).
+     */
+    private function activeUser()
+    {
+        return auth('web')->user() ?? auth('admin')->user();
+    }
+
+    private function isAdmin(): bool
+    {
+        return auth('admin')->check();
+    }
     /**
      * Muestra el historial de pedidos del usuario.
      */
     public function orders()
     {
+        // Los administradores no tienen pedidos propios
+        if ($this->isAdmin()) {
+            $orders = collect();
+            return view('profile.orders', compact('orders'));
+        }
+
         // Obtenemos los pedidos del usuario logueado, ordenados por fecha descendente
         // y cargamos las relaciones necesarias (items y juegos)
-        $orders = auth()->user()->orders()->with('items.game')->latest()->get();
+        $orders = auth('web')->user()->orders()->with('items.game')->latest()->get();
 
         return view('profile.orders', compact('orders'));
     }
 
-    public function downloadOrderPdf($id){ // Descargar la factura en pdf
-        $order = auth()->user()->orders()->with('items.game')->findOrFail($id); // Buscamos el pedido por id
+    // Descarga la factura en pdf
+    public function downloadOrderPdf($id){
+        if ($this->isAdmin()) {
+            return redirect()->route('profile.orders')->with('error', 'Los administradores no tienen facturas propias.');
+        }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+        $order = auth('web')->user()->orders()->with('items.game')->findOrFail($id); // Buscamos el pedido por id
+
+        $pdf = Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
 
         return $pdf->download('Factura_Jediga_' . 'order-' . $order->id . '.pdf'); // Descargamos la factura
     }
 
-    public function show() // Mostrar el perfil del usuario
+    // Muestra el perfil del usuario
+    public function show()
     {
         return view('profile.show');
     }
 
+
     public function update(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->activeUser();
 
         $request->validate([
             'name' => 'required|string|max:30',
@@ -44,14 +72,13 @@ class ProfileController extends Controller
         ]);
 
         //Actualizamos los datos del usuario
-        auth()->user()->update([
+        $user->update([
             'name' => $request->name,
             'country' => $request->country,
             'birth_date' => $request->birth_date,
         ]);
 
         // Para subir la imagen para personalizar tu perfil . El logo de tu usuario o empresa o como quieras.
-
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
@@ -71,20 +98,24 @@ class ProfileController extends Controller
     // Mostrar la biblioteca del usuario. SOLO puede acceder a ellas los usuarios normales (Y los admin pero eso es cosa aparte).
     public function biblioteca() 
     {
-        $user = auth()->user();
+        // Los administradores pueden ver la biblioteca pero no tienen compras propias
+        if ($this->isAdmin()) {
+            $items = collect();
+            return view('profile.biblioteca', compact('items'));
+        }
 
-        // Si el usuario es una empresa, no puede acceder a la biblioteca. Lo ponemos como metodo de seguridad ya que si una empresa
-        // intenta escribir por ejemplo /biblioteca en la url, no podra acceder.
+        $user = $this->activeUser();
 
+        // Si el usuario es una empresa, no puede acceder a la biblioteca.
         if ($user->isCompany()) { 
             return redirect()->route('profile.show')->with('error', 'No tienes permiso para acceder a la biblioteca. Esta es solo para usuarios normales.');
         }
 
-        $items = \App\Models\OrderItem::whereHas('order', function($query) use ($user) {
-            $query->where('user_id', $user->id)->
-            where('status', 'paid')->
-            where('order_type', 'b2c');
-        })->with('game') //Carga todos los juegos que ha comprado el usuario
+        $items = OrderItem::whereHas('order', function($query) use ($user) {
+            $query->where('user_id', $user->id)
+            ->where('status', 'paid')
+            ->where('order_type', 'b2c');
+        })->with('game')
         ->get(); 
 
         return view('profile.biblioteca', compact('items'));
@@ -92,8 +123,8 @@ class ProfileController extends Controller
 
     public function confirmDelivery($id) // Confirmar la entrega del pedido
     {
-        $user = auth()->user(); // Obtenemos el usuario logueado
-        $order = \App\Models\Order::where('user_id', $user->id)->findOrFail($id); // Buscamos el pedido por id
+        $user = $this->activeUser(); // Obtenemos el usuario logueado
+        $order = Order::where('user_id', $user->id)->findOrFail($id); // Buscamos el pedido por id
 
         if ($order->order_type !== 'b2b' || $order->tracking_status !== 'delivered') { // Si el pedido no es de tipo b2b o si no esta entregado, no se puede confirmar la entrega
             return redirect()->route('profile.orders')->with('error', 'No puedes confirmar la entrega de este pedido.');

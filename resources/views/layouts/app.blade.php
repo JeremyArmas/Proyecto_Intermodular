@@ -42,6 +42,7 @@
     .goog-text-highlight{ /* Quitamos el fondo amarillo que pone google al traducir */
       background-color: transparent !important;
       border: none !important;
+      color: inherit !important;
     }
 
   </style>
@@ -49,6 +50,12 @@
 </head>
 
 <body>
+  @php
+    $isAdmin = auth()->guard('admin')->check();
+    $isWebActive = auth()->guard('web')->check();
+    $anyAuth = $isAdmin || $isWebActive;
+    $user = $isAdmin ? auth()->guard('admin')->user() : ($isWebActive ? auth()->guard('web')->user() : null);
+  @endphp
 
   <!-- Animación del preloader -->
   @if(empty(request()->query()))
@@ -283,7 +290,6 @@
 @php
   // Verifica si la ruta actual es una ruta de administrador y si el usuario lo es
   $isAdminRoute = request()->is('admin*');
-  $isAdmin = auth()->check() && auth()->user()->isAdmin();
 @endphp
 
 <!-- Incluye la barra de navegación correspondiente según el tipo de usuario -->
@@ -336,6 +342,5 @@
 
 <!-- Script para la accesibilidad -->
 <script src="https://cdn.jsdelivr.net/npm/accessibility-widgets@latest/widget.js"></script>
-
 
 </html>

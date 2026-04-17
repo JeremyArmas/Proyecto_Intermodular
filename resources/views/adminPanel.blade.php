@@ -4,8 +4,7 @@
 
 @section('content')
   @php
-    // $fmt sirve para formatear precios, se puede seguir usando.
-    $fmt = fn($n) => number_format($n, 2, ',', '.');
+    // Usamos App\Services\CurrencyService::format($n) para formatear los precios
   @endphp
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -36,11 +35,13 @@
           </div>
 
           <!-- Botones de acción rápida -->
+          @if(auth('admin')->user()->hasPermission('games.create'))
           <div class="ms-auto">
             <a href="{{ route('admin.games.create') }}" class="btn jg-btn jg-btn-primary">
               <i class="bi bi-plus-circle me-1"></i> Añadir Juego
             </a>
           </div>
+          @endif
 
         </div>
       </div>
@@ -145,28 +146,43 @@
         </li>
 
         <!-- Pestaña de pedidos -->
+        @if(auth('admin')->user()->hasPermission('orders.view'))
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-pedidos" data-bs-toggle="tab" data-bs-target="#pedidos" type="button"
             role="tab">
             <i class="bi bi-receipt me-1"></i> Pedidos
           </button>
         </li>
+        @endif
 
         <!-- Pestaña de tickets -->
+        @if(auth('admin')->user()->hasPermission('tickets.view'))
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets" type="button"
             role="tab">
             <i class="bi bi-ticket me-1"></i> Tickets
           </button>
         </li>
+        @endif
 
         <!-- Pestaña de noticias -->
+        @if(auth('admin')->user()->hasPermission('news.view'))
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-noticias" data-bs-toggle="tab" data-bs-target="#noticias" type="button"
             role="tab">
             <i class="bi bi-newspaper me-1"></i> Noticias
           </button>
         </li>
+        @endif
+
+        <!-- Pestaña de administradores (Solo Super Admin) -->
+        @if(Auth::guard('admin')->user()->is_super_admin)
+        <li class="nav-item" role="presentation">
+           <a class="nav-link" href="{{ route('admin.administrators.index') }}" style="color: var(--jg-sun);">
+            <i class="bi bi-shield-lock me-1"></i> Administradores
+          </a>
+        </li>
+        @endif
       </ul>
 
 
@@ -220,15 +236,6 @@
                 </select>
               </div>
 
-              <!-- Botones de acción rápida (placeholder) -->
-              <div class="col-12 col-lg-4 d-flex gap-2 justify-content-lg-end">
-                <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
-                  <i class="bi bi-download me-1"></i> Exportar
-                </button>
-                <button class="btn jg-btn jg-btn-outline" type="button" disabled title="Placeholder">
-                  <i class="bi bi-funnel me-1"></i> Filtro avanzado
-                </button>
-              </div>
             </div>
           </div>
 
@@ -298,7 +305,7 @@
                         <td><span class="badge badge-soft">{{ $p->platform->name ?? 'N/A' }}</span></td>
 
                         <!-- Precio formateado del producto -->
-                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->price) }} €</td>
+                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ \App\Services\CurrencyService::format($p->price) }}</td>
 
                         <!-- Stock del producto con etiqueta de advertencia si es bajo o agotado -->
                         <td class="text-end">
@@ -315,8 +322,11 @@
 
                         <!-- Botones de acción para editar o eliminar el producto -->
                         <td class="text-end jg-actions">
+                          @if(auth('admin')->user()->hasPermission('games.update'))
                           <a href="{{ route('admin.games.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('games.delete'))
                           <form action="{{ route('admin.games.destroy', $p) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                             @csrf
@@ -324,6 +334,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
                     @endforeach
@@ -365,9 +376,11 @@
                 <a href="{{ route('admin.categories.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todas las categorías
                 </a>
+                @if(auth('admin')->user()->hasPermission('categories.create'))
                 <a href="{{ route('admin.categories.create') }}" class="btn jg-btn jg-btn-primary">
                   <i class="bi bi-plus-circle me-1"></i> Añadir categoría
                 </a>
+                @endif
               </div>
 
             </div>
@@ -412,8 +425,11 @@
 
                         <!-- Botones de acción para editar o eliminar la categoría -->
                         <td class="text-end">
+                          @if(auth('admin')->user()->hasPermission('categories.update'))
                           <a href="{{ route('admin.categories.edit', $c) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('categories.delete'))
                           <form action="{{ route('admin.categories.destroy', $c) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
                             @csrf
@@ -421,6 +437,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
 
@@ -469,9 +486,11 @@
                 <a href="{{ route('admin.users.index') }}" class="btn jg-btn jg-btn-sun">
                   <i class="bi bi-eye me-1"></i> Ver todos los usuarios
                 </a>
+                @if(auth('admin')->user()->hasPermission('users.create'))
                 <a href="{{ route('admin.users.create') }}" class="btn jg-btn jg-btn-primary">
                   <i class="bi bi-plus-circle me-1"></i> Invitar
                 </a>
+                @endif
               </div>
             </div>
           </div>
@@ -521,8 +540,11 @@
 
                         <!-- Botones de acción para editar o eliminar el usuario -->
                         <td class="text-end">
+                          @if(auth('admin')->user()->hasPermission('users.update'))
                           <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('users.delete'))
                           <form action="{{ route('admin.users.destroy', $u) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
                             @csrf
@@ -530,6 +552,7 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
+                          @endif
                         </td>
                       </tr>
 
@@ -561,6 +584,7 @@
 
 
         <!-- Pestaña de pedidos -->
+        @if(auth('admin')->user()->hasPermission('orders.view'))
         <div class="tab-pane fade" id="pedidos" role="tabpanel" aria-labelledby="tab-pedidos">
           <div class="jg-card p-3 mb-3">
             <div class="d-flex justify-content-between align-items-center">
@@ -626,7 +650,7 @@
                         <td><span class="badge badge-soft">{{ strtoupper($p->order_type) }}</span></td>
 
                         <!-- Total cobrado por el pedido, formateado como precio -->
-                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ $fmt($p->total_amount) }} €</td>
+                        <td class="text-end fw-bold" style="color: var(--jg-mint);">{{ \App\Services\CurrencyService::format($p->total_amount) }}</td>
 
                         <!-- Estado del envío del pedido con etiqueta visual -->
                         <td><span class="badge {{ $bOrder }}">{{ $st[$p->status] ?? $p->status }}</span></td>
@@ -638,8 +662,11 @@
                         <td class="text-end">
                           <a href="{{ route('admin.orders.show', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-eye"></i></a>
+                          @if(auth('admin')->user()->hasPermission('orders.update'))
                           <a href="{{ route('admin.orders.edit', $p) }}" class="btn btn-sm jg-btn jg-btn-outline"><i
                               class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('orders.delete'))
                           <form action="{{ route('admin.orders.destroy', $p) }}" method="POST" class="d-inline"
                             onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
                             @csrf
@@ -647,10 +674,9 @@
                             <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i
                                 class="bi bi-trash"></i></button>
                           </form>
-                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
-                            target="_blank" title="Descargar">
-                            <i class="bi bi-download"></i>
-                            <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
+                          @endif
+                          <a href="{{ route('admin.orders.download', $p->id) }}" class="btn btn-sm jg-btn jg-btn-outline" target="_blank" title="Descargar">
+                            <i class="bi bi-download"></i> <!--Creamos un enlace para que usa el ID del pedido para descargar la factura-->
                           </a>
                         </td>
                       </tr>
@@ -682,355 +708,309 @@
             </div>
           </div>
         </div>
+        @endif
+
 
         <!-- Pestaña de tickets -->
+        @if(auth('admin')->user()->hasPermission('tickets.view'))
         <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tab-tickets">
-          <div class="jg-card p-3 mb-3">
-            <div id="contenedorTickets" class="js-paginacion-admin">
-              <div class="jg-table-wrap">
-                <div class="table-responsive">
-                  <table class="table jg-table align-middle">
-                    <thead>
-                      <tr>
-                        <th>Cliente</th>
-                        <th>Asunto</th>
-                        <th>Estado</th>
-                        <th>Recibido</th>
-                        <th class="text-end">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @forelse($tickets as $t)
-                        <tr>
-                          <td>
-                            <span class="fw-bold">{{ $t->name }}</span><br>
-                            <small class="jg-muted">{{ $t->email }}</small>
-                          </td>
-                          <td class="fw-bold">{{ $t->subject }}</td>
-                          <td>
-                            @if($t->status === 'pendiente')
-                              <span class="badge badge-sun">Pendiente</span>
-                            @else
-                              <span class="badge badge-mint">Respondido</span>
-                            @endif
-                          </td>
-                          <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
-                          <td class="text-end">
-                            <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
-                              <i class="bi bi-envelope-open"></i> Responder
-                            </a>
-                          </td>
-                        </tr>
-                      @empty
-                        <tr>
-                          <td colspan="5" class="text-center py-4 jg-muted">No hay tickets de soporte.</td>
-                        </tr>
-                      @endforelse
-                    </tbody>
-                  </table>
-                  <!-- Paginación de tickets -->
-                  <div class="d-flex justify-content-end mt-2">
-                    {{ $tickets->links() }}
-                  </div>
-                </div>
-              </div>
+        <div class="jg-card p-3 mb-3">
+        <div id="contenedorTickets" class="js-paginacion-admin">
+        <div class="jg-table-wrap">
+          <div class="table-responsive">
+            <table class="table jg-table align-middle">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Asunto</th>
+                  <th>Estado</th>
+                  <th>Recibido</th>
+                  <th class="text-end">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse($tickets as $t)
+                  <tr>
+                    <td>
+                      <span class="fw-bold">{{ $t->name }}</span><br>
+                      <small class="jg-muted">{{ $t->email }}</small>
+                    </td>
+                    <td class="fw-bold">{{ $t->subject }}</td>
+                    <td>
+                      @if($t->status === 'pendiente')
+                        <span class="badge badge-sun">Pendiente</span>
+                      @else
+                        <span class="badge badge-mint">Respondido</span>
+                      @endif
+                    </td>
+                    <td class="text-nowrap">{{ $t->created_at->format('Y-m-d') }}</td>
+                    <td class="text-end">
+                      @if(auth('admin')->user()->hasPermission('tickets.update'))
+                      <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
+                        <i class="bi bi-envelope-open"></i> Responder
+                      </a>
+                      @else
+                      <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-sm jg-btn jg-btn-outline">
+                        <i class="bi bi-eye"></i> Ver
+                      </a>
+                      @endif
+                    </td>
+                  </tr>
+                @empty
+                  <tr>
+                    <td colspan="5" class="text-center py-4 jg-muted">No hay tickets de soporte.</td>
+                  </tr>
+                @endforelse
+              </tbody>
+            </table>
+            <!-- Paginación de tickets -->
+            <div class="d-flex justify-content-end mt-2">
+              {{ $tickets->links() }}
+            </div>
+          </div>
             </div>
           </div>
         </div>
+      </div>
+        @endif
 
         <!-- Pestaña de noticias -->
-
+        @if(auth('admin')->user()->hasPermission('news.view'))
         <div class="tab-pane fade" id="noticias" role="tabpanel" aria-labelledby="tab-noticias">
           <div class="jg-card p-3 mb-3">
             <div class="d-flex justify-content-between align-items-center">
-
-              <!-- Título de la sección de noticias y descripción breve -->
               <div>
                 <div class="h4 mb-1">Noticias</div>
                 <div class="jg-muted">Gestión de las noticias y las novedades.</div>
               </div>
 
+              @if(auth('admin')->user()->hasPermission('news.create'))
               <a href="{{ route('admin.news.create') }}" class="btn btn-sm jg-btn jg-btn-outline">
-                <!--Enlace para crear una nueva noticia-->
                 <i class="bi bi-plus-circle"></i> Crear noticia
               </a>
+              @endif
             </div>
           </div>
 
           <div id="contenedorNoticias" class="js-paginacion-admin">
-            <div class="jg-card p-3 mb-3">
-              <div class="jg-table-wrap">
-                <div class="table-responsive">
-                  <table class="table jg-table align-middle">
-                    <thead>
+            <div class="jg-table-wrap mb-3">
+              <div class="table-responsive">
+                <table class="table jg-table align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Imagen</th>
+                      <th>Título</th>
+                      <th>Fecha</th>
+                      <th>Estado</th>
+                      <th class="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($noticias as $n)
                       <tr>
-                        <th>ID</th>
-                        <th>Imagen para la portada</th>
-                        <th>Título</th>
-                        <th>Fecha</th>
-                        <th>Estado de la noticia</th>
-                        <th class="text-end">Acciones</th>
+                        <td>{{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}</td>
+                        <td>
+                          <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
+                        </td>
+                        <td class="fw-bold">{{ $n->title }}</td>
+                        <td>{{ $n->created_at->format('Y-m-d') }}</td>
+                        <td>
+                          @if($n->is_published)
+                            <span class="badge badge-mint">Publicada</span>
+                          @else
+                            <span class="badge badge-sun">Borrador</span>
+                          @endif
+                        </td>
+                        <td class="text-end jg-actions">
+                          <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-eye"></i></a>
+                          @if(auth('admin')->user()->hasPermission('news.update'))
+                          <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-pencil"></i></a>
+                          @endif
+                          @if(auth('admin')->user()->hasPermission('news.delete'))
+                          <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-sm jg-btn jg-btn-outline"><i class="bi bi-trash"></i></button>
+                          </form>
+                          @endif
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      @forelse($noticias as $n)
-                        <tr>
-                          <td>
-                            {{ str_pad($n->id, 4, '0', STR_PAD_LEFT) }}
-                          </td> <!--ID de la noticia-->
-                          <td>
-                            <img src="{{ asset('storage/' . $n->image) }}" alt="{{ $n->title }}" class="img-fluid"
-                              style="width: 100px;">
-                          </td> <!--Imagen para la portada-->
-                          <td class="fw-bold">
-                            {{ $n->title }}
-                          </td> <!--Título de la noticia-->
-                          <td>
-                            {{ $n->created_at->format('Y-m-d') }}
-                          </td> <!--Fecha de la noticia-->
-                          <td>
-                            @if($n->is_published)
-                              <span class="badge badge-mint">Publicada</span>
-                            @else
-                              <span class="badge badge-sun">Borrador</span>
-                            @endif
-                          </td> <!--Estado de la noticia-->
-                          <td class="text-end">
-                            <a href="{{ route('admin.news.show', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
-                              title="Ver noticia">
-                              <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.news.edit', $n->id) }}" class="btn btn-sm jg-btn jg-btn-outline"
-                              title="Editar noticia">
-                              <i class="bi bi-pencil"></i>
-                            </a>
-                            <form action="{{ route('admin.news.destroy', $n->id) }}" method="POST"
-                              onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta noticia?')"
-                              style="display: inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" class="btn btn-sm jg-btn jg-btn-outline" title="Eliminar noticia">
-                                <i class="bi bi-trash"></i>
-                              </button>
-                            </form>
-                          </td>
-                        </tr>
-                      @empty
-                        <tr>
-                          <td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td>
-                        </tr>
-                      @endforelse
-                    </tbody>
-                  </table>
-                  <!-- Paginación de noticias -->
-                  <div class="d-flex justify-content-end mt-2">
-                    {{ $noticias->links() }}
-                  </div>
-                </div>
+                    @empty
+                      <tr><td colspan="6" class="text-center py-4 jg-muted">No hay noticias.</td></tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-flex justify-content-end mt-2">
+                {{ $noticias->links() }}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+        @endif
 
-    <!-- Script para el filtro básico de productos en la pestaña de productos -->
-    @push('scripts')
-      <script>
+  </div> <!-- jg-admin-wrap -->
+</div>
 
-        // Filtro básico front
-        document.addEventListener('DOMContentLoaded', () => {
-          const input = document.getElementById('adminSearchProductos');
-          const estado = document.getElementById('adminEstadoProductos');
-          const orden = document.getElementById('adminOrdenProductos');
-          const tabla = document.getElementById('tablaProductos');
+        <!-- Script para el filtro básico de productos en la pestaña de productos -->
+        @push('scripts')
+          <script>
 
-          // Si no se encuentran los elementos necesarios, no se aplica el filtro
-          if (!input || !estado || !orden || !tabla) {
-            return;
-          }
+            // Filtro básico front
+            document.addEventListener('DOMContentLoaded', () => {
+              const input = document.getElementById('adminSearchProductos');
+              const estado = document.getElementById('adminEstadoProductos');
+              const orden = document.getElementById('adminOrdenProductos');
+              const tabla = document.getElementById('tablaProductos');
 
-          // Función de filtro que usa petición AJAX para obtener los resultados reales paginados desde el servidor
-          function aplicar() {
-            // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
-            const tablaDin = document.getElementById('tablaProductos');
-
-            // Si no se encuentra la tabla, no se aplica el filtro
-            if (!tablaDin) {
-              return;
-            }
-
-            // Obtiene el cuerpo de la tabla y las filas
-            const tbody = tablaDin.querySelector('tbody');
-            const filas = Array.from(tbody.querySelectorAll('tr'));
-
-            // Evita que se ejecute el filtro más de una vez
-            clearTimeout(window.adminFiltroTimeout);
-            window.adminFiltroTimeout = setTimeout(async () => {
-              const inputBusqueda = (input.value || '').trim();
-              const estadoSeleccionado = (estado.value || '').trim();
-              const ordenar = orden.value || 'fecha_desc';
-
-              // Obtiene los parámetros de la URL
-              const params = new URLSearchParams(window.location.search);
-
-              // Filtra según la busqueda
-              if (inputBusqueda) {
-                params.set('search', inputBusqueda);
-              } else {
-                params.delete('search');
+              // Si no se encuentran los elementos necesarios, no se aplica el filtro
+              if (!input || !estado || !orden || !tabla) {
+                return;
               }
 
-              // Filtra según el estado
-              if (estadoSeleccionado) {
-                params.set('estado', estadoSeleccionado);
-              } else {
-                params.delete('estado');
+              // Función de filtro que se ejecuta sin depender de variables "caducadas"
+              function aplicar() {
+                // Re-buscamos la tabla dinámica para que el filtro siga funcionando después de cambiar de página (paginación AJAX)
+                const tablaDin = document.getElementById('tablaProductos');
+
+                // Si no se encuentra la tabla, no se aplica el filtro
+                if (!tablaDin) {
+                  return;
+                }
+
+                // Obtiene el cuerpo de la tabla y las filas
+                const tbody = tablaDin.querySelector('tbody');
+                const filas = Array.from(tbody.querySelectorAll('tr'));
+
+                // obtiene y normaliza el texto de búsqueda y el estado seleccionado para comparaciones insensibles a mayúsculas y espacios
+                const inputBusqueda = (input.value || '').trim().toLowerCase();
+                const estadoSeleccionado = (estado.value || '').trim().toLowerCase();
+
+                // filtra las filas según el texto de búsqueda y el estado seleccionado
+                let visibles = filas.filter(fil => {
+                  const nombre = fil.dataset.nombre || '';
+                  const categoria = fil.dataset.categoria || '';
+                  const plataforma = fil.dataset.plataforma || '';
+                  const estado = fil.dataset.estado || '';
+                  const matchInput = !inputBusqueda || (nombre.includes(inputBusqueda) || categoria.includes(inputBusqueda) || plataforma.includes(inputBusqueda));
+                  const matchEstado = !estadoSeleccionado || estado === estadoSeleccionado;
+                  return matchInput && matchEstado;
+                });
+
+                // ordena las filas visibles según el criterio seleccionado en el ordenamiento
+                const ordenar = orden.value;
+
+                // funciones de comparación para texto y números, con manejo de casos especiales
+                visibles.sort((a, b) => {
+
+                  // obtiene los datos relevantes de cada fila para la comparación según el criterio de ordenamiento
+                  const A = a.dataset, B = b.dataset;
+
+                  // función de comparación para texto, usando localeCompare
+                  const compararTexto = (x, y) => (x || '').localeCompare((y || ''), 'es', { sensitivity: 'base' });
+
+                  // función de comparación para números
+                  const compararNumber = (x, y) => (parseFloat(x) || 0) - (parseFloat(y) || 0);
+
+                  // lógica de ordenamiento
+                  if (ordenar === 'nombre_asc') return compararTexto(A.nombre, B.nombre);
+                  if (ordenar === 'nombre_desc') return compararTexto(B.nombre, A.nombre);
+                  if (ordenar === 'precio_asc') return compararNumber(A.precio, B.precio);
+                  if (ordenar === 'precio_desc') return compararNumber(B.precio, A.precio);
+                  if (ordenar === 'stock_asc') return compararNumber(A.stock, B.stock);
+                  if (ordenar === 'stock_desc') return compararNumber(B.stock, A.stock);
+                  if (ordenar === 'fecha_asc') return compararTexto(A.fecha, B.fecha);
+                  if (ordenar === 'fecha_desc') return compararTexto(B.fecha, A.fecha);
+                  return 0;
+                });
+
+                // 1. Oculta primero todas las filas
+                filas.forEach(r => r.style.display = 'none');
+
+                // 2. Muestra y re-ubica (ordenando) solo las filas que pasaron el filtro, en su nuevo orden
+                visibles.forEach(r => {
+                  r.style.display = '';
+                  tbody.appendChild(r); // appendChild mueve el elemento al final de su padre, aplicando el nuevo orden visual
+                });
               }
 
-              // Filtra según el orden
-              if (ordenar && ordenar !== 'fecha_desc') {
-                params.set('orden', ordenar);
-              } else {
-                params.delete('orden');
+              // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
+              input.addEventListener('input', aplicar);
+              estado.addEventListener('change', aplicar);
+              orden.addEventListener('change', aplicar);
+            });
+
+
+            // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
+            document.addEventListener('click', async (e) => {
+
+              // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
+              const link = e.target.closest('.js-paginacion-admin .pagination a');
+
+              // si no se encuentra un enlace válido, no se hace nada
+              if (!link) {
+                return;
               }
 
-              // Reinicia a la primera página al buscar
-              params.delete('productos_page');
+              e.preventDefault();
 
-              // Construye la URL con los parámetros del filtro
-              const url = window.location.pathname + '?' + params.toString();
+              // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
+              const contenedor = link.closest('.js-paginacion-admin');
 
-              // Actualiza la URL en el historial del navegador
-              window.history.pushState({}, '', url);
-
-              // Obtiene el contenedor de productos
-              const contenedor = document.getElementById('contenedorProductos');
-
-              // Si no se encuentra el contenedor, no se aplica el filtro
+              // si no se encuentra el contenedor, no se hace nada
               if (!contenedor) {
                 return;
               }
 
-              // Aplica un estilo de carga al contenedor
+              // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
               contenedor.style.opacity = '0.6';
               contenedor.style.pointerEvents = 'none';
 
-              // Realiza la petición AJAX para obtener los resultados del filtro
+              // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
               try {
-                const res = await fetch(url, {
+                const res = await fetch(link.href, {
                   headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 });
+
+                // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
                 const html = await res.text();
+
+                // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
                 const doc = new DOMParser().parseFromString(html, 'text/html');
-                const nuevoC = doc.getElementById('contenedorProductos');
-                if (nuevoC) {
-                  contenedor.innerHTML = nuevoC.innerHTML;
+
+                // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
+                const id = contenedor.id;
+
+                // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
+                const nuevoContenedor = doc.querySelector(`#${id}`);
+
+                // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
+                if (nuevoContenedor) {
+
+                  // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
+                  contenedor.replaceWith(nuevoContenedor);
+
+                  // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
+                  history.pushState({}, '', link.href);
                 }
-              } catch (e) {
-                console.error('No se pudo cargar el filtro', e);
+
+                // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
+              } catch (err) {
+                window.location.href = link.href;
               } finally {
-                contenedor.style.opacity = '1';
-                contenedor.style.pointerEvents = 'all';
+
+                // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
+                const actual = document.getElementById(contenedor.id);
+
+                // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
+                if (actual) {
+                  actual.style.opacity = '';
+                  actual.style.pointerEvents = '';
+                }
               }
-            }, 300); // 300ms de debounce para no saturar al tipear
-          }
-
-          // Recuperar valores iniciales de la URL
-          const queryParams = new URLSearchParams(window.location.search);
-
-          // Si se encuentra el parámetro 'search', se establece el valor del input
-          if (queryParams.has('search')) {
-            input.value = queryParams.get('search');
-          }
-
-          // Si se encuentra el parámetro 'estado', se establece el valor del select
-          if (queryParams.has('estado')) {
-            estado.value = queryParams.get('estado').charAt(0).toUpperCase() + queryParams.get('estado').slice(1).toLowerCase();
-          }
-
-          // Si se encuentra el parámetro 'orden', se establece el valor del select
-          if (queryParams.has('orden')) {
-            orden.value = queryParams.get('orden');
-          }
-
-          // agrega los event listeners para aplicar el filtro y ordenación cada vez que el usuario interactúe con los inputs
-          input.addEventListener('input', aplicar);
-          estado.addEventListener('change', aplicar);
-          orden.addEventListener('change', aplicar);
-        });
-
-
-        // Paginación AJAX para evitar recargas completas al cambiar de página en las tablas
-        document.addEventListener('click', async (e) => {
-
-          // detecta si el clic se realizó en un enlace de paginación dentro de un contenedor con la clase js-paginacion-admin
-          const link = e.target.closest('.js-paginacion-admin .pagination a');
-
-          // si no se encuentra un enlace válido, no se hace nada
-          if (!link) {
-            return;
-          }
-
-          e.preventDefault();
-
-          // encuentra el contenedor principal de la sección que se va a actualizar, para mostrar un efecto de carga
-          const contenedor = link.closest('.js-paginacion-admin');
-
-          // si no se encuentra el contenedor, no se hace nada
-          if (!contenedor) {
-            return;
-          }
-
-          // aplica un efecto de carga al contenedor para indicar que se está cargando nueva información
-          contenedor.style.opacity = '0.6';
-          contenedor.style.pointerEvents = 'none';
-
-          // intenta cargar el nuevo contenido mediante AJAX, y si falla, recarga la página completa como fallback
-          try {
-            const res = await fetch(link.href, {
-              headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
 
-            // si la respuesta no es exitosa, lanza un error para activar el fallback de recarga completa
-            const html = await res.text();
-
-            // parsea el HTML recibido para extraer el nuevo contenedor con la información actualizada
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-
-            // obtiene el ID del contenedor actual para buscar el nuevo contenedor en la respuesta
-            const id = contenedor.id;
-
-            // busca el nuevo contenedor en el HTML recibido, y si se encuentra, reemplaza el contenido actual sin recargar la página
-            const nuevoContenedor = doc.querySelector(`#${id}`);
-
-            // si se encuentra el nuevo contenedor, reemplaza el contenido actual y actualiza la URL en el historial del navegador para reflejar el cambio de página
-            if (nuevoContenedor) {
-
-              // reemplaza el contenedor actual con el nuevo contenido recibido por AJAX
-              contenedor.replaceWith(nuevoContenedor);
-
-              // actualiza la URL en el historial del navegador para reflejar la nueva página sin recargar
-              history.pushState({}, '', link.href);
-            }
-
-            // si no se encuentra el nuevo contenedor en la respuesta, lanza un error para activar el fallback de recarga completa
-          } catch (err) {
-            window.location.href = link.href;
-          } finally {
-
-            // al finalizar el proceso, ya sea exitoso o con error, se asegura de restaurar la apariencia del contenedor para que vuelva a ser interactivo
-            const actual = document.getElementById(contenedor.id);
-
-            // si se encuentra el contenedor actual después de la actualización, restaura su opacidad y capacidad de interacción para que el usuario pueda seguir navegando normalmente
-            if (actual) {
-              actual.style.opacity = '';
-              actual.style.pointerEvents = '';
-            }
-          }
-        });
-
-      </script>
-    @endpush
+          </script>
+        @endpush
 
 @endsection

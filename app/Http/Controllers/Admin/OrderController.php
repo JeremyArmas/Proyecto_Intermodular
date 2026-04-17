@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -22,7 +23,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        // Generalmente no se crean pedidos manualmente desde aquÃ­
+        // Generalmente no se crean pedidos manualmente desde aquí
         return redirect()->route('admin.orders.index')->with('error', 'La creación manual de pedidos no está habilitada.');
     }
 
@@ -81,16 +82,23 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado de la base de datos.');
     }
 
-    public function downloadOrderPdf($id){ // Descargar la factura en pdf
+    // Función que descarga la factura en pdf
+    public function downloadOrderPdf($id){ 
         $order = Order::with('items.game')->findOrFail($id); // Busca un pedido por la id y carga los items y juegos
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+        $pdf = Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
 
         return $pdf->download('Factura_Jediga_' . 'order-' . $order->id . '.pdf'); // Descargamos la factura
     }
 
-    public function exportAllPdfs(){ // Exportar todas las facturas en un zip
+    // Función que exporta todas las facturas en un zip
+    public function exportAllPdfs(){ 
         $orders = Order::with('items.game')->get(); // Busca todos los pedidos
+
+        // Si no hay pedidos, redirigimos atrás con un mensaje de aviso
+        if ($orders->isEmpty()) {
+            return back()->with('error', 'No hay pedidos registrados en el sistema para realizar la exportación.');
+        }
         
         $zip = new \ZipArchive(); // Creamos un zip
         $zipFileName = 'Facturas_de_los_pedidos_jediga.zip'; // Nombre del zip
@@ -101,11 +109,16 @@ class OrderController extends Controller
         }
 
         foreach ($orders as $order) { // Recorremos todos los pedidos
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
+            $pdf = Pdf::loadView('profile.order-pdf', compact('order')); // Cargamos la vista de la factura
             $zip->addFromString('Factura_Jediga_order-' . $order->id . '.pdf', $pdf->output()); // Añadimos la factura al zip
         }
 
         $zip->close(); // Cerramos el zip
+
+        // Verificamos si el archivo existe antes de intentar descargarlo
+        if (!file_exists($zipPath)) {
+            return back()->with('error', 'Hubo un error al generar el archivo de exportación.');
+        }
 
         return response()->download($zipPath)->deleteFileAfterSend(true); // Descargamos el zip y lo eliminamos después de enviarlo.
     }

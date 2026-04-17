@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Cart extends Model
 {
@@ -40,8 +41,8 @@ class Cart extends Model
      */
     public function getTotalPriceAttribute()
     {
-        $user = auth()->user();
-        return $this->items->sum(function ($item) use ($user) {
+        $user = Auth::user();
+        return $this->items()->get()->sum(function ($item) use ($user) {
             return $item->game->getPriceForUser($user) * $item->quantity;
         });
     }

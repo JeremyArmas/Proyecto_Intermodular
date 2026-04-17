@@ -6,6 +6,8 @@
 <div class="container py-5">
     @php
         $isUpcoming = $game->release_date && $game->release_date->isFuture();
+        // Resuelve el usuario autenticado sea cual sea el guard (web o admin)
+        $currentUser = auth()->guard('web')->user() ?? auth()->guard('admin')->user();
     @endphp
     
     <div class="row g-4">
@@ -79,22 +81,26 @@
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Estado</span>
-                        @if(auth()->check() && (auth()->user()->isCompany() || auth()->user()->isAdmin())) <!-- Si el usuario está autenticado y es una empresa o administrador, se muestran los estados de stock físico. -->
-                        @if($isUpcoming)
-                            <strong class="text-sun h5"><i class="bi bi-calendar-check me-2"></i>Próximamente</strong>
-                        @elseif($game->stock > 0)
-                            <strong class="text-mint h5"><i class="bi bi-check-circle me-2"></i>Disponible ({{ $game->stock }})</strong>
+                        @if(auth()->guard('admin')->check() || (auth()->check() && auth()->user()->isCompany()))
+                            @if($isUpcoming)
+                                <strong class="text-sun h5"><i class="bi bi-calendar-check me-2"></i>Próximamente</strong>
+                            @elseif($game->stock > 0)
+                                <strong class="text-mint h5"><i class="bi bi-check-circle me-2"></i>Disponible ({{ $game->stock }})</strong>
+                            @else
+                                <strong class="text-danger h5"><i class="bi bi-x-circle me-2"></i>Agotado</strong>
+                            @endif
                         @else
-                            <strong class="text-danger h5"><i class="bi bi-x-circle me-2"></i>Agotado</strong>
+                            {{-- Para clientes normales o invitados, mostramos disponibilidad digital --}}
+                            @if($isUpcoming)
+                                <strong class="text-sun h5"><i class="bi bi-calendar-check me-2"></i>Próximamente</strong>
+                            @else
+                                <strong class="text-mint h5"><i class="bi bi-cloud-arrow-down me-2"></i>Versión Digital</strong>
+                            @endif
                         @endif
-                        @else
-                        <!-- Al ser un cliente normal, se le oculta el stock físico y se simula stock infinito (siempre disponible) mediante el letrero de 'Versión Digital'. -->
-                            <strong class="text-mint h5"><i class="bi bi-cloud-arrow-down me-2"></i>Versión Digital</strong>
-                        @endif 
                     </div>
                     <div class="col-md-3">
                         <span class="d-block small jg-muted mb-1 text-uppercase tracking-wider">Precio Habitual</span>
-                        <strong class="text-white opacity-50 h5 text-decoration-line-through">{{ number_format($game->price * 1.2, 2) }}€</strong>
+                        <strong class="text-white opacity-50 h5 text-decoration-line-through">{{ \App\Services\CurrencyService::format($game->price * 1.2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -105,7 +111,7 @@
             <div class="card jg-card p-4 rounded-4 text-white border-0 sticky-top" style="top: 100px;">
                 <div class="mb-4">
                     <h4 class="jg-muted small text-uppercase mb-2">{{ $isUpcoming ? 'Reservar Hoy' : 'Comprar Hoy' }}</h4>
-                    <div class="display-4 fw-bold text-sun mb-1">{{ number_format($game->getPriceForUser(auth()->user()), 2) }}€</div>
+                    <div class="display-4 fw-bold text-sun mb-1">{{ \App\Services\CurrencyService::format($game->getPriceForUser($currentUser)) }}</div>
                     <div class="text-mint small">
                         @if($isUpcoming)
                             <i class="bi bi-calendar-date me-1"></i> Lanzamiento: {{ $game->release_date->format('d/m/Y') }}
@@ -121,11 +127,11 @@
                     </div>
                 @endif
 
-                @if(auth()->check())
+                @if($currentUser)
                     <form action="{{ route('carrito.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="game_id" value="{{ $game->id }}"> <!-- Enviamos el ID del juego al carrito de forma invisible, y si el usuario está conectado y es una Empresa, le mostramos el desplegable para que elija cuántas cajas físicas quiere comprar (hasta un máximo de 10). -->
-                        @if(auth()->check() && auth()->user()->isCompany())
+                        @if($currentUser->isCompany())
                         <div class="mb-3">
                             <label class="form-label small text-white opacity-75">Seleccionar Cantidad</label>
                             <select name="quantity" class="form-select bg-dark text-white border-secondary mb-3" {{ $game->stock <= 0 ? 'disabled' : '' }}>
@@ -144,10 +150,10 @@
                             </button>
                         @else
                         @php //Sirve para bloquear el botón de compra a las Empresas cuando el stock físico llega a cero, pero permitiendo que los usuarios normales sigan comprando la versión digital sin importar el stock.
-                        $ifDisabledForCompany = auth()->check() && auth()->user()->isCompany() && $game->stock <= 0;
+                        $ifDisabledForCompany = $currentUser->isCompany() && $game->stock <= 0;
                         @endphp 
                             <button type="submit" class="btn jg-btn jg-btn-sun w-100 btn-lg mb-3 shadow {{ $ifDisabledForCompany ? 'disabled' : '' }}">
-                                <i class="bi bi-cart-plus-fill me-2"></i> {{ auth()->check() && auth()->user()->isCompany() ? 'Compra las copias físicas' : 'Compra la versión digital' }}
+                                <i class="bi bi-cart-plus-fill me-2"></i> {{ $currentUser->isCompany() ? 'Compra las copias físicas' : 'Compra la versión digital' }}
                             </button> <!-- Botón que cambia de nombre dependiendo de si eres empresa o usuario normal, y que se bloquea automáticamente si las empresas intentan comprar sin stock. -->
                         @endif
                     </form>
@@ -163,9 +169,24 @@
                     @endif
                 @endif
                 
-                <button type="button" class="btn jg-btn jg-btn-outline w-100 py-2">
-                    <i class="bi bi-heart me-2"></i> Añadir a Lista de Deseos
-                </button>
+                @php
+                    $inWishlist = $currentUser && $currentUser->wishlist()->where('game_id', $game->id)->exists();
+                @endphp
+
+                @if($currentUser)
+                    <form id="wishlistForm" action="{{ route('wishlist.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="game_id" value="{{ $game->id }}">
+                        <button type="submit" id="wishlistBtn" class="btn jg-btn jg-btn-outline w-100 py-2">
+                            <i id="wishlistIcon" class="bi {{ $inWishlist ? 'bi-heart-fill text-danger' : 'bi-heart' }} me-2"></i> 
+                            <span id="wishlistText">{{ $inWishlist ? 'Quitar de la Lista' : 'Añadir a Lista de Deseos' }}</span>
+                        </button>
+                    </form>
+                @else
+                    <button type="button" class="btn jg-btn jg-btn-outline w-100 py-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-heart me-2"></i> Añadir a Lista de Deseos
+                    </button>
+                @endif
 
                 <div class="mt-4 p-3 rounded-3" style="background: rgba(255,255,255, 0.03);">
                     <div class="d-flex align-items-center gap-3">
@@ -203,6 +224,63 @@ document.addEventListener('DOMContentLoaded', function () {
             iframe.src = '';
         }
     });
+
+    // Lógica AJAX para la Wishlist
+    const wishlistForm = document.getElementById('wishlistForm');
+    if (wishlistForm) {
+        wishlistForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('wishlistBtn');
+            const icon = document.getElementById('wishlistIcon');
+            const textSpan = document.getElementById('wishlistText');
+            const badge = document.getElementById('wishlist-count-badge');
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(this)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la petición');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.status === 'added') {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill', 'text-danger');
+                        textSpan.innerText = 'Quitar de la Lista';
+                    } else {
+                        icon.classList.remove('bi-heart-fill', 'text-danger');
+                        icon.classList.add('bi-heart');
+                        textSpan.innerText = 'Añadir a Lista de Deseos';
+                    }
+
+                    // Actualizar contador del Navbar (Notificación)
+                    if (badge) {
+                        if (data.new_count > 0) {
+                            badge.innerText = data.new_count;
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error al procesar la Wishlist:', error);
+                // Si falla la sesión de repente, recargamos para que laravel maneje el login
+                if (error.message.includes('401') || error.message.includes('419')) {
+                    window.location.reload();
+                }
+            });
+        });
+    }
 });
 </script>
 @endsection

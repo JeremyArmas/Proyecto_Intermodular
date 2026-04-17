@@ -74,7 +74,7 @@
               <!-- Formateamos el coste total con dos decimales y el símbolo de euro para una mejor presentación -->
               <tr>
                 <th>Coste Total:</th>
-                <td class="fw-bold" style="color: var(--jg-mint);">{{ number_format($order->total_amount, 2) }} €</td>
+                <td class="fw-bold" style="color: var(--jg-mint);">{{ \App\Services\CurrencyService::format($order->total_amount) }}</td>
               </tr>
               
               <!-- Mostramos la dirección de envío o un mensaje si no está especificada -->

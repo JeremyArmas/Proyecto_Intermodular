@@ -64,16 +64,26 @@ class AuthController extends Controller
         // Si el usuario pidió "recordarme"
         $remember = $request->boolean('remember');
 
-        // Intenta autenticar con las credenciales validadas
-        if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
-            
-            // Incrementa intentos fallidos en sesión
+        // Intenta autenticar primero como usuario normal (web)
+        $credentials = ['email' => $validated['email'], 'password' => $validated['password']];
+        
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
+            $user = Auth::guard('web')->user();
+            $redirect = url('/'); // Default para usuarios
+        } 
+        // Si falla, intenta autenticar como administrador (admin)
+        else if (Auth::guard('admin')->attempt($credentials, $remember)) {
+            $user = Auth::guard('admin')->user();
+            $redirect = route('admin.panel'); // Default para admins
+        } 
+        else {
+            // Incrementa intentos fallidos en sesión si ambos fallan
             $intentos++;
             $request->session()->put('login_intentos', $intentos);
 
             $restantes = $this->maxIntentos - $intentos;
 
-            // Si se excede el máximo, establece bloqueo temporal y borra el contador de intentos
+            // Bloqueo si se excede el máximo
             if ($intentos >= $this->maxIntentos) {
                 $request->session()->put('login_bloqueado_hasta', now()->addMinutes($this->minutosBloqueo));
                 $request->session()->forget('login_intentos');
@@ -97,35 +107,25 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Si la autenticación es correcta: limpiar datos de sesión relacionados con login y regenerar
+        // Si la autenticación fue exitosa (ya sea user o admin)
         $request->session()->forget(['login_intentos', 'login_bloqueado_hasta']);
         $request->session()->regenerate();
 
-        // Redirección según rol del usuario autenticado
-        $user = Auth::user();
-        $redirect = match ($user->role) {
-            'admin'   => route('admin.panel'),
-            'company' => url('/'),
-            'client'  => url('/'),
-            default   => url('/'),
-        };
-
-        // Respuesta JSON indicando éxito y URL de redirección
         return response()->json(['success' => true, 'redirect' => $redirect]);
     }
 
     // Función del logout: cierra sesión, limpia remember_token y regenera token CSRF
+    // Función del logout
     public function logout(Request $request)
     {
-        // Limpia el remember_token del usuario antes de logout
-        $user = Auth::user();
-        if ($user) {
-            $user->update(['remember_token' => null]);
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        } else {
+            Auth::guard('web')->logout();
         }
 
-        Auth::logout();
-        $request->session()->invalidate(); // Invalida la sesión actual
-        $request->session()->regenerateToken(); // Regenera token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         // Si la petición espera JSON, devolver JSON; si no, redirigir a home
         if ($request->expectsJson()) {

@@ -4,18 +4,10 @@
     <meta charset="utf-8">
     <title>Recibo del pedido #{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 14px; }
-        h1 { color: #333; margin-bottom: 5px; }
-        .header-info { margin-bottom: 30px; color: #555; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
-        th { background: #f8f9fa; font-weight: bold; }
-        .game-title { margin: 0 0 5px 0; font-size: 16px; color: #111; }
-        .game-desc { font-size: 11px; color: #666; line-height: 1.4; margin: 0; }
-        .total-box { margin-top: 30px; text-align: right; font-size: 18px; }
+        {!! file_get_contents(resource_path('css/general.css')) !!}
     </style>
 </head>
-<body>
+<body class="pdf-body">
     <h1>Comprobante de Pedido #{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}</h1>
     <div class="header-info">
         <p style="margin: 0;"><strong>Fecha:</strong> {{ $order->created_at->format('d/m/Y - H:i') }}</p>
@@ -66,7 +58,7 @@
                     x{{ $item->quantity }}
                 </td>
                 <td style="text-align: right; font-weight: bold;">
-                    {{ number_format($item->price_at_purchase, 2) }} €
+                    {{ \App\Services\CurrencyService::format($item->price_at_purchase) }}
                 </td>
             </tr>
             @endforeach
@@ -74,7 +66,7 @@
     </table>
 
     <div class="total-box">
-        <strong>Total pagado: <span style="color: #28a745;">{{ number_format($order->total_amount, 2) }} €</span></strong>
+        <strong>Total pagado: <span style="color: #28a745;">{{ \App\Services\CurrencyService::format($order->total_amount) }}</span></strong>
     </div>
 
     <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #000000ff;">
