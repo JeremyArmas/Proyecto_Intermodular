@@ -1,3 +1,36 @@
+## Comandos básicos para la gestión del proyecto
+
+1. Instalación y Configuración Inicial
+Si clonas el proyecto desde cero en un nuevo entorno:
+
+composer install          # Instala dependencias de PHP
+npm install               # Instala dependencias de JavaScript
+cp .env.example .env      # Crea tu archivo de entorno
+php artisan key:generate  # Genera la clave de seguridad de la aplicación
+php artisan storage:link  # Crea el enlace simbólico para imágenes
+
+2. Base de Datos
+Comandos esenciales para manejar las tablas y datos:
+
+php artisan migrate                # Ejecuta las migraciones pendientes 
+php artisan migrate:fresh --seed   # ¡CUIDADO! Borra todo, recrea tablas y carga datos de prueba
+php artisan db:seed                # Carga solo los datos de prueba (Seeders)
+
+3. Desarrollo Local
+Para trabajar en tu ordenador:
+
+php artisan serve    # Inicia el servidor de PHP (http://127.0.0.1:8000)
+npm run dev          # Inicia el compilador de assets (Vite) en tiempo real
+
+4. Preparación para Producción (Despliegue)
+Comandos críticos antes de subir el proyecto:
+
+npm run build              # Compila y optimiza JS/CSS para producción
+php artisan config:cache   # Optimiza la carga de configuración
+php artisan route:cache    # Optimiza el registro de rutas
+php artisan view:cache     # Pre-compila las vistas Blade
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
