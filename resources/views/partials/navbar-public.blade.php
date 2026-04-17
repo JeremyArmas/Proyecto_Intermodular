@@ -124,7 +124,7 @@
       <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
         
         <!-- Carrito -->
-        @if($isWebActive)
+        @if($anyAuth)
           <a href="{{ route('carrito.index') }}" class="btn jg-btn jg-btn-outline position-relative" title="Ver Carrito">
         @else
           <a href="#" class="btn jg-btn jg-btn-outline position-relative" data-bs-toggle="modal" data-bs-target="#loginModal" title="Inicia sesión para ver el carrito">
@@ -132,8 +132,12 @@
           <i class="bi bi-cart3"></i>
         @php
             $cartCount = 0;
-            if ($isWebActive && $user) {
-                $cart = $user->cart;
+            if ($anyAuth && $user) {
+                // Si es admin, buscamos el carrito usando el id del admin directamente en la tabla carts
+                $cart = ($isAdmin) 
+                    ? \App\Models\Cart::where('user_id', $user->id)->first() 
+                    : $user->cart;
+
                 if ($cart) {
                     $cartCount = $cart->items()->sum('quantity');
                 }
