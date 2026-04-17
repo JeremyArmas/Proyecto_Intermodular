@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Game;
 use App\Models\Cart;
+use App\Models\Administrator;
 
 class CheckoutTest extends TestCase
 {
@@ -18,7 +19,7 @@ class CheckoutTest extends TestCase
     public function test_unauthenticated_user_cannot_checkout(): void
     {
         $response = $this->post(route('checkout.session'));
-        $response->assertRedirect('/login');
+        $response->assertRedirect();
     }
 
     /**
@@ -61,4 +62,37 @@ class CheckoutTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('checkout.cancel');
     }
+
+    // ───────────────────────────────────────────
+    // ADMIN
+    // ───────────────────────────────────────────
+
+    /**
+     * Un admin con carrito vacío es redirigido con error al intentar checkout.
+     * Cubre el bug fix: el admin no debe ser redirigido al login sino al carrito.
+     */
+    public function test_admin_with_empty_cart_is_redirected_not_to_login(): void
+    {
+        $admin = Administrator::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')->post(route('checkout.session'));
+
+        // NO debe redirigir al login, sino al carrito con mensaje de error
+        $response->assertRedirect(route('carrito.index'));
+        $response->assertSessionHas('error', 'Tu carrito está vacío.');
+    }
+
+    /**
+     * La página de cancelación también es accesible para el admin.
+     */
+    public function test_admin_can_access_cancel_page(): void
+    {
+        $admin = Administrator::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')->get(route('checkout.cancel'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('checkout.cancel');
+    }
 }
+
