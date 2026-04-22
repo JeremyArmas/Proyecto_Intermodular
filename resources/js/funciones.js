@@ -44,6 +44,7 @@ function iniciarPreloader() {
   preloader.addEventListener('animationend', (e) => {
     if (e.target === preloader && e.animationName === 'jgLoaderLeave') removerLoader();
   });
+  
   preloader.addEventListener('transitionend', (e) => {
     if (e.target === preloader) removerLoader();
   });
@@ -343,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const swiper = new Swiper(swiperJG, {
     loop: true,
     speed: 1300, 
-    effect: 'slide',
+    effect: 'slide', 
     spaceBetween: 40, 
     autoplay: {
       delay: 19500, 
@@ -367,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return slideEl ? slideEl.querySelector('iframe.jg-hero-vid') : null;
   }
 
+  // Al iniciar la transición de cambio de slide, vacía el src del iframe del slide anterior para detener cualquier video que se esté reproduciendo
   swiper.on('slideChangeTransitionStart', function () {
     const prevSlide = swiper.slides[swiper.previousIndex];
     const prevIframe = getSlideIframe(prevSlide);
@@ -375,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Al finalizar la transición de cambio de slide, carga el src del iframe del nuevo slide activo para iniciar el video (si tiene data-src)
   swiper.on('slideChangeTransitionEnd', function () {
     const activeSlide = swiper.slides[swiper.activeIndex];
     const activeIframe = getSlideIframe(activeSlide);
@@ -383,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Carga inicial para el primer slide
+  // Al cargar la página, si el slide activo tiene un iframe con data-src, cargarlo para iniciar el video desde el principio
   const initialIframe = getSlideIframe(swiper.slides[swiper.activeIndex]);
   if (initialIframe && initialIframe.dataset.src) {
     initialIframe.src = initialIframe.dataset.src;
@@ -451,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loginModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });
 
+// Realiza la petición de registro vía fetch, maneja errores, muestra mensajes y controla la visibilidad del captcha según la respuesta del backend
 async function register(form, contenedorErrores) {
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
   try {
@@ -459,19 +463,42 @@ async function register(form, contenedorErrores) {
       headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
       body: new FormData(form),
     });
-    if (res.status === 419) { window.location.reload(); return; }
+
+    // Si token CSRF expiró -> recarga la página
+    if (res.status === 419) {
+      window.location.reload(); return; 
+    }
+    
+    // Intenta parsear JSON (fallback a objeto vacío si falla)
     const data = await res.json().catch(() => ({}));
-    if (res.ok && data.success) { window.location.href = data.redirect || '/'; return; }
+    
+    // Si el registro fue correcto redirige a la URL recibida
+    if (res.ok && data.success) {
+      window.location.href = data.redirect || '/'; return; 
+    }
+    
+    // Mensaje por defecto en caso de error
     let msg = 'Error al crear la cuenta';
-    if (data && data.message) msg = data.message;
-    else if (data && data.errors) msg = Object.values(data.errors)[0][0];
+    
+    // Prioriza mensajes concretos devueltos por el backend
+    if (data && data.message){
+      msg = data.message;
+    } else if (data && data.errors){
+      msg = Object.values(data.errors)[0][0];
+    } 
+    
+    // Si se proporcionó un contenedor para errores, mostrar ahí; si no, usar alert como fallback
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
     } else alert(msg);
     document.getElementById('reloadCaptchaRegistro')?.click();
   } catch {
+
+    // Error de red genérico
     const msg = 'Error de red. Inténtalo de nuevo.';
+    
+    // Si se proporcionó un contenedor para errores, mostrar ahí; si no, usar alert como fallback
     if (contenedorErrores) {
       contenedorErrores.textContent = msg;
       contenedorErrores.classList.remove('d-none');
@@ -479,6 +506,7 @@ async function register(form, contenedorErrores) {
   }
 }
 
+// Añade listener al formulario de registro para usar la función register() y al botón de recarga de captcha del registro para solicitar un nuevo captcha al backend
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('#registerModal form');
   const contenedorErrores = document.getElementById('contenedorErroresRegistro');
@@ -489,18 +517,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Añade listener al botón de recarga de captcha del registro para solicitar un nuevo captcha al backend y actualizar el DOM
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('reloadCaptchaRegistro');
   const frame = document.querySelector('#captchaBlockRegistro .jg-captcha-frame');
   const input = document.querySelector('#registerModal input[name="captcha"]');
-  if (!btn || !frame) return;
+  
+  // Si no se encuentran el btn o el frame, devuelve
+  if (!btn || !frame){
+    return;
+  } 
+  
+  // Función para recargar el captcha: hace una petición al backend y actualiza el contenido del frame
   const recargarCaptcha = async () => {
+    
+    // Deshabilita el botón mientras se carga para evitar múltiples clicks
     btn.disabled = true;
+    
+    // Agrega un timestamp a la URL para evitar caché
     try {
       const res = await fetch(`/reload-captcha?_=${Date.now()}`, {
         headers: { 'Accept': 'application/json' },
       });
+      
+      // Si el backend devuelve un nuevo captcha, actualiza el contenido del frame y limpia el input
       const data = await res.json();
+      
+      // Si el backend devuelve un nuevo captcha, actualiza el contenido del frame y limpia el input
       if (data?.captcha) {
         frame.innerHTML = data.captcha;
         if (input) input.value = '';
@@ -508,6 +551,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { console.error('No se pudo recargar captcha registro', e); }
     finally { btn.disabled = false; }
   };
+  
+  // Agrega el listener al botón de recarga
   btn.addEventListener('click', recargarCaptcha);
+  
+  // Recarga al abrir el modal de registro
   document.getElementById('registerModal')?.addEventListener('shown.bs.modal', recargarCaptcha);
 });

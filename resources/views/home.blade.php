@@ -218,7 +218,7 @@
         </div>
 
         <!-- Enlace a ver todos los juegos de esta sección, con un icono de flecha a la derecha. -->
-        <a class="jg-link-muted" href="{{ url('/catalogo?price=free') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
+        <a class="jg-link-muted" href="{{ url('/catalogo?price_max=0') }}">Ver todos <i class="bi bi-arrow-right ms-1"></i></a>
       </div>
 
       <!-- Lista de juegos destacados en esta sección -->
